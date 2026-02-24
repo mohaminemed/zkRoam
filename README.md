@@ -4,11 +4,18 @@ This repository implements a **proof-of-concept framework for secure, privacy-pr
 
 It leverages:
 
-- **Dynamic EVM Smart Contracts** – to model inter-operator agreements and settlements.  
+- **Dynamic EVM Roaming Agreement Smart Contracts** – RASC to model inter-operator agreements and settlements.  
 - **Zero-knowledge (ZK) Circuits** – for privacy-preserving verification of roaming sessions.  
 - **Private EVM Network** – for simulating multi-operator interactions in a controlled environment.
 
 The framework supports **Groth16 zk-SNARK proofs** (Circom and Rust/Arkworks) and demonstrates **off-chain aggregation** using a SnarkPack implementation.
+
+## zkRoam Workflow
+
+<p align="center">
+  <img src="zkRoam.png" width="70%">
+</p>
+
 
 ---
 
@@ -44,7 +51,7 @@ Implements a **private EVM test network** for contract deployment and testing:
 - **`boot.key`** – Bootstrap key for network initialization.  
 - **`genesis.json`** – Blockchain configuration file.  
 - **`network_keypair`** – Keypair for network authentication.  
-- **`bootstrap.sh` / `clean_state.sh`** – Scripts to start/reset the private Ethereum network.  
+- **`bootstrap.sh` / `clean_state.sh`** – Scripts to start/reset the private EVM network.  
 
 > **Note:** The private network uses **Geth v1.13.15-stable-c5ba367e**.
 
@@ -54,7 +61,7 @@ Implements a **private EVM test network** for contract deployment and testing:
 Deployment and execution scripts for smart contracts and ZK proofs.
 
 #### `deploy/`
-- **`AgreementFactory.s.sol`** – Factory for creating roaming agreements.  
+- **`AgreementFactory.s.sol`** – Factory for creating roaming agreements (i.e., RASC).  
 - **`CreateAgreement.s.sol`** – Deploys individual roaming agreements.  
 
 #### `zk/`
