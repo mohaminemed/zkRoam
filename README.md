@@ -12,6 +12,20 @@ The framework supports **Groth16 zk-SNARK proofs** (Circom and Rust/Arkworks) an
 
 ---
 
+## ⚙️ Prerequisites
+
+Before using the framework, ensure the following are installed:
+
+- **Node.js & npm** – for deploying scripts (`v18+ recommended`).  
+- **Rust & Cargo** – for Arkworks-based proof aggregation.  
+- **Geth** – v1.13.15-stable-c5ba367e for the private Ethereum network.  
+- **Circom** – for circuit compilation.  
+- **SnarkJS** – for proof generation with Circom.
+
+Optional tools: `jq`, `curl`, `make`.
+
+---
+
 ## 📂 Repository Structure
 
 ### 1. `circuits/circom`
@@ -68,19 +82,6 @@ Rust/Arkworks implementation for **off-chain ZK proof aggregation**:
 
 Run `cargo run --release` to reproduce proof aggregation results. You can modify the `nproofs` variable in `main.rs` for different proof counts.
 
----
-
-## ⚙️ Prerequisites
-
-Before using the framework, ensure the following are installed:
-
-- **Node.js & npm** – for deploying scripts (`v18+ recommended`).  
-- **Rust & Cargo** – for Arkworks-based proof aggregation.  
-- **Geth** – v1.13.15-stable-c5ba367e for the private Ethereum network.  
-- **Circom** – for circuit compilation.  
-- **SnarkJS** – for proof generation with Circom.
-
-Optional tools: `jq`, `curl`, `make`.
 
 ---
 
