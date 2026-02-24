@@ -6,7 +6,7 @@ It leverages:
 
 - **Dynamic EVM Smart Contracts** – to model inter-operator agreements and settlements.  
 - **Zero-knowledge (ZK) Circuits** – for privacy-preserving verification of roaming sessions.  
-- **Private Ethereum Network** – for simulating multi-operator interactions in a controlled environment.
+- **Private EVM Network** – for simulating multi-operator interactions in a controlled environment.
 
 The framework supports **Groth16 ZK-SNARK proofs** and demonstrates **off-chain aggregation** using both Circom and Rust/Arkworks-based implementations.
 
@@ -23,8 +23,8 @@ Contains **Circom circuits** for ZK proof generation:
 
 ---
 
-### 2. `private_ethereum_setup`
-Implements a **private Ethereum test network** for contract deployment and testing:
+### 2. `private_evm_setup`
+Implements a **private EVM test network** for contract deployment and testing:
 
 - **`node1/ … node4/`** – Local Ethereum nodes.  
 - **`boot.key`** – Bootstrap key for network initialization.  
