@@ -1,4 +1,4 @@
-# zkRoam- Zero-Knowledge Roaming Settlement Framework
+# zkRoam: Zero-Knowledge Roaming Settlement Framework
 
 This repository implements a **proof-of-concept framework for secure, privacy-preserving, and scalable roaming settlement** in 5G and beyond networks, the paper (short version) can be found [here](https://arxiv.org/abs/2509.16390).
 
