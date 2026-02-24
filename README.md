@@ -8,7 +8,7 @@ It leverages:
 - **Zero-knowledge (ZK) Circuits** – for privacy-preserving verification of roaming sessions.  
 - **Private EVM Network** – for simulating multi-operator interactions in a controlled environment.
 
-The framework supports **Groth16 zk-SNARK proofs** (Circom and Rust/Arkworks) and demonstrates **off-chain aggregation** using both a SnarkPack implementation.
+The framework supports **Groth16 zk-SNARK proofs** (Circom and Rust/Arkworks) and demonstrates **off-chain aggregation** using a SnarkPack implementation.
 
 ---
 
