@@ -8,7 +8,7 @@ BINARY=./target/release/snarkpack_aggregation
 
 RUNS=10
 
-PROOFS=(64 128 256 512 1024 2048)
+PROOFS=(8 64 128 256 512 1024 2048)
 
 OUTDIR=results
 

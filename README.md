@@ -87,6 +87,7 @@ Rust/Arkworks implementation for **off-chain ZK proof aggregation**:
 - **`src/main.rs`** & **`src/constraints.rs`** – Define and execute the Rust-based circuit.  
 - **`Cargo.toml`** – Rust dependencies for Arkworks and Snarkpack proving.  
 
+
 Run `experiments.sh` to reproduce proof aggregation results (10 Runs). You can modify the `nproofs` variable in `main.rs` for different proof counts.
 
 
