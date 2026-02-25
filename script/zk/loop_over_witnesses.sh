@@ -7,7 +7,7 @@
 # -------------------------------
 # Config
 # -------------------------------
-ZKEY="CDRGeneration_final.zkey"       # Your compiled zkey
+ZKEY="CDRGeneration_final.zkey"       # Compiled zkey
 WITNESS="witness.wtns"               # Single witness file to reuse
 PROOF_DIR="zkProofs"                 # Directory to save proofs
 PUBLIC_DIR="zkPublic"                 # Directory to save public inputs
