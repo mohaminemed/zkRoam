@@ -109,7 +109,7 @@ cd script/zk
 ./universal_setup.sh
 ./groth16_proof_generation.sh
 ```
-This generates the required proving and verification keys. Run `loop_over_witnesses.sh` to reproduce SnarkJS single proof results
+This generates the required proving and verification keys. Run `loop_over_witnesses.sh` to reproduce SnarkJS single proof results.
 
 3. Simulate a 5G roaming settlement
 
