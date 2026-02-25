@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
-/*
+/*  
+    CDR Verifier
     Copyright 2021 0KIMS association.
 
     This file is generated with [snarkJS](https://github.com/iden3/snarkjs).
