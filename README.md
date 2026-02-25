@@ -88,7 +88,7 @@ Rust/Arkworks implementation for **off-chain ZK proof aggregation**:
 - **`Cargo.toml`** – Rust dependencies for Arkworks and Snarkpack proving.  
 
 
-Run `experiments.sh` to reproduce proof aggregation results (10 Runs). You can modify the `nproofs` variable in `main.rs` for different proof counts.
+Run `run_experiments.sh` to reproduce proof aggregation results (10 Runs). You can modify the `nproofs` variable in `main.rs` for different proof counts.
 
 
 ---
@@ -109,7 +109,7 @@ cd script/zk
 ./universal_setup.sh
 ./groth16_proof_generation.sh
 ```
-This generates the required proving and verification keys.
+This generates the required proving and verification keys. Run `loop_over_witnesses.sh` to reproduce SnarkJS single proof results
 
 3. Simulate a 5G roaming settlement
 
