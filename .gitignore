@@ -23,7 +23,7 @@ snarkpack_aggregation/output/*
 .r1cs
 .ptau   
 *.pdf
-*.py
+plot*.py
 *.ptau
 *.txt
 response*
@@ -39,5 +39,6 @@ CDRGeneration_cpp/
 zkPublic/
 zkProofs/
 zkMetrics/
-qbft-heterogeneity/logs/*
-qbft-heterogeneity/networkFiles/*
+ploting/
+net-heterogeneity/logs/*
+net-heterogeneity/networkFiles/*
