@@ -47,7 +47,7 @@ besu \
   --rpc-http-enabled \
   --rpc-http-host=0.0.0.0 \
   --rpc-http-port=8545 \
-  --rpc-http-api=ETH,QBFT,NET,ADMIN \
+  --rpc-http-api=ETH,QBFT,NET,ADMIN,WEB3 \
   --rpc-ws-enabled \
   --rpc-ws-host=0.0.0.0 \
   --rpc-ws-port=8546 \

@@ -40,7 +40,7 @@ def main():
             "ip": f"{SUBNET_PREFIX}.{10 + i}",
             "p2p_port": P2P_PORT,
             "host_rpc_port": BASE_HOST_RPC_PORT + i,
-            "host_ws_port": BASE_HOST_WS_PORT + i,
+            "host_ws_port": BASE_HOST_WS_PORT + 30 + i,
             "profile": CORE_PROFILE,
         })
 

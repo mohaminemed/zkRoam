@@ -72,7 +72,7 @@ def main():
         lines.append(f"      TC_LOSS_PCT: \"{p['loss_pct']}\"")
         lines.append(f"      BOOTNODES: \"{bootnodes}\"")
         lines.append("    volumes:")
-        lines.append(f"      - ./{key_dir_host}/key.priv:/data/key.priv:ro")
+        lines.append(f"      - ./{key_dir_host}/key:/data/key.priv:ro")
         lines.append("      - ./networkFiles/genesis.json:/config/genesis.json:ro")
         lines.append(f"      - ./logs/{n['name']}:/data/logs")
         lines.append("    ports:")

@@ -31,20 +31,32 @@ monitoring/collect_metrics.py  counts QBFT round-changes + flags stalled blocks 
 ## Running the heterogeneous experiment
 ```bash
 bash scripts/04-run-network.sh
-python3 workload/send_txs.py --rpc http://localhost:8545 --num-tx 500  --rate 20 --out results/hetero_500tx.csv
-python3 workload/send_txs.py --rpc http://localhost:8545 --num-tx 2000 --rate 20 --out results/hetero_2000tx.csv
+python workload/send_txs.py \
+    --topology networkFiles/topology.json \
+    --accounts accounts/accounts.json \
+    --num-tx 1000 \
+    --rate 500 \
+    --workers 48 \
+    --receipt-workers 32 \
+    --out results/hetero_baseline_1000tx_500.csv
+    --summary-out results/summary_hetero_1000tx_500.csv
 python3 monitoring/collect_metrics.py --logs-dir ./logs --rpc http://localhost:8545 --out results/hetero_robustness.csv
 docker compose down
 ```
 
 ## Running the baseline (homogeneous, "ideal network") control
 ```bash
-bash scripts/01-generate-network.sh
-python3 scripts/02b-assign-tiers-baseline.py
-python3 scripts/03-generate-compose.py
-docker compose up -d --build
-sleep 30
-python3 workload/send_txs.py --rpc http://localhost:8545 --num-tx 500 --rate 20 --out results/baseline_500tx.csv
+bash scripts/04b-run-baseline.sh
+
+python3 workload/send_txs.py \
+    --topology networkFiles/topology.json \
+    --accounts accounts/accounts.json \
+    --num-tx 1000 \
+    --rate 500 \
+    --workers 48 \
+    --receipt-workers 32 \
+    --out results/details_baseline_1000tx_500.csv
+    --summary-out results/summary_baseline_1000tx_500.csv
 python3 monitoring/collect_metrics.py --logs-dir ./logs --rpc http://localhost:8545 --out results/baseline_robustness.csv
 docker compose down
 ```

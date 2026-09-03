@@ -42,7 +42,7 @@ def main():
     addresses = sorted(os.listdir(KEYS_DIR))
     if len(addresses) != 24:
         raise SystemExit(
-            f"Expected 24 validator keys, found {len(addresses)}. "
+            f"Expected 4 validator keys, found {len(addresses)}. "
             "Re-run 01-generate-network.sh."
         )
 
