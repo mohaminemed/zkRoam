@@ -321,7 +321,7 @@ Use `verify_real_proof.py` before the full workload. The proof and public-input 
 ### Transactions time out or revert
 Check that the Besu network is producing blocks, the sending accounts are funded, the RPC ports in the topology are reachable, and `receipt_timeout` is long enough for the configured network delay. Reduce `rate`, `workers`, and `num_vmnos` while diagnosing.
 
-### Results are estimates rather than real contract measurements
+### Real contract measurements
 If `deployed_contracts.json` does not contain `cdr_verifier` or `aggregate_anchor`, the driver falls back to raw calldata-cost estimates. Treat those results as transport/calldata measurements, not EVM verifier gas measurements.
 
 ## Reproducibility checklist
