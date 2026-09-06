@@ -59,8 +59,8 @@ contracts:
   # SnarkPack pipeline will NOT verify against this contract, and this
   # proof was never run through SnarkPack aggregation - this only
   # exercises the "individual" on-chain leg honestly.
-  proof_json: fixtures/proofv1.json
-  public_json: fixtures/publicv1.json
+  proof_json: fixtures/proof.json
+  public_json: fixtures/public.json
 
 execution:
   rate: 500.0            # tx/s - low on purpose for a first real-proof run
