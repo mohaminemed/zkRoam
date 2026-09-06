@@ -3,7 +3,7 @@
 This directory contains the Python workload drivers used by the Besu QBFT network experiments in `net-heterogeneity/`. There are two related workloads:
 
 - `besu_benchmark.py`: a generic rate-controlled transaction producer and receipt poller.
-- `zkroam_snarkpack_workload.py`: a zkRoam-specific sweep comparing individual Groth16 verification transactions with one aggregate-anchor transaction per VMNO.
+- `zkroam_workload.py`: a zkRoam-specific sweep comparing individual Groth16 verification transactions with one aggregate-anchor transaction per VMNO.
 
 The scripts submit transactions to the RPC endpoints listed in `networkFiles/topology.json`, use accounts from `accounts/accounts.json`, and write measurements under `results/`.
 
@@ -18,7 +18,7 @@ cd zkRoam/net-heterogeneity
 When using the zkRoam driver, pass the configuration explicitly:
 
 ```bash
-python3 workload/zkroam_snarkpack_workload.py --config workload/config.yml
+python3 workload/zkroam_workload.py --config workload/config.yml
 ```
 
 
@@ -53,7 +53,7 @@ The script can also use a locally installed compiler through the `SOLC_BINARY` e
 | `config.yml` | Real-proof workload configuration. It enables both workload legs and several runs at `nproofs: 8, ..., 2048`. |
 | `config.dummy.yml` | Safe template configuration with no deployed verifier or proof files configured. |
 | `besu_benchmark.py` | Generic transaction benchmark implementation. |
-| `zkroam_snarkpack_workload.py` | YAML-driven zkRoam workload and sweep driver. |
+| `zkroam_workload.py` | YAML-driven zkRoam workload and sweep driver. |
 | `deploy_verifiers.py` | Compiles and deploys the individual verifier and aggregate anchor contracts. |
 | `verify_real_proof.py` | Small proof-verification smoke test. |
 
@@ -104,7 +104,7 @@ The summary contains submission throughput, confirmed throughput, success rate, 
 The zkRoam driver reads all settings from YAML. Its only command-line option is `--config`:
 
 ```bash
-python3 workload/zkroam_snarkpack_workload.py \
+python3 workload/zkroam_workload.py \
     --config workload/config.yml
 ```
 
@@ -274,7 +274,7 @@ cp workload/config.yml workload/config.smoke.yml
 Edit `config.smoke.yml` to use `nproofs: [8]`, `runs: 1`, `num_vmnos: 1`, and `mode: individual`, then run:
 
 ```bash
-python3 workload/zkroam_snarkpack_workload.py \
+python3 workload/zkroam_workload.py \
     --config workload/config.smoke.yml
 ```
 

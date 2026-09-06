@@ -16,7 +16,7 @@ Writes deployed_contracts.json:
       "aggregate_anchor": {"address": "0x...", "abi": [...]}
     }
 
-zkroam_snarkpack_workload.py reads this file automatically (via
+zkroam_workload.py reads this file automatically (via
 --deployed-contracts, default deployed_contracts.json) so the "individual"
 and "aggregate" legs call real deployed contracts instead of a bare
 --verifier-address with raw calldata.
@@ -193,7 +193,7 @@ def main():
             "identity is decoupled from transaction-submitting nonce - "
             "this pool no longer needs to be large for throughput reasons "
             "(that's now handled by relaying through the full account "
-            "pool, see zkroam_snarkpack_workload.py). Size this for how "
+            "pool, see zkroam_workload.py). Size this for how "
             "many independent trusted verifier keys you actually want "
             "(redundancy / threshold-of-N), not for nonce-gap capacity."
         ),

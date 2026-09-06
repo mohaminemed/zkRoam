@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-zkroam_snarkpack_workload.py
+zkroam_workload.py
 
 Custom transaction WORKLOAD for the Besu QBFT benchmark harness
 (benchmark.py, the script you pasted), modeling the on-chain leg of your
@@ -650,7 +650,7 @@ DEFAULT_CONFIG = {
         # value. See "WORKLOAD SIZE" in the module docstring.
         # individual leg total tx = nproofs * num_vmnos
         # aggregate  leg total tx = num_vmnos
-        "num_vmnos": 1000,
+        "num_vmnos": 100,
     },
     "offchain": {
         "logs_dir": "snarkpack_aggregation/output",
