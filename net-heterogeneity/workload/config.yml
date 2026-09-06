@@ -31,7 +31,7 @@ network:
   accounts: accounts/accounts.json
 
 sweep:
-  nproofs: [8]        # start small - see note below on what nproofs means here
+  nproofs: [8]        # [8 64 128 256 512 1024 2048] start small - see note below on what nproofs means here
   runs: 1
   mode: both      # individual | aggregate | both
                        
@@ -39,7 +39,7 @@ sweep:
 workload:
   # How many VMNO settlements actually get submitted on-chain this run.
   # This is the actual number of concurrent operator accounts.
-  num_vmnos: 500
+  num_vmnos: 50
 
 offchain:
   logs_dir: ../aggregation/aggregation_bn254/output

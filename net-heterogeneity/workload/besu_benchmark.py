@@ -301,6 +301,19 @@ class ResourceMonitor:
             for s in samples:
                 writer.writerow(s)
 
+            if not PSUTIL_AVAILABLE:
+                # Every column above is a real one - not blank because the
+                # run was actually idle - but None because psutil couldn't
+                # be imported at all. Loud in the CSV itself, not just a
+                # startup print easy to miss in a long run's terminal log.
+                writer.writerow({})
+                writer.writerow({
+                    "ts": "NOTE",
+                    "phase": "psutil not installed - all metric columns "
+                             "above are empty, not actually zero/idle. "
+                             "Install with: pip install psutil",
+                })
+
         print(f"Wrote: {path}")
 
 
@@ -420,25 +433,20 @@ def assign_accounts(accounts, endpoints):
 
 def load_nonces(accounts, assignment, web3s):
 
-    nonces = {}
-
     print()
-    print("Reading pending nonce for each account...")
+    print(f"Reading pending nonce for {len(accounts)} accounts (parallel)...")
     print()
 
-    for account in accounts:
-
-        account_index = account["index"]
-        rpc_index = assignment[account_index]
-
+    def fetch(account):
+        rpc_index = assignment[account["index"]]
         w3 = web3s[rpc_index]
+        nonce = w3.eth.get_transaction_count(account["address"], "pending")
+        return account["index"], nonce
 
-        nonce = w3.eth.get_transaction_count(
-            account["address"],
-            "pending",
-        )
-
-        nonces[account_index] = nonce
+    nonces = {}
+    with ThreadPoolExecutor(max_workers=min(64, len(accounts) or 1)) as executor:
+        for account_index, nonce in executor.map(fetch, accounts):
+            nonces[account_index] = nonce
 
     return nonces
 

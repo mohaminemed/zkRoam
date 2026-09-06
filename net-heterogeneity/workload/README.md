@@ -1,11 +1,41 @@
 # Workload Experiments
 
-This directory contains the Python workload drivers used by the Besu QBFT network experiments in `net-heterogeneity/`. There are two related workloads:
+Benchmarks the **on-chain** cost of a zkRoam CDR roaming settlement, comparing
+two strategies at the same per-VMNO proof-count sweep the Rust pipeline
+(`aggregation/`) already measures off-chain:
+
+- **individual** — post every Groth16 CDR proof as its own transaction
+  (no aggregation).
+- **aggregate** — aggregate off-chain with SnarkPack, anchor the result
+  on-chain with one attestation per VMNO settlement.
+
+It's built as a workload layered on top of a generic Besu QBFT
+transaction-benchmark harness (`besu_benchmark.py`), submitted through the
+same producer/poller infrastructure, so gas, throughput, and confirmation
+latency are all real measurements against a live Besu network — not
+estimates, wherever a contract is actually deployed.
 
 - `besu_benchmark.py`: a generic rate-controlled transaction producer and receipt poller.
 - `zkroam_workload.py`: a zkRoam-specific sweep comparing individual Groth16 verification transactions with one aggregate-anchor transaction per VMNO.
 
 The scripts submit transactions to the RPC endpoints listed in `networkFiles/topology.json`, use accounts from `accounts/accounts.json`, and write measurements under `results/`.
+
+---
+
+## File map
+
+| File | What it is |
+|---|---|
+| `besu_benchmark.py` | Generic tx-submission/receipt-polling harness (rate-controlled producer, resource monitor, per-RPC stats). Everything else imports from this. |
+| `zkroam_workload.py` | The actual workload: sweeps `nproofs`, builds individual/aggregate transactions, writes `sweep_summary.csv`. |
+| `contracts/CDRVerifier.sol` | Real snarkjs-generated Groth16 verifier (BN254) for individual proofs. |
+| `contracts/SnarkPackAggregateAnchor.sol` | Attestation/anchor contract for aggregate results (see "Why not a real aggregate verifier?" below). |
+| `deploy_verifiers.py` | Compiles + deploys both contracts, authorizes a verifier pool. |
+| `verify_real_proof.py` | Standalone smoke test: deploy + call `verifyProof()` with a real proof, assert `true`, before running the full sweep. |
+| `config.yml` | Full config schema with inline comments. Rdit and run. |
+| `fixtures/` | Real snarkjs `proof.json`/`public.json`. |
+
+---
 
 ## Important: run from the network directory
 
@@ -21,6 +51,7 @@ When using the zkRoam driver, pass the configuration explicitly:
 python3 workload/zkroam_workload.py --config workload/config.yml
 ```
 
+---
 
 ## Prerequisites
 
@@ -46,94 +77,113 @@ python -c "import solcx; solcx.install_solc('0.8.19')"
 
 The script can also use a locally installed compiler through the `SOLC_BINARY` environment variable when downloading a compiler is not possible.
 
-## Input files
+You need:
+- A running Besu QBFT network, with `networkFiles/topology.json` (RPC
+  endpoints) and an `accounts.json` (funded keypairs) matching the format
+  `besu_benchmark.py` expects.
+- (Optional but strongly recommended) real snarkjs `proof.json`/
+  `public.json` for the circuit `CDRVerifier.sol` was actually compiled
+  from — `fixtures/` has a working example set.
 
-| File | Description |
-| --- | --- |
-| `config.yml` | Real-proof workload configuration. It enables both workload legs and several runs at `nproofs: 8, ..., 2048`. |
-| `config.dummy.yml` | Safe template configuration with no deployed verifier or proof files configured. |
-| `besu_benchmark.py` | Generic transaction benchmark implementation. |
-| `zkroam_workload.py` | YAML-driven zkRoam workload and sweep driver. |
-| `deploy_verifiers.py` | Compiles and deploys the individual verifier and aggregate anchor contracts. |
-| `verify_real_proof.py` | Small proof-verification smoke test. |
+---
 
-The workload expects:
-
-- `networkFiles/topology.json` with validator RPC host ports.
-- `accounts/accounts.json` with funded accounts and private keys.
-- Off-chain aggregation logs such as `aggregation/aggregation_bn254/output/experiment_log_8_1.json`.
-- Optional Solidity deployment output in `deployed_contracts.json`.
-- Optional Circom proof inputs in `fixtures/proof.json` and `fixtures/public.json`.
-
-## Generic Besu benchmark
-
-Use `besu_benchmark.py` when you want to measure transaction submission and confirmation behavior without the zkRoam-specific sweep:
+## Quick start
 
 ```bash
-python3 workload/besu_benchmark.py \
-    --topology networkFiles/topology.json \
-    --accounts accounts/accounts.json \
-    --num-tx 1000 \
-    --rate 500 \
-    --workers 48 \
-    --receipt-workers 32 \
-    --out results/details_1000tx_500.csv \
-    --summary-out results/summary_1000tx_500.csv \
-    --resource-out results/resources_1000tx_500.csv
+# 1. Deploy both contracts + authorize a verifier
+python3 deploy_verifiers.py \
+  --topology networkFiles/topology.json \
+  --accounts networkFiles/accounts/accounts.json
+
+# 2. Confirm the real proof actually verifies before trusting anything else
+python3 verify_real_proof.py \
+  --deployed-contracts deployed_contracts.json \
+  --proof-json fixtures/proof.json \
+  --public-json fixtures/public.json
+
+# 3. Edit the config
+nano config.yml
+
+# 4. Run the sweep
+python3 zkroam_workload.py --config config.yml
 ```
 
-Useful options:
+Output lands in `results/zkroam/`: `<experiment>_sweep_summary.csv` (one row
+per `nproofs`/run), `detail/` (per-transaction CSVs), and
+`<experiment>_resource_usage.csv` (host CPU/mem, if monitoring is enabled).
 
-| Option | Meaning | Default |
-| --- | --- | --- |
-| `--num-tx` | Number of transactions to submit. | `500` |
-| `--rate` | Target submission rate in transactions per second. | `100.0` |
-| `--workers` | Concurrent transaction submission workers. | `32` |
-| `--receipt-workers` | Concurrent receipt polling workers. | `16` |
-| `--receipt-timeout` | Maximum wait per receipt, in seconds. | `120` |
-| `--poll-interval` | Receipt polling interval, in seconds. | `0.25` |
-| `--out` | Per-transaction CSV output. | `results/benchmark.csv` |
-| `--summary-out` | Aggregate summary CSV output. | `results/summary.csv` |
-| `--resource-out` | Host resource time-series CSV. | `results/resource_usage.csv` |
-| `--no-monitor-resources` | Disable CPU and memory sampling. | Monitoring enabled |
+---
 
-The summary contains submission throughput, confirmed throughput, success rate, confirmation latency percentiles, and failure/timeout counts. The detailed CSV contains one row per submitted transaction, including its RPC endpoint and receipt status.
+## Key concept: `nproofs` vs `num_vmnos`
 
-## zkRoam SnarkPack workload
+These are two independent dials — conflating them was a real bug in an
+earlier version of this script, worth being deliberate about:
+
+- **`nproofs`** (sweep value, e.g. 8/64/128/…) — how many CDR proofs *one*
+  VMNO settlement bundles together. This is what the Rust binary swept and
+  what `offchain.logs_dir` has logs for.
+- **`num_vmnos`** (config value) — how many such VMNO settlements are
+  actually submitted on-chain *this run*. The real workload size, unrelated
+  to `nproofs`.
+
+They combine as:
+
+```
+individual leg -> nproofs * num_vmnos total transactions   (each VMNO posts nproofs individual proof-verify txs)
+aggregate  leg -> num_vmnos total transactions              (each VMNO posts exactly 1 attestation)
+```
+
+---
+
+## Why not a real on-chain SnarkPack verifier?
+
+`SnarkPackAggregateAnchor.sol` is an attestation contract, not a
+verifier. Verification of the aggregate proof
+(`snarkpack::verify_aggregate_proof`, ~12-14ms, already measured by the
+Rust binary) happens **off-chain**, and an authorized verifier attests to
+the result on-chain.
+
+This isn't a shortcut taken for convenience — the actual blocker is
+structural: SnarkPack's GIPA/TIPP recursion requires the verifier to do
+generic target-field (GT/Fq12) exponentiation and multiplication across
+`log2(nproofs)` rounds, and **no EVM chain has a precompile for that on
+any curve** — `ecPairing` (0x08) only ever answers "does this product of
+pairings equal 1?", it never exposes a raw GT value you can exponentiate.
+Moving the circuit to BN254 fixed the *individual*-proof verifier (which
+only needs the standard 4-pairing Groth16 check, which the precompile
+does support) — it does not fix this. A real aggregate verifier means
+implementing audited Fq12 tower-field arithmetic in Solidity from
+scratch, which is its own project, not an add-on to a benchmark harness.
+
+`keccak_transcript.rs` solves a *different*, smaller piece of that
+puzzle (Fiat-Shamir challenge compatibility) in case that project is
+ever undertaken — it is not itself a verifier.
+
+### Attestation model: `anchorAggregateProof` vs `relayAggregateProof`
+
+Two ways to record an attestation:
+
+- **`anchorAggregateProof(settlementId, commitment, nproofs)`** —
+  `onlyVerifier`. `msg.sender` *is* the attesting identity, so it must be
+  both authorized and pay its own transaction's nonce. Simple, but every
+  attestation from one verifier account competes for Besu's ~200
+  in-flight nonce-gap budget.
+- **`relayAggregateProof(settlementId, commitment, nproofs, signers[],
+  signatures[])`** — permissionless. Verifier identity comes from an
+  EIP-712 signature (`ecrecover`), not `msg.sender`, so a verifier signs
+  off-chain for free and *any* account can relay it on-chain. This is
+  what `zkroam_workload.py`'s aggregate leg actually uses:
+  `contracts.verifier_key_index` picks who signs, submission round-robins
+  the *entire* account pool with no special authorization needed.
+
+---
+
+## zkRoam workload
 
 The zkRoam driver reads all settings from YAML. Its only command-line option is `--config`:
 
-```bash
-python3 workload/zkroam_workload.py \
-    --config workload/config.yml
-```
 
-The driver sweeps every value in `sweep.nproofs` and every run from `1` through `sweep.runs`. For each sweep point it can execute two legs:
-
-### Individual leg
-
-Each VMNO submits `nproofs` full proof-verification transactions. The total number of transactions is:
-
-```text
-nproofs * workload.num_vmnos
-```
-
-### Aggregate leg
-
-Each VMNO submits one aggregate-anchor transaction. The total number of transactions is:
-
-```text
-workload.num_vmnos
-```
-
-These are different size controls:
-
-- `sweep.nproofs` is the number of CDR proofs in one VMNO settlement.
-- `workload.num_vmnos` is the number of VMNO settlements submitted in the run.
-
-Do not use `num_vmnos` as a replacement for the proof-count sweep. Increasing `nproofs` increases the individual leg's transaction count, while increasing `num_vmnos` increases the number of settlements in both legs.
-
-## YAML configuration
+### YAML configuration
 
 The main sections in `config.yml` are:
 
@@ -188,7 +238,7 @@ output:
 - Keep `rate`, `workers`, and `receipt_workers` low during a smoke test, then increase them for the experiment.
 - `monitoring.enabled` records host resource usage in the output directory.
 
-## Real proof setup
+### Real proof setup
 
 The individual leg can call a deployed `CDRVerifier` contract. For a true positive verification, both proof files must match the deployed verification key and circuit:
 
@@ -202,24 +252,7 @@ In this checkout the available fixture names are `fixtures/proof.json` and `fixt
 
 The Circom fixture circuit and the Arkworks aggregation circuit are not automatically interchangeable. Their Poseidon inputs and public-signal orders differ. A proof generated by the Rust/SnarkPack circuit should not be assumed to verify against the Circom-generated `CDRVerifier`.
 
-## Deploy the verifier contracts
-
-Deploy both contracts against the running Besu network:
-
-```bash
-python3 workload/deploy_verifiers.py \
-    --topology networkFiles/topology.json \
-    --accounts accounts/accounts.json \
-    --contracts-dir contracts \
-    --out deployed_contracts.json
-```
-
-This deploys:
-
-- `CDRVerifier.sol`, unless `--skip-cdr-verifier` is supplied.
-- `SnarkPackAggregateAnchor.sol`.
-
-The first account in `accounts/accounts.json` is the deployer. The output file contains the chain ID, deployed addresses, and ABIs. The workload reads it through `contracts.deployed_contracts`.
+### Deploy the verifier contracts
 
 To authorize more verifier identities for the aggregate anchor:
 
@@ -231,33 +264,12 @@ python3 workload/deploy_verifiers.py \
 
 The verifier pool is for authorized signing identities; transaction submission throughput is controlled separately by the account pool and worker settings.
 
-## Verify one real proof first
-
-Before launching a large sweep, run the standalone sanity check:
-
-```bash
-python3 workload/verify_real_proof.py \
-    --topology networkFiles/topology.json \
-    --accounts accounts/accounts.json \
-    --proof-json fixtures/proof.json \
-    --public-json fixtures/public.json \
-    --deployed-contracts deployed_contracts.json
-```
-
-This performs an `eth_call` to `verifyProof()` and exits successfully only when the proof is accepted. To also submit a real transaction and report `gasUsed`, add:
-
-```bash
---send-tx
-```
-
-If the check fails, verify the circuit, verification key, proof file, public-signal order, chain, and deployed address before running the full workload.
-
-## Recommended experiment sequence
+### Recommended experiment sequence
 
 1. Start the QBFT network from `net-heterogeneity/04b-run-baseline` or `net-heterogeneity/04-run-network`.
 2. Confirm `networkFiles/topology.json` and `accounts/accounts.json` exist and that accounts are funded.
 3. Build the off-chain aggregation logs for the proof counts you want to sweep.
-4. Deploy the verifier contracts and write `deployed_contracts.json`.
+4. Deploy the verifier contracts to write `deployed_contracts.json`.
 5. Run `verify_real_proof.py` with one known-good proof.
 6. Copy `config.yml` to a separate experiment config and set `num_vmnos` to a small value.
 7. Run `mode: individual` once and inspect the output.
@@ -265,20 +277,8 @@ If the check fails, verify the circuit, verification key, proof file, public-sig
 9. Save the complete `results/zkroam/` directory and the exact YAML config used.
 10. Stop the network after the run with the network project's Docker command.
 
-Example smoke-test configuration override:
 
-```bash
-cp workload/config.yml workload/config.smoke.yml
-```
-
-Edit `config.smoke.yml` to use `nproofs: [8]`, `runs: 1`, `num_vmnos: 1`, and `mode: individual`, then run:
-
-```bash
-python3 workload/zkroam_workload.py \
-    --config workload/config.smoke.yml
-```
-
-## Output files
+### Output files
 
 The zkRoam driver writes a summary CSV and per-leg detail files under `output.out_dir`, normally `results/zkroam/`:
 
@@ -290,39 +290,69 @@ The zkRoam driver writes a summary CSV and per-leg detail files under `output.ou
 - Resource monitoring writes `<experiment-name>_resource_usage.csv`.
 - Per-transaction details are stored in `results/zkroam/detail/`.
 
-Inspect a result directory with:
 
-```bash
-find results/zkroam -maxdepth 2 -type f -print
-```
+---
 
-## Troubleshooting
+## Troubleshooting / reading the numbers correctly
 
-### `FileNotFoundError` for topology, accounts, or logs
-Run from `net-heterogeneity/` and pass `--config workload/config.yml`. Check that the paths in the YAML match the current checkout.
+**`gas/tx` lands exactly on a suspiciously round number (150000, 200000,
+400000).** That's the hardcoded fallback used when `estimate_gas` threw
+an exception — not a real measurement. Check the printed
+`estimate_gas failed (...)` line for why (commonly: replay guard tripped
+by a reused `settlementId`, or an unauthorized signer).
 
-### No off-chain log for a sweep point
-For `nproofs: [256]` and `runs: 3`, the driver expects files such as:
+**Aggregate leg gas/tx was pinned at fallback, or only 1 of N confirmed
+with real `gasUsed`.** Almost certainly a reused `settlementId` — the
+replay guard is keyed on `(settlementId, verifier)`, so `num_vmnos` calls
+attesting the *same* settlement will all revert after the first. Each
+VMNO's settlement needs its own distinct id; this is already how the
+current script builds calldata, but if you're modifying it, don't
+share one id across a batch.
 
-```text
-aggregation/aggregation_bn254/output/experiment_log_256_1.json
-aggregation/aggregation_bn254/output/experiment_log_256_2.json
-aggregation/aggregation_bn254/output/experiment_log_256_3.json
-```
+**`Transaction nonce is too distant from current sender nonce.`** You're
+forcing too many transactions through too few sender accounts. If you're
+using the direct `anchorAggregateProof` path, this happens fast (~200 tx
+per single verifier account) — switch to `relayAggregateProof`
+(the default here), which decouples verifier identity from the
+submitting account entirely.
 
-Generate the missing Rust aggregation runs or remove that proof count from the sweep.
+**Real throughput is way below `execution.rate`, but blocks show ~0%
+gas utilization.** Gas is not your bottleneck. Check per-block
+`tx count / block period` from the node's logs — if it's stable
+regardless of pending-pool depth, you're wall-clock-bound by actual EVM
+execution time (e.g. a real BN254 pairing check costs real CPU time,
+independent of its gas price). Isolate this by running the same leg
+against a plain non-contract address with identical calldata size (no
+execution at all) and comparing throughput — the gap is your real
+per-tx compute cost, not something `execution.rate` can fix.
 
-### No deployed verifier found
-Run `deploy_verifiers.py` first and ensure `contracts.deployed_contracts` points to the resulting JSON file. Alternatively, set `contracts.verifier_address` for the individual verifier address.
+**Resource-usage CSV has empty metric columns.** `psutil` isn't installed
+— see Prerequisites. Check for the `NOTE` row `write_csv()` appends when
+this happens; if it's not there, the columns being empty is a real
+observation (host truly idle), not this bug.
 
-### The proof does not verify
-Use `verify_real_proof.py` before the full workload. The proof and public-input files must match the deployed verifier's circuit and verification key. A valid proof from a different circuit is still invalid for this verifier.
+**Resource-usage CSV shows a long block of `idle`/`setup:*` phases before
+anything interesting.** That's the one-time RPC-heavy setup (connecting,
+`load_accounts`, `load_nonces` — one call per account) tagged separately
+now (`setup:connecting`/`setup:loading_accounts`/`setup:loading_nonces`)
+specifically so it doesn't get lumped into a generic `idle` blob.
+`load_nonces` fetches all accounts' nonces concurrently, so this should
+be seconds even with hundreds of accounts, not the linear-in-account-count
+wait it used to be — if it's still slow, check RPC endpoint latency
+directly rather than assuming the monitor is broken.
 
-### Transactions time out or revert
-Check that the Besu network is producing blocks, the sending accounts are funded, the RPC ports in the topology are reachable, and `receipt_timeout` is long enough for the configured network delay. Reduce `rate`, `workers`, and `num_vmnos` while diagnosing.
+**`estimate_gas` succeeds but the deployed contract returns unexpected
+results.** For the individual leg, double check `public.json`'s signal
+order matches what the *specific* circuit was compiled with — the circom
+circuit in `fixtures/CDRCircuit.circom` uses a different signal order
+(`[T, hashCDR, r_mb, r_sms, r_voice]`) and a different Poseidon arity (3
+inputs) than the arkworks circuit in `snarkpack_aggregation/src/
+constraints.rs` (`[r_sms, r_mb, r_voice, t, hash_cdr]`, 5 inputs). These
+are two different relations — a proof from one can never verify against
+a verifier built from the other. `verify_real_proof.py` exists precisely
+to catch this class of mismatch before you run a full sweep on top of it.
 
-### Real contract measurements
-If `deployed_contracts.json` does not contain `cdr_verifier` or `aggregate_anchor`, the driver falls back to raw calldata-cost estimates. Treat those results as transport/calldata measurements, not EVM verifier gas measurements.
+---
 
 ## Reproducibility checklist
 

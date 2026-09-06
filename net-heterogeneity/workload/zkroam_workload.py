@@ -3,13 +3,13 @@
 zkroam_workload.py
 
 Custom transaction WORKLOAD for the Besu QBFT benchmark harness
-(benchmark.py, the script you pasted), modeling the on-chain leg of your
+(benchmark.py, the script you pasted), modeling the on-chain leg of the
 zkRoam CDR circuit + SnarkPack aggregation pipeline
 (snarkpack_aggregation/).
 
 WHAT THIS MODELS
 ------------------------------------------------------------------
-Your Rust binary already measures the OFF-CHAIN cost of a roaming
+the Rust binary already measures the OFF-CHAIN cost of a roaming
 settlement: generating `nproofs` Groth16 CDR proofs, then aggregating
 them with SnarkPack (output/experiment_log_<n>_<run>.json).
 
@@ -21,13 +21,13 @@ nproofs sweep you already used (8/64/128/256/512/1024/2048, 10 runs):
     its own transaction (no aggregation, one verify-tx per operator
     settlement record).
   * "aggregate"  - do the SnarkPack aggregation off-chain (already
-    measured by your Rust binary) and post ONE transaction carrying
+    measured by the Rust binary) and post ONE transaction carrying
     the aggregate proof.
 
 For each nproofs level it submits real transactions through
 benchmark.py's producer/poller, gets submission throughput +
 confirmation latency + gas cost, then stitches that together with
-your measured off-chain numbers (proof-gen time, aggregation time,
+the measured off-chain numbers (proof-gen time, aggregation time,
 aggregation-verify time) into one end-to-end pipeline comparison:
 
     individual pipeline = max(proof_gen_i) + max(individual tx confirm_i)
@@ -40,7 +40,7 @@ aggregation: fewer/smaller on-chain footprint vs proof count.
 WORKLOAD SIZE: nproofs (per-VMNO) vs num_vmnos (total workload)
 ------------------------------------------------------------------
 `nproofs` (the sweep value, e.g. 8/64/128/...) is the number of CDR
-proofs a SINGLE VMNO settlement bundles together - it's what your
+proofs a SINGLE VMNO settlement bundles together - it's what the
 Rust binary swept and what `--offchain-logs-dir` has logs for.
 
 `num_vmnos` (set in the YAML config, see below) is how many such
@@ -78,7 +78,15 @@ IMPORTANT ASSUMPTIONS (read before trusting the gas numbers)
    points at a real deploy_verifiers.py output, in which case real
    verifyProof()/anchorAggregateProof() calls are made and real gasUsed
    is fetched from receipts.
-2. "individual" mode posts a full compressed Groth16 proof (A,B,C =
+2. SnarkPack aggregate-proof size is estimated analytically (BLS12-381
+   compressed point sizes x an O(log nproofs) TIPP/GIPA transcript).
+   This is a stated approximation, not a serialized-byte-count.
+   For real numbers: add one line to the Rust main.rs -
+       let mut buf = vec![];
+       agg_proof.serialize_compressed(&mut buf).unwrap();
+   and store buf.len() as "aggregate_proof_bytes" in ExperimentLog.
+   This script will use that field automatically if present.
+3. "individual" mode posts a full compressed Groth16 proof (A,B,C =
    G1+G2+G1 = 48+96+48 = 192 bytes) per transaction, not just a hash
    commitment - the pessimistic case for the no-aggregation baseline.
 ------------------------------------------------------------------
@@ -97,7 +105,7 @@ from types import SimpleNamespace
 
 import yaml
 
-from besu_benchmark import (  # your pasted script, save it as besu_benchmark.py
+from besu_benchmark import (  # the pasted script, save it as besu_benchmark.py
     ResourceMonitor,
     build_rpc_endpoints,
     connect_web3,
@@ -229,8 +237,8 @@ def build_relay_calldata(w3, settlement_id: bytes, commitment: bytes,
 # will be cryptographically invalid (verifyProof returns false, but the
 # transaction still succeeds; this contract never reverts on a bad
 # proof), so this is honest for gas/latency benchmarking, not for
-# correctness testing. Pass proof_json/public_json
-# (proof.json / public.json) for a real proof instead.
+# correctness testing. Pass proof_json/public_json (snarkjs
+# proof.json / public.json) for a real proof instead.
 DUMMY_PA = (
     2398337629181014763546313145651356636255150315462676709288079856466236234747,
     13840928493832268677418897163492247680112434824843838084394385339941026710099,
@@ -333,7 +341,7 @@ EXEC_COST = 206000
 
 
 # ============================================================
-# Reference off-chain numbers (medians from YOUR
+# Reference off-chain numbers (medians from the
 # output/experiment_log_<n>_<run>.json, 10 runs each), used only
 # as a fallback when offchain.logs_dir doesn't have a matching
 # file for a given (nproofs, run).
@@ -353,12 +361,12 @@ DEFAULT_SWEEP = [8]  # , 64, 128, 256, 512, 1024, 2048]
 
 
 # ============================================================
-# Off-chain log loading (your Rust output/ directory)
+# Off-chain log loading (the Rust output/ directory)
 # ============================================================
 
 def load_offchain_log(offchain_dir, nproofs, run):
     """
-    Look for output/experiment_log_<nproofs>_<run>.json produced by your
+    Look for output/experiment_log_<nproofs>_<run>.json produced by the
     Rust binary. Falls back to REFERENCE_OFFCHAIN_STATS if missing.
     """
 
@@ -642,7 +650,7 @@ DEFAULT_CONFIG = {
         # value. See "WORKLOAD SIZE" in the module docstring.
         # individual leg total tx = nproofs * num_vmnos
         # aggregate  leg total tx = num_vmnos
-        "num_vmnos": 100,
+        "num_vmnos": 1000,
     },
     "offchain": {
         "logs_dir": "snarkpack_aggregation/output",
@@ -692,7 +700,7 @@ def load_config(path):
         raise FileNotFoundError(
             f"Config file not found: {path}\n"
             f"Copy config.example.yml to {path} and edit it, or pass "
-            f"--config /path/to/your.yml."
+            f"--config /path/to/the.yml."
         )
 
     with open(path) as f:
@@ -768,17 +776,28 @@ def main():
     if args.monitor_resources:
         resource_monitor = ResourceMonitor(args.monitor_interval)
         resource_monitor.start()
+        resource_monitor.set_phase("setup:connecting")
 
     topology = load_json(args.topology)
     endpoints = build_rpc_endpoints(topology)
     web3s, chain_id = connect_web3(endpoints)
+
+    if resource_monitor is not None:
+        resource_monitor.set_phase("setup:loading_accounts")
 
     accounts = load_accounts(args.accounts)
     if not accounts:
         raise RuntimeError("No workload accounts found.")
 
     assignment = assign_accounts(accounts, endpoints)
+
+    if resource_monitor is not None:
+        resource_monitor.set_phase("setup:loading_nonces")
+
     nonces = load_nonces(accounts, assignment, web3s)
+
+    if resource_monitor is not None:
+        resource_monitor.set_phase("idle")
 
     deployed = load_deployed_contracts(args.deployed_contracts)
 
@@ -957,10 +976,10 @@ def main():
 
                     calldata_list = []
                     for vmno_i in range(aggregate_total_tx):
-                        # Stand-in payload here since we don't have your
+                        # Stand-in payload here since we don't have the
                         # real per-VMNO serialized aggregate proof bytes
                         # in this sandbox - swap in
-                        # agg_proof.serialize_compressed() output on your
+                        # agg_proof.serialize_compressed() output on the
                         # side for a real commitment.
                         fake_proof_bytes = make_calldata(proof_bytes)
                         commitment = Web3.keccak(fake_proof_bytes)
@@ -1099,6 +1118,7 @@ def main():
 # ============================================================
 
 def write_leg_detail(detail_dir, label, nproofs, num_vmnos, rate, workers, receipt_workers, run, transactions, endpoints):
+    
     path = os.path.join(detail_dir, f"{label}_n{nproofs}_{num_vmnos}_{rate}_{workers}_{receipt_workers}_r{run}.csv")
 
     fields = ["tx_index", "sender", "rpc_node", "tx_hash", "nonce",

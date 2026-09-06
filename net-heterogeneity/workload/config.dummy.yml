@@ -38,7 +38,7 @@ sweep:
 
 workload:
   # How many VMNO settlements actually get submitted on-chain this run.
-  num_vmnos: 1000
+  num_vmnos: 100
 
 offchain:
   logs_dir: ../aggregation/aggregation_bn254/output
