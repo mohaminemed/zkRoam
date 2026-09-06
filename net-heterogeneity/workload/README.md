@@ -7,7 +7,7 @@ two strategies at the same per-VMNO proof-count sweep the Rust pipeline
 - **individual** — post every Groth16 CDR proof as its own transaction
   (no aggregation).
 - **aggregate** — aggregate off-chain with SnarkPack, anchor the result
-  on-chain with one attestation per VMNO settlement.
+  on-chain with one attestation per VMNO.
 
 It's built as a workload layered on top of a generic Besu QBFT
 transaction-benchmark harness (`besu_benchmark.py`), submitted through the
