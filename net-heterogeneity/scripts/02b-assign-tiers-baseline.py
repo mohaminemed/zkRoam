@@ -27,8 +27,8 @@ CORE_PROFILE = {"delay_ms": 10, "rate_mbit": 100, "loss_pct": 0, "jitter_ms": 0}
 
 def main():
     addresses = sorted(os.listdir(KEYS_DIR))
-    if len(addresses) != 24:
-        raise SystemExit(f"Expected 24 validator keys, found {len(addresses)}.")
+    if len(addresses) != 15:
+        raise SystemExit(f"Expected 15 validator keys, found {len(addresses)}.")
 
     nodes = []
     for i, addr in enumerate(addresses):

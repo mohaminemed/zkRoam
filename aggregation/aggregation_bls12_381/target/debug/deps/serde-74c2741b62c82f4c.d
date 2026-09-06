@@ -1,0 +1,14 @@
+/home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/deps/serde-74c2741b62c82f4c.d: /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/build/serde-8c63de14314a3a66/out/private.rs
+
+/home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/deps/libserde-74c2741b62c82f4c.rlib: /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/build/serde-8c63de14314a3a66/out/private.rs
+
+/home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/deps/libserde-74c2741b62c82f4c.rmeta: /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/build/serde-8c63de14314a3a66/out/private.rs
+
+/home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs:
+/home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs:
+/home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs:
+/home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs:
+/home/mbouchiha/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs:
+/home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/build/serde-8c63de14314a3a66/out/private.rs:
+
+# env-dep:OUT_DIR=/home/mbouchiha/zkRoam/snarkpack_aggregation/target/debug/build/serde-8c63de14314a3a66/out

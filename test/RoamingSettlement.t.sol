@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
-import "../src/AgreementFactory.sol";
-import "../src/Agreement.sol";
+import "../contracts/AgreementFactory.sol";
+import "../contracts/Agreement.sol";
+import "../contracts/CDRVerifier.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import "./Poseidon.sol";
 import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";

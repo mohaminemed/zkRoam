@@ -1,0 +1,77 @@
+# zkRoam / SnarkPack on-chain workload config
+#
+# 
+#
+# ----------------------------------------------------------------------
+# TWO DIFFERENT "SIZE" KNOBS - DO NOT CONFUSE THEM:
+#
+#   sweep.nproofs     -> how many CDR proofs ONE VMNO bundles into a
+#                         single settlement (per-VMNO batch size). This
+#                         is the value the Rust binary swept and that
+#                         offchain.logs_dir has experiment_log_<n>_<r>.json
+#                         files for. 1 proof == 1 roaming session
+#
+#   workload.num_vmnos -> how many VMNO settlements are actually
+#                          submitted on-chain in this run - the REAL
+#                          total workload size. Has nothing to do with
+#                          nproofs. Set this to however many operator
+#                          accounts you want settling concurrently
+#                          (e.g. your accounts.json account count).
+#
+# They combine as:
+#   individual leg total tx = nproofs * num_vmnos
+#   aggregate  leg total tx = num_vmnos
+# ----------------------------------------------------------------------
+
+experiment:
+  name: zkroam_real_proof_dummy
+
+network:
+  topology: networkFiles/topology.json
+  accounts: accounts/accounts.json
+
+sweep:
+  nproofs: [8]        # start small - see note below on what nproofs means here
+  runs: 1
+  mode: both    # individual | aggregate | both
+                       # start with "individual" only: the aggregate leg's
+                       # commitment is still a placeholder (make_calldata()
+                       # stand-in, not a real snarkpack::aggregate_proofs()
+                       # output) until you wire in real aggregate proof bytes.
+
+workload:
+  # How many VMNO settlements actually get submitted on-chain this run.
+  # Kept small here because every one of them replays the SAME real proof
+  # (see contracts.proof_json below) - fine for validating wiring/gas,
+  # not representative of a real multi-tenant workload yet.
+  num_vmnos: 1000
+
+offchain:
+  logs_dir: ../aggregation/aggregation_bn254/output
+
+contracts:
+  verifier_address: null
+  deployed_contracts: null #deployed_contracts.json   # output of deploy_verifiers.py
+  # Real snarkjs proof for fixtures/CDRCircuit.circom - NOT the arkworks
+  # circuit in src/constraints.rs. See the chat note: these two circuits
+  # compute a similar-looking but different relation (3-input vs 5-input
+  # Poseidon hash, different public signal order). A proof from the Rust/
+  # SnarkPack pipeline will NOT verify against this contract, and this
+  # proof was never run through SnarkPack aggregation - this only
+  # exercises the "individual" on-chain leg honestly.
+  proof_json: null #fixtures/proof.json
+  public_json: null #fixtures/public.json
+
+execution:
+  rate: 500.0            # tx/s - low on purpose for a first real-proof run
+  workers: 32
+  receipt_workers: 16
+  receipt_timeout: 120.0
+  poll_interval: 0.25
+
+monitoring:
+  enabled: true
+  interval: 1.0
+
+output:
+  out_dir: results/zkroam

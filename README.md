@@ -81,7 +81,7 @@ Core Solidity contracts and supporting files:
 
 ---
 
-### 5. `snarkpack_aggregation`
+### 5. `aggregation`
 Rust/Arkworks implementation for **off-chain ZK proof aggregation**:
 
 - **`src/main.rs`** & **`src/constraints.rs`** – Define and execute the Rust-based circuit.  
@@ -115,10 +115,10 @@ This generates the required proving and verification keys. Run `loop_over_witnes
 
 - Use Circom-based circuits to generate individual CDR proofs.
 
-- Use Rust/Arkworks (snarkpack_aggregation) to perform proof aggregation:
+- Use Rust/Arkworks to perform proof aggregation:
 
 ```bash
-cd snarkpack_aggregation
+cd aggregation/aggregation_bn254
 cargo run --release
 ```
 Modify nproofs in main.rs to run different aggregation counts to reproduce our results.

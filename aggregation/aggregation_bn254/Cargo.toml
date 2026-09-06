@@ -1,0 +1,36 @@
+[package]
+name = "aggregation_bn254"
+version = "0.1.0"
+edition = "2024"
+
+
+
+[dependencies]
+
+# Arkworks MUST be 0.4
+ark-ff = { version = "0.4.0-alpha.0" }
+ark-ec = "0.4.0"
+ark-std = { version = "0.4.0-alpha.0" }
+ark-relations = { version = "0.4.0-alpha.0" }
+ark-serialize = "0.4.0"
+# BN254 (alt_bn128) instead of BLS12-381: matches the EVM's native ecAdd/
+# ecMul/ecPairing precompiles (address 0x06/0x07/0x08), so the snarkjs-
+# generated Groth16Verifier.sol can actually verify these proofs on-chain.
+ark-bn254 = { version = "0.4.0" }
+ark-groth16 = "0.4.0"
+ark-sponge = { version = "0.4.0-alpha" }
+ark-r1cs-std = { version = "0.4.0-alpha.0" }
+# SnarkPack
+snarkpack = { git = "https://github.com/nikkolasg/snarkpack" }
+
+# RNG
+rand = "0.8"
+rand_core = "0.6"
+rand_chacha = "0.3"
+
+# Merlin transcript
+merlin = "3.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sysinfo = "0.38.2"
+
