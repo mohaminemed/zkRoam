@@ -62,9 +62,8 @@ docker compose down
 ```
 
 ## Metrics captured
-- **Throughput / latency** (`send_txs.py`): confirmed tx/s and per-tx
-  submit-to-inclusion latency, same style as the groth16/ultraVerifier plots
-  earlier in the paper.
+- **Throughput / latency** (`workload/besu_benchmark.py`): confirmed tx/s and per-tx
+  submit-to-inclusion latency.
 - **View changes** (`collect_metrics.py`): count of QBFT round-change events
   per node, parsed from Besu logs — the direct signal that mobile-tier
   delay/loss is destabilizing consensus, not just slowing it down.
