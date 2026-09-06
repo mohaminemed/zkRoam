@@ -78,15 +78,7 @@ IMPORTANT ASSUMPTIONS (read before trusting the gas numbers)
    points at a real deploy_verifiers.py output, in which case real
    verifyProof()/anchorAggregateProof() calls are made and real gasUsed
    is fetched from receipts.
-2. SnarkPack aggregate-proof size is estimated analytically (BLS12-381
-   compressed point sizes x an O(log nproofs) TIPP/GIPA transcript).
-   This is a stated approximation, not a serialized-byte-count.
-   For real numbers: add one line to your Rust main.rs -
-       let mut buf = vec![];
-       agg_proof.serialize_compressed(&mut buf).unwrap();
-   and store buf.len() as "aggregate_proof_bytes" in ExperimentLog.
-   This script will use that field automatically if present.
-3. "individual" mode posts a full compressed Groth16 proof (A,B,C =
+2. "individual" mode posts a full compressed Groth16 proof (A,B,C =
    G1+G2+G1 = 48+96+48 = 192 bytes) per transaction, not just a hash
    commitment - the pessimistic case for the no-aggregation baseline.
 ------------------------------------------------------------------
