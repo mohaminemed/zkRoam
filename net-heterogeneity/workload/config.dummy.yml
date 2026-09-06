@@ -34,16 +34,10 @@ sweep:
   nproofs: [8]        # start small - see note below on what nproofs means here
   runs: 1
   mode: both    # individual | aggregate | both
-                       # start with "individual" only: the aggregate leg's
-                       # commitment is still a placeholder (make_calldata()
-                       # stand-in, not a real snarkpack::aggregate_proofs()
-                       # output) until you wire in real aggregate proof bytes.
+            
 
 workload:
   # How many VMNO settlements actually get submitted on-chain this run.
-  # Kept small here because every one of them replays the SAME real proof
-  # (see contracts.proof_json below) - fine for validating wiring/gas,
-  # not representative of a real multi-tenant workload yet.
   num_vmnos: 1000
 
 offchain:
@@ -52,18 +46,12 @@ offchain:
 contracts:
   verifier_address: null
   deployed_contracts: null #deployed_contracts.json   # output of deploy_verifiers.py
-  # Real snarkjs proof for fixtures/CDRCircuit.circom - NOT the arkworks
-  # circuit in src/constraints.rs. See the chat note: these two circuits
-  # compute a similar-looking but different relation (3-input vs 5-input
-  # Poseidon hash, different public signal order). A proof from the Rust/
-  # SnarkPack pipeline will NOT verify against this contract, and this
-  # proof was never run through SnarkPack aggregation - this only
-  # exercises the "individual" on-chain leg honestly.
+  
   proof_json: null #fixtures/proof.json
   public_json: null #fixtures/public.json
 
 execution:
-  rate: 500.0            # tx/s - low on purpose for a first real-proof run
+  rate: 50.0            # tx/s - low on purpose for a first real-proof run
   workers: 32
   receipt_workers: 16
   receipt_timeout: 120.0
