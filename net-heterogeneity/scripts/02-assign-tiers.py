@@ -40,9 +40,9 @@ def tier_for_index(i: int) -> str:
 
 def main():
     addresses = sorted(os.listdir(KEYS_DIR))
-    if len(addresses) != 24:
+    if len(addresses) != 15 :
         raise SystemExit(
-            f"Expected 24 validator keys, found {len(addresses)}. "
+            f"Expected 15 validator keys, found {len(addresses)}. "
             "Re-run 01-generate-network.sh."
         )
 
