@@ -1,6 +1,6 @@
 # QBFT Network Heterogeneity Experiment
 
-24 QBFT validators (Hyperledger Besu) split into three tiers, each shaped
+N (>4) QBFT validators (Hyperledger Besu) split into three tiers, each shaped
 with `tc netem` inside its own Docker container on a shared bridge network
 (`gurubft-net`), plus a control (homogeneous) run for comparison.
 
@@ -16,10 +16,10 @@ with `tc netem` inside its own Docker container on a shared bridge network
 
 ## Layout
 ```
-config/qbftConfigFile.json     genesis + validator-generation spec (24 nodes, pre-funded dev account)
-scripts/01-generate-network.sh generates genesis.json + 24 validator keypairs (via Besu image)
+config/qbftConfigFile.json     genesis + validator-generation spec (N nodes, pre-funded dev account)
+scripts/01-generate-network.sh generates genesis.json + N validator keypairs (via Besu image)
 scripts/02-assign-tiers.py     assigns nodes to core/edge/mobile + IPs -> networkFiles/topology.json
-scripts/02b-assign-tiers-baseline.py   control variant: all 24 nodes on the core profile
+scripts/02b-assign-tiers-baseline.py   control variant: all N nodes on the core profile
 scripts/03-generate-compose.py generates docker-compose.yml from topology.json
 scripts/04-run-network.sh      one-shot: runs 01-03 then `docker compose up`
 docker/Dockerfile              Besu image + iproute2 (tc)
@@ -77,7 +77,7 @@ docker compose down
 - `SENDER_PRIVATE_KEY` in `workload/besu_benchmark.py` must match the account
   pre-funded in `config/qbftConfigFile.json`'s `alloc` section (already
   aligned in this template — change both together if you regenerate keys).
-- `01-generate-network.sh` pins `hyperledger/besu:24.7.0`; bump the tag in
+- `01-generate-network.sh` pins `hyperledger/besu:N.7.0`; bump the tag in
   both that script and `docker/Dockerfile` together if you need a newer
   Besu release.
 - Bootnodes are the 3 core-tier nodes; if you want to stress-test bootstrap
