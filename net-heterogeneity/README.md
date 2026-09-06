@@ -31,7 +31,7 @@ monitoring/collect_metrics.py  counts QBFT round-changes + flags stalled blocks 
 ## Running the heterogeneous experiment
 ```bash
 bash scripts/04-run-network.sh
-python workload/send_txs.py \
+python workload/besu_benchmark.py \
     --topology networkFiles/topology.json \
     --accounts accounts/accounts.json \
     --num-tx 1000 \
@@ -48,7 +48,7 @@ docker compose down
 ```bash
 bash scripts/04b-run-baseline.sh
 
-python3 workload/send_txs.py \
+python3 workload/besu_benchmark.py \
     --topology networkFiles/topology.json \
     --accounts accounts/accounts.json \
     --num-tx 1000 \
@@ -74,7 +74,7 @@ docker compose down
   degraded time-to-finality.
 
 ## Notes / things to double check before running for real
-- `SENDER_PRIVATE_KEY` in `workload/send_txs.py` must match the account
+- `SENDER_PRIVATE_KEY` in `workload/besu_benchmark.py` must match the account
   pre-funded in `config/qbftConfigFile.json`'s `alloc` section (already
   aligned in this template — change both together if you regenerate keys).
 - `01-generate-network.sh` pins `hyperledger/besu:24.7.0`; bump the tag in
