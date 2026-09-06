@@ -2,14 +2,13 @@
 
 zkRoam is a proof-of-concept framework for privacy-preserving roaming settlement in 5G and beyond networks. It combines Solidity settlement contracts, Circom/Groth16 proofs, Rust/Arkworks proof aggregation, and optional private-network experiments.
 
-The short paper is available on [arXiv](https://arxiv.org/abs/2509.16390).
 
 ## Repository layout
 
 | Path | Purpose |
 | --- | --- |
 | `contracts/` | Roaming agreement, settlement, and verifier Solidity contracts. |
-| `circuits/` | Circom CDR and Poseidon circuits. |
+| `circuits/` | Circom CDR and Poseidon circuits (B5GRoam baseline). |
 | `scripts/` | Foundry deployment and roaming-session scripts. |
 | `test/` | Foundry Solidity tests. |
 | `aggregation/aggregation_bn254/` | SnarkPack aggregation over BN254, compatible with EVM pairing precompiles. |
@@ -49,7 +48,7 @@ forge test -vv
 
 Foundry uses `contracts/` as the source directory and `lib/` for dependencies. The vendored `forge-std` library is in `lib/forge-std/`.
 
-## ZK and settlement workflow
+## B5GRoam ZK and settlement workflow
 
 1. Compile the circuits in `circuits/` with Circom.
 2. Generate witnesses and Groth16 proofs using the ZK scripts under `scripts/zk/`.
@@ -58,7 +57,7 @@ Foundry uses `contracts/` as the source directory and `lib/` for dependencies. T
 
 Review the addresses, private keys, and network settings in the scripts before broadcasting transactions.
 
-## Proof aggregation
+## zkRoam Proof aggregation
 
 The two aggregation projects are independent. Run each command from the corresponding project directory.
 
@@ -139,7 +138,7 @@ Important fields include `proofs`, `aggregation_time_ms`, `aggregation_memory`, 
 
 ## Networked experiments
 
-see [net-heterogeneity/README.md](net-heterogeneity/README.md)
+see [net-heterogeneity](net-heterogeneity/workload/README.md)
 
 ## References
 
