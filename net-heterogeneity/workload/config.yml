@@ -63,4 +63,4 @@ monitoring:
   interval: 1.0
 
 output:
-  out_dir: results/zkroam
+  out_dir: results/zkroam-heterogeneous  # e.g. results/zkroam-heterogeneous | results/zkroam-homogeneous
