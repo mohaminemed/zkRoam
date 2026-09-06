@@ -4,7 +4,7 @@
 	<strong>On-Chain Roaming Settlement, Made Secure and Scalable</strong><br>
 </p>
 
-zkRoam is a proof-of-concept framework for privacy-preserving roaming settlement in 5G and beyond networks. It combines Solidity settlement contracts, Circom/Groth16 proofs, Rust/Arkworks proof aggregation, and controlled network experiments.
+zkRoam is a proof-of-concept framework for privacy-preserving on-chain roaming settlement at scale in 5G and beyond networks. It combines Solidity settlement contracts, Circom/Groth16 proofs, Rust/Arkworks proof aggregation, and controlled network experiments.
 
 <p align="center">
 	<img src="zkRoam.png" alt="zkRoam workflow" width="70%">
