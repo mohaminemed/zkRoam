@@ -928,7 +928,7 @@ def main():
                         + (stats["confirm_duration_s"] or 0)
                     )
 
-                write_leg_detail(detail_dir, "individual", nproofs, args.num_vmnos, run, txs, endpoints)
+                write_leg_detail(detail_dir, "individual", nproofs, args.num_vmnos, args.rate, args.workers, args.receipt_workers, run, txs, endpoints)
 
             # -------- aggregate: each of num_vmnos VMNOs posts 1 SnarkPack ----
             # -------- aggregate proof -> num_vmnos total tx --------------------
@@ -1079,7 +1079,7 @@ def main():
                         + agg_tx_latency
                     )
 
-                write_leg_detail(detail_dir, "aggregate", nproofs, args.num_vmnos, run, txs, endpoints)
+                write_leg_detail(detail_dir, "aggregate", nproofs, args.num_vmnos, args.rate, args.workers, args.receipt_workers, run, txs, endpoints)
 
             # -------- head-to-head for this (nproofs, num_vmnos, run) --------
             if args.mode == "both":
@@ -1096,9 +1096,9 @@ def main():
 
     if resource_monitor is not None:
         resource_monitor.stop()
-        resource_monitor.write_csv(os.path.join(args.out_dir, f"{args.experiment_name}_resource_usage.csv"))
+        resource_monitor.write_csv(os.path.join(args.out_dir, f"{args.experiment_name}_{args.num_vmnos}_{args.rate}_{args.workers}_{args.receipt_workers}_resource_usage.csv"))
 
-    write_sweep_summary(os.path.join(args.out_dir, f"{args.experiment_name}_sweep_summary.csv"), sweep_rows)
+    write_sweep_summary(os.path.join(args.out_dir, f"{args.experiment_name}_{args.num_vmnos}_{args.rate}_{args.workers}_{args.receipt_workers}_sweep_summary.csv"), sweep_rows)
     print_sweep_highlights(sweep_rows)
 
 
@@ -1106,8 +1106,8 @@ def main():
 # Output writers
 # ============================================================
 
-def write_leg_detail(detail_dir, label, nproofs, num_vmnos, run, transactions, endpoints):
-    path = os.path.join(detail_dir, f"{label}_n{nproofs}_vmnos{num_vmnos}_r{run}.csv")
+def write_leg_detail(detail_dir, label, nproofs, num_vmnos, rate, workers, receipt_workers, run, transactions, endpoints):
+    path = os.path.join(detail_dir, f"{label}_n{nproofs}_{num_vmnos}_{rate}_{workers}_{receipt_workers}_r{run}.csv")
 
     fields = ["tx_index", "sender", "rpc_node", "tx_hash", "nonce",
               "submit_ts", "confirm_ts", "latency_s", "block_number",

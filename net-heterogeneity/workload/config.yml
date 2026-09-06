@@ -24,7 +24,7 @@
 # ----------------------------------------------------------------------
 
 experiment:
-  name: zkroam_real_proof_smoketest
+  name: zkroam_real_proof
 
 network:
   topology: networkFiles/topology.json
@@ -44,7 +44,7 @@ workload:
   # Kept small here because every one of them replays the SAME real proof
   # (see contracts.proof_json below) - fine for validating wiring/gas,
   # not representative of a real multi-tenant workload yet.
-  num_vmnos: 500
+  num_vmnos: 50
 
 offchain:
   logs_dir: ../aggregation/aggregation_bn254/output
