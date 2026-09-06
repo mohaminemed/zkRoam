@@ -237,8 +237,8 @@ def build_relay_calldata(w3, settlement_id: bytes, commitment: bytes,
 # will be cryptographically invalid (verifyProof returns false, but the
 # transaction still succeeds; this contract never reverts on a bad
 # proof), so this is honest for gas/latency benchmarking, not for
-# correctness testing. Pass proof_json/public_json (snarkjs
-# proof.json / public.json) for a real proof instead.
+# correctness testing. Pass proof_json/public_json
+# (proof.json / public.json) for a real proof instead.
 DUMMY_PA = (
     2398337629181014763546313145651356636255150315462676709288079856466236234747,
     13840928493832268677418897163492247680112434824843838084394385339941026710099,
