@@ -14,7 +14,7 @@ mkdir -p zkMetrics/groth16
 
 # Compile the Circom circuit
 echo "Step 1: Compiling the Circom circuit..."
-circom --r1cs --wasm --c --sym --inspect circuits/circom/CDRGeneration.circom > zkMetrics/circuit_compilation_output.txt 2>&1
+circom --r1cs --wasm --c --sym --inspect circuits/CDRCircuit.circom > zkMetrics/circuit_compilation_output.txt 2>&1
 
 # Check if compilation succeeded
 if [ $? -ne 0 ]; then
@@ -25,7 +25,7 @@ echo "Circuit compilation completed. Output saved to zkMetrics/circuit_compilati
 
 #  Generate the witness
 echo "Step 2: Generating the witness..."
-snarkjs wtns calculate CDRGeneration_js/CDRGeneration.wasm input.json witness.wtns
+snarkjs wtns calculate CDRCircuit_js/CDRCircuit.wasm input.json witness.wtns
 
 # Check if witness generation succeeded
 if [ $? -ne 0 ]; then
@@ -36,7 +36,7 @@ echo "Witness generation completed."
 
 # Set up Groth16 (initial zkey)
 echo "Step 3: Setting up Groth16 (initial zkey)..."
-snarkjs groth16 setup CDRGeneration.r1cs pot14_final.ptau CDRGeneration_0000.zkey
+snarkjs groth16 setup CDRCircuit.r1cs pot14_final.ptau CDRGeneration_0000.zkey
 
 # Check if setup succeeded
 if [ $? -ne 0 ]; then
@@ -102,7 +102,7 @@ echo "Bellman response imported."
 
 # Verify the zkey
 echo "Step 9: Verifying the zkey..."
-snarkjs zkey verify CDRGeneration.r1cs pot14_final.ptau CDRGeneration_0003.zkey
+snarkjs zkey verify CDRCircuit.r1cs pot14_final.ptau CDRGeneration_0003.zkey
 
 # Check if verification succeeded
 if [ $? -ne 0 ]; then
@@ -124,7 +124,7 @@ echo "Beacon application completed."
 
 # Verify the final zkey
 echo "Step 11: Verifying the final zkey..."
-snarkjs zkey verify CDRGeneration.r1cs pot14_final.ptau CDRGeneration_final.zkey
+snarkjs zkey verify CDRCircuit.r1cs pot14_final.ptau CDRGeneration_final.zkey
 
 # Check if verification succeeded
 if [ $? -ne 0 ]; then
@@ -147,8 +147,8 @@ echo "Verification key exported to verification_key.json."
 # TRUSTED SETUP DONE, GENERATING PROOF
 
 echo "Generating Solidity Verifier..."
-delete_if_exists "src/Groth16Verifier.sol"
-snarkjs zkey export solidityverifier CDRGeneration_final.zkey src/Groth16Verifier.sol
+delete_if_exists "contracts/CDRVerifier.sol"
+snarkjs zkey export solidityverifier CDRGeneration_final.zkey contracts/CDRVerifier.sol
 
 # echo "Step 13: Generating the proof and benchmarking performance..."
 # /usr/bin/time -f "Elapsed Time: %e seconds\nMaximum Memory: %M KB" snarkjs groth16 prove CDRGeneration_final.zkey witness.wtns proof.json public.json 2> zkMetrics/groth16/time_output.txt

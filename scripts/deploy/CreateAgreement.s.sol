@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "forge-std/Script.sol";
-import "../../src/AgreementFactory.sol";
-import {Vm} from "forge-std/Vm.sol";
-import {console} from "forge-std/console.sol";
+import "../../lib/forge-std/src/Script.sol";
+import "../../contracts/AgreementFactory.sol";
+import {Vm} from "../../lib/forge-std/src/Vm.sol";
+import {console} from "../../lib/forge-std/src/console.sol";
 
 contract AgreementCreation is Script {
     function run() external {

@@ -12,6 +12,7 @@ delete_if_exists() {
 
 delete_if_exists "CDRGeneration_cpp"
 delete_if_exists "CDRGeneration_js"
+delete_if_exists "CDRCircuit_js"
 delete_if_exists "zkMetrics"
 
 delete_if_exists "circuit_compilation_output.txt"
@@ -27,6 +28,10 @@ for file in CDRGeneration_final*; do
 done
 
 for file in CDRGeneration*; do
+    delete_if_exists "$file"
+done
+
+for file in CDRCircuit*; do
     delete_if_exists "$file"
 done
 

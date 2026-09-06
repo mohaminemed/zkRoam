@@ -3,11 +3,10 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../src/Agreement.sol";
+import "../contracts/Agreement.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {console} from "forge-std/console.sol";
 import "../test/Poseidon.sol";
-import {console} from "forge-std/console.sol";
 contract SubmitCDR is Script {
     function run() external {
         Agreement agreement = Agreement(0x420a1bC7AA832E2521389c618bC7D309b8F4F1df);

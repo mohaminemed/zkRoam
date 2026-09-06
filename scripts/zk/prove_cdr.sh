@@ -1,5 +1,5 @@
 echo "Generating Solidity Verifier..."
-snarkjs zkey export solidityverifier CDRGeneration_final.zkey src/Groth16Verifier.sol
+snarkjs zkey export solidityverifier CDRGeneration_final.zkey contracts/CDRVerifier.sol
 
 # echo "Step 13: Generating the proof and benchmarking performance..."
  /usr/bin/time -f "Elapsed Time: %e seconds\nMaximum Memory: %M KB" snarkjs groth16 prove CDRGeneration_final.zkey witness.wtns proof.json public.json 2> zkMetrics/groth16/time_output.txt
