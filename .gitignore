@@ -40,9 +40,7 @@ zkPublic/
 zkProofs/
 zkMetrics/
 ploting/
-*/target/
-aggregation/aggregation_bls12_381/target
-aggregation/aggregation_bn254/target
+
 
 test/
 net-heterogeneity/logs/*
@@ -51,3 +49,5 @@ net-heterogeneity/results/
 net-heterogeneity/accounts/
 net-heterogeneity/node_modules
 
+aggregation/aggregation_bls12_381/target/
+aggregation/aggregation_bn254/target/
