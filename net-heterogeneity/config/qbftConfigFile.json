@@ -1,0 +1,37 @@
+{
+  "genesis": {
+    "config": {
+      "chainId": 1337,
+      "berlinBlock": 0,
+      "qbft": {
+        "blockperiodseconds": 1,
+        "epochlength": 30000,
+        "requesttimeoutseconds": 10
+      }
+    },
+    "nonce": "0x0",
+    "timestamp": "0x58ee40ba",
+    "gasLimit": "0x1fffffffffffff",
+    "difficulty": "0x1",
+    "coinbase": "0x0000000000000000000000000000000000000000",
+    "alloc": {
+      "1c5c8ce9278b54e3ddcc0844019f90d175ccc11e": {
+        "privateKey": "a452df66e693ebc1851990925fa68066a516226e8086de651262533b4d7beb87",
+        "comment": "Dev account, pre-funded for the workload generator (workload/send_txs.py)",
+        "balance": "0xad78ebc5ac6200000"
+      },
+      "2afb4854cab9ec886084c0b8e8046ac6626ad342": {
+        "privateKey": "4d05bf7bc2b4048759f99a67c41b976a7ecb19795ffc8c7a454409b7e031676e",
+        "comment": "Dev account, pre-funded for the workload generator (workload/send_txs.py)",
+        "balance": "0xad78ebc5ac6200000"
+      }
+
+    }
+  },
+  "blockchain": {
+    "nodes": {
+      "generate": true,
+      "count": 15
+    }
+  }
+}
