@@ -93,7 +93,7 @@ This writes `output/experiment_log_8_1.json` in the BLS12-381 project. The two p
 
 Each JSON file records proof-generation and verification timings, aggregation timings, memory measurements, proof count, and constraint count.
 
-## Reproducing experiments
+### Reproducing experiments
 
 Each `run_experiments.sh` script runs the release binary ten times and verifies that every expected JSON file was created.
 
@@ -128,7 +128,7 @@ PROOFS=(8 64 128 256 512 1024 2048)
 
 Results are saved as `output/experiment_log_<proof-count>_<run>.json`; for example, `output/experiment_log_256_7.json` is run 7 with 256 proofs. The scripts stop if the binary is missing, the Rust program fails, or an expected output file is absent.
 
-## Inspecting results
+### Inspecting results
 
 ```bash
 jq . aggregation/aggregation_bn254/output/experiment_log_8_1.json
@@ -136,6 +136,10 @@ jq . aggregation/aggregation_bn254/output/experiment_log_8_1.json
 
 Important fields include `proofs`, `aggregation_time_ms`, `aggregation_memory`, `verify_time_ms`, `aggregation_verify_time_ms`, and `peak_memory_bytes`.
 
+
+## Networked experiments
+
+see [net-heterogeneity/README.md](net-heterogeneity/README.md)
 
 ## References
 
