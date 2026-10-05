@@ -91,7 +91,7 @@ VMNO 3  ──┤
 VMNO N  ──┘
 ```
 
-# Commands to run from zkRoam/net-heterogeneity 
+# Commands to run: 
 
 ```bash
   cd net-heterogeneity 
