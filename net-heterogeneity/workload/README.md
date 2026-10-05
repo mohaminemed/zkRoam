@@ -103,10 +103,10 @@ nano config.yml
 # 4. Run the sweep
 python3 workload/zkroam_workload.py --config workload/config.yml
 
-# Monitoring
+# 5. Network monitoring
 python3 monitoring/collect_metrics.py --logs-dir ./logs --rpc http://localhost:8545 --out results/hetero_robustness.csv
 
-# Stop and clear the network
+# 6. Stop and clear the network
 docker compose down
 ```
 
