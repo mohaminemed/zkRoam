@@ -31,15 +31,15 @@ network:
   accounts: accounts/accounts.json
 
 sweep:
-  nproofs: [8]        # [8 64 128 256 512 1024 2048] start small - see note below on what nproofs means here
-  runs: 1
+  nproofs: [8, 64, 128, 256, 512, 1024] #start small - see note below on what nproofs means here
+  runs: 5
   mode: both      # individual | aggregate | both
                        
 
 workload:
   # How many VMNO settlements actually get submitted on-chain this run.
   # This is the actual number of concurrent operator accounts.
-  num_vmnos: 50
+  num_vmnos: 64
 
 offchain:
   logs_dir: ../aggregation/aggregation_bn254/output
@@ -63,4 +63,4 @@ monitoring:
   interval: 1.0
 
 output:
-  out_dir: results/zkroam-heterogeneous  # e.g. results/zkroam-heterogeneous | results/zkroam-homogeneous
+  out_dir: results/zkroam-wan-64vmnos  # e.g. results/zkroam-heterogeneous | results/zkroam-homogeneous

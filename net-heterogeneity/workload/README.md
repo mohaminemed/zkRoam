@@ -45,12 +45,6 @@ The bundled configuration uses paths relative to `net-heterogeneity/`, not relat
 cd zkRoam/net-heterogeneity
 ```
 
-When using the zkRoam driver, pass the configuration explicitly:
-
-```bash
-python3 workload/zkroam_workload.py --config workload/config.yml
-```
-
 ---
 
 ## Prerequisites
@@ -62,7 +56,7 @@ Install the Python dependencies in a virtual environment:
 ```bash
 cd net-heterogeneity
 python3 -m venv venv
-. venv/bin/activate
+source venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install web3 pyyaml py-solc-x psutil
 ```
@@ -90,22 +84,30 @@ You need:
 ## Quick start
 
 ```bash
-# 1. Deploy both contracts + authorize a verifier
-python3 deploy_verifiers.py \
+
+cd net-heterogeneity/
+
+# 1. Run one of the network configs
+bash scripts/04a-run-network-wan.sh #Or
+bash scripts/04b-run-baseline.sh #Or
+bash scripts/04-run-network.sh    
+
+# 2. Deploy both contracts + authorize a verifier
+python3 workload/deploy_verifiers.py \
   --topology networkFiles/topology.json \
-  --accounts networkFiles/accounts/accounts.json
+  --accounts accounts/accounts.json
 
-# 2. Confirm the real proof actually verifies before trusting anything else
-python3 verify_real_proof.py \
-  --deployed-contracts deployed_contracts.json \
-  --proof-json fixtures/proof.json \
-  --public-json fixtures/public.json
-
-# 3. Edit the config
+# 3. Edit the config : make sure you change the output name before running a new experiment.
 nano config.yml
 
 # 4. Run the sweep
-python3 zkroam_workload.py --config config.yml
+python3 workload/zkroam_workload.py --config workload/config.yml
+
+# Monitoring
+python3 monitoring/collect_metrics.py --logs-dir ./logs --rpc http://localhost:8545 --out results/hetero_robustness.csv
+
+# Stop and clear the network
+docker compose down
 ```
 
 Output lands in `results/zkroam/`: `<experiment>_sweep_summary.csv` (one row

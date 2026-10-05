@@ -1,31 +1,35 @@
 #!/usr/bin/env bash
-# End-to-end (baseline): generate keys/genesis -> assign tiers -> generate compose -> launch.
+# End-to-end (WAN): generate keys/genesis -> assign regions -> generate compose -> launch.
 set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
 echo "=== Step 0: tear down any previous experiment ==="
-docker compose down -v --remove-orphans 2>/dev/null || true
-docker rm -f $(docker ps -aq --filter "name=^node[0-9][0-9]$") 2>/dev/null || true
-docker network prune -f >/dev/null
 rm -rf networkFiles/tc
 if ! rm -rf logs 2>/dev/null; then
   docker run --rm -v "$PWD":/w alpine rm -rf /w/logs
 fi
 mkdir -p results
+# Pre-create per-node log dirs as YOUR user so Docker doesn't create them as root
 for i in $(seq -w 0 14); do mkdir -p "logs/node${i}"; done
 chmod -R 777 logs
 
 echo "=== Step 1: generate genesis + validator keys ==="
 bash scripts/01-generate-network.sh
 
-echo "=== Step 2: assign nodes to tiers ==="
-python3 scripts/02b-assign-tiers-baseline.py
+echo "=== Step 2: assign nodes to WAN regions ==="
+python3 scripts/02a-assign-tiers-wan.py
 
 echo "=== Step 3: generate docker-compose.yml ==="
 python3 scripts/03-generate-compose.py
 
-echo "=== Step 4: build + launch 15-node network ==="
+# Rules files must exist as FILES before compose starts, otherwise Docker
+# silently creates empty directories at the mount path.
+n_rules=$(find networkFiles/tc -maxdepth 1 -name 'node*.rules' -type f | wc -l)
+echo "tc rules files: ${n_rules}"
+[ "${n_rules}" -eq 15 ] || { echo "ERROR: expected 15 rules files"; exit 1; }
+
+echo "=== Step 4: build + launch 15-node WAN network ==="
 docker compose build --no-cache
 docker compose up -d
 
@@ -43,13 +47,17 @@ done
 if [ "${ok}" -ne 1 ]; then
   echo "ERROR: node00 RPC never came up. Container states:"
   docker compose ps -a
+  for n in $(docker compose ps -a --format '{{.Name}} {{.State}}' | awk '$2!="running"{print $1}'); do
+    echo "---- docker logs ${n} ----"
+    docker logs "${n}" 2>&1 | tail -20
+  done
   echo "---- docker logs node00 ----"
   docker logs node00 2>&1 | tail -30
   exit 1
 fi
 
-echo "=== Letting QBFT settle ==="
-sleep 20
+echo "=== Letting QBFT settle (WAN latency makes round 0 slower) ==="
+sleep 30
 
 echo "=== Node00 block number: ==="
 curl -s -X POST -H "Content-Type: application/json" \

@@ -19,9 +19,9 @@ services:
       TC_JITTER_MS: "0"
       TC_RATE_MBIT: "100"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x1d3284e896c95deb85b389da12b5e190db5027d8/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x03b21ebe45e6cb534a9fed2f2ecb2e29c6b8b6a8/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node00:/data/logs
     ports:
@@ -45,9 +45,9 @@ services:
       TC_JITTER_MS: "0"
       TC_RATE_MBIT: "100"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x2da8b8a7baf80f0d9ad2e38fb3c62448c66aa1d8/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x1ac190865bc49f610732ed2e9de77a5195c76cf5/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node01:/data/logs
     ports:
@@ -71,9 +71,9 @@ services:
       TC_JITTER_MS: "0"
       TC_RATE_MBIT: "100"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x2e6eb1e0224f072ce84084a2ad286c8d311f5b26/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x1d40fbaa970c9521f847bc067ef651e705591eb6/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node02:/data/logs
     ports:
@@ -97,9 +97,9 @@ services:
       TC_JITTER_MS: "0"
       TC_RATE_MBIT: "100"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x348a45c5773bbab4fb8ac4334d2868f8e0ca7a65/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x25f37d4db226cc4442a78ac64376c72dbaa51be3/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node03:/data/logs
     ports:
@@ -123,9 +123,9 @@ services:
       TC_JITTER_MS: "0"
       TC_RATE_MBIT: "100"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x3d21fced889417554896d3206f5155833572264b/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x35937c1114cc0437d8a23240cb2f5d2268ac93f0/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node04:/data/logs
     ports:
@@ -149,9 +149,9 @@ services:
       TC_JITTER_MS: "0"
       TC_RATE_MBIT: "100"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x72d16a9e34fed2d0cc89a7b1feef27865d876b38/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x3be30df20d477b7ae59be95a18674e433da03459/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node05:/data/logs
     ports:
@@ -175,9 +175,9 @@ services:
       TC_JITTER_MS: "10"
       TC_RATE_MBIT: "50"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x77ae03e3f0015f37125ec919d5682ee158b6834d/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x7948c1b14d1f21aac16b7aaba2a8d17b361fbc2d/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node06:/data/logs
     ports:
@@ -201,9 +201,9 @@ services:
       TC_JITTER_MS: "10"
       TC_RATE_MBIT: "50"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0x83151a959a87b88019660b76f8fc8b693656dca5/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x88ecadcce0c41d7893550c700aafb0328fc52b60/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node07:/data/logs
     ports:
@@ -227,9 +227,9 @@ services:
       TC_JITTER_MS: "10"
       TC_RATE_MBIT: "50"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xa3a987f5f0214e47e45d897766f6cdacbcb3a469/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x8a35be9448a7cf87ae2284f0dd14d53741029c2a/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node08:/data/logs
     ports:
@@ -253,9 +253,9 @@ services:
       TC_JITTER_MS: "10"
       TC_RATE_MBIT: "50"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xbeba99f6e3690c3ca7a0a476e0ff6191e6f0e4e9/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x8d5b60d92f93bfb2b20de814d628c8469596ec80/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node09:/data/logs
     ports:
@@ -279,9 +279,9 @@ services:
       TC_JITTER_MS: "10"
       TC_RATE_MBIT: "50"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xc427fd713687eaf2ce7b7033ea799c809c99aa59/key:/data/key.priv:ro
+      - ./networkFiles/keys/0x9f9babc51dbf7d40fa0b3f5ebfb65711a1fb2686/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node10:/data/logs
     ports:
@@ -305,9 +305,9 @@ services:
       TC_JITTER_MS: "10"
       TC_RATE_MBIT: "50"
       TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xca92491e818be0107f537e36d9cff7d99e6f2465/key:/data/key.priv:ro
+      - ./networkFiles/keys/0xb391c22d51b33a0b4e14f445230f5d6d895e53a7/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node11:/data/logs
     ports:
@@ -326,14 +326,14 @@ services:
       - NET_ADMIN
     environment:
       NODE_NAME: node12
-      NODE_TIER: edge
-      TC_DELAY_MS: "100"
-      TC_JITTER_MS: "10"
-      TC_RATE_MBIT: "50"
-      TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      NODE_TIER: mobile
+      TC_DELAY_MS: "300"
+      TC_JITTER_MS: "50"
+      TC_RATE_MBIT: "10"
+      TC_LOSS_PCT: "5"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xcc0058682b6fb5c0f194944ae60d4745f7841216/key:/data/key.priv:ro
+      - ./networkFiles/keys/0xc2f7dbf655770375dfae5c42177c68437ee744d7/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node12:/data/logs
     ports:
@@ -352,14 +352,14 @@ services:
       - NET_ADMIN
     environment:
       NODE_NAME: node13
-      NODE_TIER: edge
-      TC_DELAY_MS: "100"
-      TC_JITTER_MS: "10"
-      TC_RATE_MBIT: "50"
-      TC_LOSS_PCT: "0"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      NODE_TIER: mobile
+      TC_DELAY_MS: "300"
+      TC_JITTER_MS: "50"
+      TC_RATE_MBIT: "10"
+      TC_LOSS_PCT: "5"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xe1777af48d5aacc481035287247c63fc0ea9a2c9/key:/data/key.priv:ro
+      - ./networkFiles/keys/0xcbfd5d233d74de27c13dd1a307a452d04d405049/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node13:/data/logs
     ports:
@@ -383,9 +383,9 @@ services:
       TC_JITTER_MS: "50"
       TC_RATE_MBIT: "10"
       TC_LOSS_PCT: "5"
-      BOOTNODES: "enode://21e16e5ece042dd798663baa14065c89db636c62120f3943a01421a1ca3925648e905421664f9343cf85a69efba628f86e88d9eec0e284900d615d8d956e59b9@172.28.0.10:30303,enode://266e9023e3ad57dd81672430eae677d697cc8bb21a98c242f9c46b08bf5c07a45fceec25366fbb581ac81e45f83c4a300077a918ab9ca0556b8876a54ad2a546@172.28.0.11:30303,enode://8dcbc79fbfc1ecad58044f4f15522faa2881b23d70a290d13c7cf9d1c1a5d558cacee1c7e847679507a2ce80c5f04cbc3637e585de8750c22bb44a0264395169@172.28.0.12:30303"
+      BOOTNODES: "enode://d0d969522de9bf7aed8047d1ca0a04d8cd626c49f76382de245e28edef301c5c4a4a3733f3adacdc38370c3eae472e6dc45cc662d74d6db34a1331e65f2a3686@172.28.0.10:30303,enode://f1c67152dd78c369c4b8f64d834816db28010e192d28da0e9d03acae6e809c259b87130b46ce0349daa6ad3cac2ef0c145a2e564a456867942ee928d547e5d81@172.28.0.11:30303,enode://3395628d71278aea36a4c3fd94cfb7d191a794b8d5e44dcdcd7fb91865fbc5b55281dff3ebe16a5a8e776db5c072dd691e92e755d0b717d5f459b42dc672ca98@172.28.0.12:30303"
     volumes:
-      - ./networkFiles/keys/0xf368975255a3fdf863a70d009d91e5d469e725cc/key:/data/key.priv:ro
+      - ./networkFiles/keys/0xce48b61bebc38be7f9322531191910ca19fd3110/key:/data/key.priv:ro
       - ./networkFiles/genesis.json:/config/genesis.json:ro
       - ./logs/node14:/data/logs
     ports:
