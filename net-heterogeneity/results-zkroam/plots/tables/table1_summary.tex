@@ -1,0 +1,49 @@
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Summary of results at selected scales (mean over 5 runs). Individual: one on-chain verification per proof; Aggregate: one aggregated verification per VMNO. Latencies in seconds, throughput in confirmed tx/s. $^\dagger$: success rate $<95\%$, so latency statistics are computed over confirmed transactions only (right-censored by the timeout).}
+\label{tab:summary}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+ & & \multicolumn{4}{c}{Individual} & \multicolumn{2}{c}{Aggregate} \\
+\cmidrule(lr){3-6}\cmidrule(lr){7-8}
+Scale & Network & Succ.\ (\%) & p50 & p99 & Tput & Succ.\ (\%) & Lat. \\
+\midrule
+\multicolumn{8}{l}{\textbf{Exp.~1: proof-count scaling} ($N=8$ VMNOs; scale $=n$ proofs per VMNO)} \\
+\midrule
+8 & Baseline & 100.0 & 14.9 & 28.9 & 2.3 & 100.0 & 11.9 \\
+ & WAN & 100.0 & 16.3 & 30.2 & 2.2 & 100.0 & 22.6 \\
+ & Heterogeneous & 100.0 & 15.5 & 29.7 & 2.2 & 100.0 & 23.4 \\
+\addlinespace[2pt]
+64 & Baseline & 100.0 & 16.6 & 30.5 & 17.3 & 100.0 & 5.9 \\
+ & WAN & 100.0 & 17.3 & 30.9 & 17.3 & 100.0 & 5.2 \\
+ & Heterogeneous & 100.0 & 17.2 & 30.8 & 17.0 & 100.0 & 4.5 \\
+\addlinespace[2pt]
+512 & Baseline & 100.0 & 33.0 & 53.8 & 81.5 & 100.0 & 11.4 \\
+ & WAN & 100.0 & 36.2 & 59.6 & 72.5 & 100.0 & 18.4 \\
+ & Heterogeneous & 100.0 & 37.7 & 63.3 & 68.4 & 100.0 & 15.0 \\
+\addlinespace[2pt]
+2048 & Baseline & 70.6 & 82.8$^\dagger$ & 146.2$^\dagger$ & 90.1 & 100.0 & 14.6 \\
+ & WAN & 67.4 & 95.7$^\dagger$ & 150.0$^\dagger$ & 81.2 & 100.0 & 20.1 \\
+ & Heterogeneous & 60.1 & 104.6$^\dagger$ & 152.6$^\dagger$ & 74.6 & 100.0 & 18.0 \\
+\midrule
+\multicolumn{8}{l}{\textbf{Exp.~2: VMNO scaling} ($n=8$ proofs per VMNO; scale $=N$ VMNOs)} \\
+\midrule
+8 & Baseline & 100.0 & 15.6 & 29.4 & 2.3 & 100.0 & 14.1 \\
+ & WAN & 97.2 & 15.4 & 29.4 & 2.2 & 100.0 & 13.9 \\
+ & Heterogeneous & 100.0 & 15.5 & 29.4 & 2.3 & 100.0 & 13.7 \\
+\addlinespace[2pt]
+64 & Baseline & 100.0 & 16.8 & 30.5 & 17.6 & 100.0 & 13.3 \\
+ & WAN & 100.0 & 16.6 & 30.7 & 17.9 & 100.0 & 16.1 \\
+ & Heterogeneous & 100.0 & 16.6 & 30.7 & 17.8 & 100.0 & 14.3 \\
+\addlinespace[2pt]
+512 & Baseline & 100.0 & 34.0 & 55.5 & 78.3 & 100.0 & 16.9 \\
+ & WAN & 100.0 & 35.1 & 60.0 & 71.7 & 100.0 & 15.2 \\
+ & Heterogeneous & 100.0 & 38.6 & 64.5 & 67.8 & 100.0 & 9.8 \\
+\addlinespace[2pt]
+2048 & Baseline & 71.5 & 97.0$^\dagger$ & 152.4$^\dagger$ & 87.5 & 100.0 & 15.1 \\
+ & WAN & 64.1 & 101.8$^\dagger$ & 146.5$^\dagger$ & 82.0 & 100.0 & 19.0 \\
+ & Heterogeneous & 59.9 & 94.3$^\dagger$ & 147.5$^\dagger$ & 76.5 & 100.0 & 22.4 \\
+\bottomrule
+\end{tabular}
+\end{table*}

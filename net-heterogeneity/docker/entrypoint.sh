@@ -77,7 +77,7 @@ besu \
   --rpc-http-enabled \
   --rpc-http-host=0.0.0.0 \
   --rpc-http-port=8545 \
-  --rpc-http-api=ETH,QBFT,NET,ADMIN,WEB3 \
+  --rpc-http-api=ETH,QBFT,NET,ADMIN,WEB3,TXPOOL \
   --rpc-ws-enabled \
   --rpc-ws-host=0.0.0.0 \
   --rpc-ws-port=8546 \
@@ -86,4 +86,5 @@ besu \
   --min-gas-price=0 \
   --logging=INFO \
   --bootnodes="${BOOTNODES}" \
+  --tx-pool=sequenced \
   2>&1 | tee "/data/logs/${NODE_NAME}.log"

@@ -1,0 +1,158 @@
+\begin{table*}[!t]
+\centering
+\scriptsize
+\caption{Full results, Baseline network (mean over 5 runs). Lat.\ = p50 for individual mode and on-chain aggregate latency for aggregate mode (s); p99, Pipeline in s; Tput in tx/s; Gas = gas savings (\%).}
+\label{tab:full-baseline}
+\begin{tabular}{@{}lllrrrrrr@{}}
+\toprule
+Exp. & Mode & Scale & Succ.\ (\%) & Lat. & p99 & Tput & Pipeline & Gas \\
+\midrule
+Exp. 1 & Individual & 8 & 100.0 & 14.9 & 28.9 & 2.3 & 28.0 & 92.06 \\
+Exp. 1 & Individual & 16 & 98.6 & 15.7 & 29.9 & 4.4 & 28.9 & 96.03 \\
+Exp. 1 & Individual & 32 & 100.0 & 16.4 & 30.1 & 9.1 & 28.3 & 98.02 \\
+Exp. 1 & Individual & 64 & 100.0 & 16.6 & 30.5 & 17.3 & 29.6 & 99.01 \\
+Exp. 1 & Individual & 128 & 100.0 & 18.0 & 31.0 & 34.3 & 29.8 & 99.50 \\
+Exp. 1 & Individual & 256 & 100.0 & 19.5 & 32.0 & 69.3 & 29.6 & 99.75 \\
+Exp. 1 & Individual & 512 & 100.0 & 33.0 & 53.8 & 81.5 & 50.3 & 99.88 \\
+Exp. 1 & Individual & 1024 & 100.0 & 58.5 & 110.3 & 85.0 & 96.4 & 99.94 \\
+Exp. 1 & Individual & 2048 & 70.6 & 82.8 & 146.2 & 90.1 & 128.6 & 99.97 \\
+\addlinespace[2pt]
+Exp. 1 & Aggregate & 8 & 100.0 & 11.9 & -- & -- & 12.0 & 92.06 \\
+Exp. 1 & Aggregate & 16 & 95.0 & 21.8 & -- & -- & 21.9 & 96.03 \\
+Exp. 1 & Aggregate & 32 & 100.0 & 6.9 & -- & -- & 7.0 & 98.02 \\
+Exp. 1 & Aggregate & 64 & 100.0 & 5.9 & -- & -- & 6.1 & 99.01 \\
+Exp. 1 & Aggregate & 128 & 100.0 & 16.5 & -- & -- & 16.7 & 99.50 \\
+Exp. 1 & Aggregate & 256 & 100.0 & 17.8 & -- & -- & 18.1 & 99.75 \\
+Exp. 1 & Aggregate & 512 & 100.0 & 11.4 & -- & -- & 12.0 & 99.88 \\
+Exp. 1 & Aggregate & 1024 & 100.0 & 15.0 & -- & -- & 16.3 & 99.94 \\
+Exp. 1 & Aggregate & 2048 & 100.0 & 14.6 & -- & -- & 17.8 & 99.97 \\
+\addlinespace[2pt]
+Exp. 2 & Individual & 8 & 100.0 & 15.6 & 29.4 & 2.3 & 28.0 & 92.06 \\
+Exp. 2 & Individual & 16 & 88.6 & 16.4 & 30.0 & 4.0 & 28.5 & 92.06 \\
+Exp. 2 & Individual & 32 & 100.0 & 16.1 & 30.1 & 9.1 & 28.1 & 92.06 \\
+Exp. 2 & Individual & 64 & 100.0 & 16.8 & 30.5 & 17.6 & 29.1 & 92.06 \\
+Exp. 2 & Individual & 128 & 100.0 & 17.1 & 30.6 & 34.7 & 29.6 & 92.06 \\
+Exp. 2 & Individual & 256 & 100.0 & 19.4 & 31.9 & 69.0 & 29.7 & 92.06 \\
+Exp. 2 & Individual & 512 & 100.0 & 34.0 & 55.5 & 78.3 & 52.3 & 92.06 \\
+Exp. 2 & Individual & 1024 & 100.0 & 60.1 & 112.4 & 83.4 & 98.3 & 92.06 \\
+Exp. 2 & Individual & 2048 & 71.5 & 97.0 & 152.4 & 87.5 & 133.9 & 92.06 \\
+\addlinespace[2pt]
+Exp. 2 & Aggregate & 8 & 100.0 & 14.1 & -- & -- & 14.2 & 92.06 \\
+Exp. 2 & Aggregate & 16 & 71.2 & 9.9 & -- & -- & 6.0 & 92.06 \\
+Exp. 2 & Aggregate & 32 & 100.0 & 15.6 & -- & -- & 15.7 & 92.06 \\
+Exp. 2 & Aggregate & 64 & 100.0 & 13.3 & -- & -- & 13.4 & 92.06 \\
+Exp. 2 & Aggregate & 128 & 100.0 & 18.1 & -- & -- & 18.1 & 92.06 \\
+Exp. 2 & Aggregate & 256 & 100.0 & 13.7 & -- & -- & 13.7 & 92.06 \\
+Exp. 2 & Aggregate & 512 & 100.0 & 16.9 & -- & -- & 17.0 & 92.06 \\
+Exp. 2 & Aggregate & 1024 & 100.0 & 15.2 & -- & -- & 15.3 & 92.06 \\
+Exp. 2 & Aggregate & 2048 & 100.0 & 15.1 & -- & -- & 15.1 & 92.06 \\
+\addlinespace[2pt]
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\centering
+\scriptsize
+\caption{Full results, WAN network (mean over 5 runs). Lat.\ = p50 for individual mode and on-chain aggregate latency for aggregate mode (s); p99, Pipeline in s; Tput in tx/s; Gas = gas savings (\%).}
+\label{tab:full-wan}
+\begin{tabular}{@{}lllrrrrrr@{}}
+\toprule
+Exp. & Mode & Scale & Succ.\ (\%) & Lat. & p99 & Tput & Pipeline & Gas \\
+\midrule
+Exp. 1 & Individual & 8 & 100.0 & 16.3 & 30.2 & 2.2 & 28.8 & 92.06 \\
+Exp. 1 & Individual & 16 & 100.0 & 16.3 & 30.1 & 4.4 & 28.9 & 96.03 \\
+Exp. 1 & Individual & 32 & 100.0 & 16.3 & 30.1 & 9.1 & 28.3 & 98.02 \\
+Exp. 1 & Individual & 64 & 100.0 & 17.3 & 30.9 & 17.3 & 29.7 & 99.01 \\
+Exp. 1 & Individual & 128 & 100.0 & 18.3 & 31.0 & 34.3 & 29.9 & 99.50 \\
+Exp. 1 & Individual & 256 & 100.0 & 21.4 & 35.3 & 62.1 & 33.0 & 99.75 \\
+Exp. 1 & Individual & 512 & 100.0 & 36.2 & 59.6 & 72.5 & 56.5 & 99.88 \\
+Exp. 1 & Individual & 1024 & 100.0 & 63.6 & 120.3 & 77.2 & 106.2 & 99.94 \\
+Exp. 1 & Individual & 2048 & 67.4 & 95.7 & 150.0 & 81.2 & 135.9 & 99.97 \\
+\addlinespace[2pt]
+Exp. 1 & Aggregate & 8 & 100.0 & 22.6 & -- & -- & 22.7 & 92.06 \\
+Exp. 1 & Aggregate & 16 & 100.0 & 19.7 & -- & -- & 19.8 & 96.03 \\
+Exp. 1 & Aggregate & 32 & 100.0 & 14.1 & -- & -- & 14.2 & 98.02 \\
+Exp. 1 & Aggregate & 64 & 100.0 & 5.2 & -- & -- & 5.4 & 99.01 \\
+Exp. 1 & Aggregate & 128 & 100.0 & 18.9 & -- & -- & 19.1 & 99.50 \\
+Exp. 1 & Aggregate & 256 & 100.0 & 16.4 & -- & -- & 16.7 & 99.75 \\
+Exp. 1 & Aggregate & 512 & 100.0 & 18.4 & -- & -- & 18.9 & 99.88 \\
+Exp. 1 & Aggregate & 1024 & 100.0 & 16.7 & -- & -- & 18.1 & 99.94 \\
+Exp. 1 & Aggregate & 2048 & 100.0 & 20.1 & -- & -- & 23.3 & 99.97 \\
+\addlinespace[2pt]
+Exp. 2 & Individual & 8 & 97.2 & 15.4 & 29.4 & 2.2 & 28.0 & 92.06 \\
+Exp. 2 & Individual & 16 & 100.0 & 15.3 & 29.6 & 4.4 & 29.2 & 92.06 \\
+Exp. 2 & Individual & 32 & 100.0 & 16.2 & 30.2 & 9.1 & 28.2 & 92.06 \\
+Exp. 2 & Individual & 64 & 100.0 & 16.6 & 30.7 & 17.9 & 28.7 & 92.06 \\
+Exp. 2 & Individual & 128 & 100.0 & 17.6 & 31.0 & 34.1 & 30.1 & 92.06 \\
+Exp. 2 & Individual & 256 & 100.0 & 21.2 & 35.5 & 60.8 & 33.7 & 92.06 \\
+Exp. 2 & Individual & 512 & 100.0 & 35.1 & 60.0 & 71.7 & 57.1 & 92.06 \\
+Exp. 2 & Individual & 1024 & 100.0 & 63.2 & 122.1 & 76.0 & 107.8 & 92.06 \\
+Exp. 2 & Individual & 2048 & 64.1 & 101.8 & 146.5 & 82.0 & 128.2 & 92.06 \\
+\addlinespace[2pt]
+Exp. 2 & Aggregate & 8 & 100.0 & 13.9 & -- & -- & 14.0 & 92.06 \\
+Exp. 2 & Aggregate & 16 & 100.0 & 12.7 & -- & -- & 12.8 & 92.06 \\
+Exp. 2 & Aggregate & 32 & 100.0 & 17.5 & -- & -- & 17.5 & 92.06 \\
+Exp. 2 & Aggregate & 64 & 100.0 & 16.1 & -- & -- & 16.2 & 92.06 \\
+Exp. 2 & Aggregate & 128 & 100.0 & 16.3 & -- & -- & 16.4 & 92.06 \\
+Exp. 2 & Aggregate & 256 & 100.0 & 17.6 & -- & -- & 17.7 & 92.06 \\
+Exp. 2 & Aggregate & 512 & 100.0 & 15.2 & -- & -- & 15.3 & 92.06 \\
+Exp. 2 & Aggregate & 1024 & 100.0 & 17.7 & -- & -- & 17.8 & 92.06 \\
+Exp. 2 & Aggregate & 2048 & 100.0 & 19.0 & -- & -- & 19.1 & 92.06 \\
+\addlinespace[2pt]
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\centering
+\scriptsize
+\caption{Full results, Heterogeneous network (mean over 5 runs). Lat.\ = p50 for individual mode and on-chain aggregate latency for aggregate mode (s); p99, Pipeline in s; Tput in tx/s; Gas = gas savings (\%).}
+\label{tab:full-heterogeneous}
+\begin{tabular}{@{}lllrrrrrr@{}}
+\toprule
+Exp. & Mode & Scale & Succ.\ (\%) & Lat. & p99 & Tput & Pipeline & Gas \\
+\midrule
+Exp. 1 & Individual & 8 & 100.0 & 15.5 & 29.7 & 2.2 & 28.8 & 92.06 \\
+Exp. 1 & Individual & 16 & 100.0 & 16.5 & 30.3 & 4.3 & 29.7 & 96.03 \\
+Exp. 1 & Individual & 32 & 100.0 & 16.5 & 30.4 & 9.0 & 28.6 & 98.02 \\
+Exp. 1 & Individual & 64 & 100.0 & 17.2 & 30.8 & 17.0 & 30.1 & 99.01 \\
+Exp. 1 & Individual & 128 & 100.0 & 18.9 & 31.9 & 33.1 & 31.0 & 99.50 \\
+Exp. 1 & Individual & 256 & 100.0 & 24.0 & 39.4 & 55.9 & 36.7 & 99.75 \\
+Exp. 1 & Individual & 512 & 100.0 & 37.7 & 63.3 & 68.4 & 60.0 & 99.88 \\
+Exp. 1 & Individual & 1024 & 99.0 & 72.9 & 134.5 & 69.4 & 116.9 & 99.94 \\
+Exp. 1 & Individual & 2048 & 60.1 & 104.6 & 152.6 & 74.6 & 132.3 & 99.97 \\
+\addlinespace[2pt]
+Exp. 1 & Aggregate & 8 & 100.0 & 23.4 & -- & -- & 23.5 & 92.06 \\
+Exp. 1 & Aggregate & 16 & 100.0 & 10.7 & -- & -- & 10.7 & 96.03 \\
+Exp. 1 & Aggregate & 32 & 100.0 & 9.8 & -- & -- & 9.9 & 98.02 \\
+Exp. 1 & Aggregate & 64 & 100.0 & 4.5 & -- & -- & 4.6 & 99.01 \\
+Exp. 1 & Aggregate & 128 & 100.0 & 17.3 & -- & -- & 17.5 & 99.50 \\
+Exp. 1 & Aggregate & 256 & 100.0 & 4.8 & -- & -- & 5.2 & 99.75 \\
+Exp. 1 & Aggregate & 512 & 100.0 & 15.0 & -- & -- & 15.5 & 99.88 \\
+Exp. 1 & Aggregate & 1024 & 100.0 & 12.4 & -- & -- & 13.8 & 99.94 \\
+Exp. 1 & Aggregate & 2048 & 100.0 & 18.0 & -- & -- & 21.2 & 99.97 \\
+\addlinespace[2pt]
+Exp. 2 & Individual & 8 & 100.0 & 15.5 & 29.4 & 2.3 & 28.1 & 92.06 \\
+Exp. 2 & Individual & 16 & 100.0 & 16.3 & 30.6 & 4.4 & 28.9 & 92.06 \\
+Exp. 2 & Individual & 32 & 100.0 & 16.0 & 30.1 & 9.0 & 28.5 & 92.06 \\
+Exp. 2 & Individual & 64 & 100.0 & 16.6 & 30.7 & 17.8 & 28.8 & 92.06 \\
+Exp. 2 & Individual & 128 & 100.0 & 18.5 & 31.8 & 33.5 & 30.6 & 92.06 \\
+Exp. 2 & Individual & 256 & 100.0 & 24.7 & 39.4 & 55.3 & 37.2 & 92.06 \\
+Exp. 2 & Individual & 512 & 100.0 & 38.6 & 64.5 & 67.8 & 60.5 & 92.06 \\
+Exp. 2 & Individual & 1024 & 100.0 & 68.1 & 130.3 & 71.5 & 114.7 & 92.06 \\
+Exp. 2 & Individual & 2048 & 59.9 & 94.3 & 147.5 & 76.5 & 128.2 & 92.06 \\
+\addlinespace[2pt]
+Exp. 2 & Aggregate & 8 & 100.0 & 13.7 & -- & -- & 13.7 & 92.06 \\
+Exp. 2 & Aggregate & 16 & 100.0 & 11.5 & -- & -- & 11.5 & 92.06 \\
+Exp. 2 & Aggregate & 32 & 100.0 & 17.3 & -- & -- & 17.4 & 92.06 \\
+Exp. 2 & Aggregate & 64 & 100.0 & 14.3 & -- & -- & 14.4 & 92.06 \\
+Exp. 2 & Aggregate & 128 & 100.0 & 15.5 & -- & -- & 15.5 & 92.06 \\
+Exp. 2 & Aggregate & 256 & 100.0 & 18.9 & -- & -- & 19.0 & 92.06 \\
+Exp. 2 & Aggregate & 512 & 100.0 & 9.8 & -- & -- & 9.9 & 92.06 \\
+Exp. 2 & Aggregate & 1024 & 100.0 & 12.6 & -- & -- & 12.7 & 92.06 \\
+Exp. 2 & Aggregate & 2048 & 100.0 & 22.4 & -- & -- & 22.5 & 92.06 \\
+\addlinespace[2pt]
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -37,13 +37,13 @@ Measure how zkRoam behaves as the number of proofs increases while keeping the n
 Fix:
 
 ```text
-nVMNO = 64
+nVMNO = 8
 ```
 
 Sweep the number of proofs over:
 
 ```text
-8, 16, 32, 64, 128, 256, 512, 1024
+8, 16, 32, 64, 128, 256, 512, 1024, 2048
 ```
 
 For zkRoam's aggregation mechanism, we distinguish clearly between:
@@ -68,13 +68,13 @@ This experiment directly addresses the requirement to evaluate **large-scale roa
 Fix:
 
 ```text
-nbProofs = 64
+nbProofs = 8
 ```
 
 Sweep the number of VMNOs over:
 
 ```text
-8, 16, 32, 64, 128, 256, 512, 1024
+8, 16, 32, 64, 128, 256, 512, 1024, 2048
 ```
 
 The VMNOs must represent **concurrent participants**, rather than simply multiplying the number of proofs submitted by one VMNO.

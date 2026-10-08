@@ -1,0 +1,151 @@
+{
+  "nproofs": 16,
+  "constraints": 731,
+  "param_time_ms": 31.492808999999998,
+  "param_memory": {
+    "rss_bytes": 19038208,
+    "virtual_bytes": 1126862848
+  },
+  "proofs": [
+    {
+      "index": 0,
+      "time_ms": 42.211062,
+      "memory": {
+        "rss_bytes": 20455424,
+        "virtual_bytes": 1127657472
+      }
+    },
+    {
+      "index": 1,
+      "time_ms": 35.410281000000005,
+      "memory": {
+        "rss_bytes": 20619264,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 2,
+      "time_ms": 36.347783,
+      "memory": {
+        "rss_bytes": 20639744,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 3,
+      "time_ms": 29.835082,
+      "memory": {
+        "rss_bytes": 20746240,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 4,
+      "time_ms": 25.570623,
+      "memory": {
+        "rss_bytes": 20770816,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 5,
+      "time_ms": 24.589711,
+      "memory": {
+        "rss_bytes": 20799488,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 6,
+      "time_ms": 38.725832000000004,
+      "memory": {
+        "rss_bytes": 20840448,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 7,
+      "time_ms": 31.215403,
+      "memory": {
+        "rss_bytes": 20910080,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 8,
+      "time_ms": 26.333608,
+      "memory": {
+        "rss_bytes": 20918272,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 9,
+      "time_ms": 43.16912,
+      "memory": {
+        "rss_bytes": 20938752,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 10,
+      "time_ms": 26.964272,
+      "memory": {
+        "rss_bytes": 20938752,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 11,
+      "time_ms": 35.013212,
+      "memory": {
+        "rss_bytes": 20959232,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 12,
+      "time_ms": 24.709207,
+      "memory": {
+        "rss_bytes": 20959232,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 13,
+      "time_ms": 27.040539,
+      "memory": {
+        "rss_bytes": 20967424,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 14,
+      "time_ms": 26.02186,
+      "memory": {
+        "rss_bytes": 20987904,
+        "virtual_bytes": 1127972864
+      }
+    },
+    {
+      "index": 15,
+      "time_ms": 28.487861,
+      "memory": {
+        "rss_bytes": 21020672,
+        "virtual_bytes": 1127972864
+      }
+    }
+  ],
+  "verify_time_ms": 1.4577049999999998,
+  "aggregation_time_ms": 41.844660999999995,
+  "aggregation_memory": {
+    "rss_bytes": 23691264,
+    "virtual_bytes": 1127972864
+  },
+  "aggregation_verify_time_ms": 7.588074000000001,
+  "aggregation_verify_memory": {
+    "rss_bytes": 24633344,
+    "virtual_bytes": 1127972864
+  },
+  "peak_memory_bytes": 24633344
+}

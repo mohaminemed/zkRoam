@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Effect of aggregation as a function of the number of proofs per VMNO $n$ (Exp.~1, $N=8$). Gas savings are identical across network profiles; they correspond to an aggregated verification costing $\approx 0.635$ single-proof verifications (savings $=1-0.635/n$). On-chain latency is the mean over the three profiles; off-chain overhead is pipeline latency minus on-chain latency.}
+\label{tab:gas}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$n$ & Tx/VMNO (indiv.\ $\to$ agg.) & Gas savings (\%) & On-chain lat.\ (s) & Off-chain ovh.\ (s) \\
+\midrule
+8 & 8 $\to$ 1 & 92.06 & 19.3 & 0.07 \\
+16 & 16 $\to$ 1 & 96.03 & 17.4 & 0.07 \\
+32 & 32 $\to$ 1 & 98.02 & 10.3 & 0.07 \\
+64 & 64 $\to$ 1 & 99.01 & 5.2 & 0.14 \\
+128 & 128 $\to$ 1 & 99.50 & 17.6 & 0.21 \\
+256 & 256 $\to$ 1 & 99.75 & 13.0 & 0.32 \\
+512 & 512 $\to$ 1 & 99.88 & 14.9 & 0.55 \\
+1024 & 1024 $\to$ 1 & 99.94 & 14.7 & 1.35 \\
+2048 & 2048 $\to$ 1 & 99.97 & 17.5 & 3.21 \\
+\bottomrule
+\end{tabular}
+\end{table}
