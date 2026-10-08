@@ -1,0 +1,1302 @@
+
+$ bash scripts/04c-run-network-apptainer.sh wan
+=== Step 0: stop the previous zkRoam Apptainer network ===
+$ apptainer exec --cleanenv /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/zkroam-besu.sif ip -o link show
+$ apptainer exec --cleanenv /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/zkroam-besu.sif ip link delete zkroam0
+=== Step 1: generate genesis, validator keys, and accounts ===
+==========================================
+Generating QBFT test network
+==========================================
+
+Validators : 15
+Client accounts : 2000
+Balance/account : 1000000000000000000000 wei
+
+[1/5] Cleaning previous network files...
+[2/5] Generating QBFT validators and genesis...
+2026-10-07 16:30:10.541+00:00 | main | INFO  | GenerateBlockchainConfig | Generating 15 nodes keys.
+2026-10-07 16:30:10.544+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 0.
+2026-10-07 16:30:10.593+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 1.
+2026-10-07 16:30:10.597+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 2.
+2026-10-07 16:30:10.599+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 3.
+2026-10-07 16:30:10.600+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 4.
+2026-10-07 16:30:10.602+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 5.
+2026-10-07 16:30:10.603+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 6.
+2026-10-07 16:30:10.605+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 7.
+2026-10-07 16:30:10.606+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 8.
+2026-10-07 16:30:10.607+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 9.
+2026-10-07 16:30:10.608+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 10.
+2026-10-07 16:30:10.609+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 11.
+2026-10-07 16:30:10.610+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 12.
+2026-10-07 16:30:10.611+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 13.
+2026-10-07 16:30:10.612+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 14.
+2026-10-07 16:30:10.614+00:00 | main | INFO  | GenerateBlockchainConfig | Generating QBFT extra data.
+2026-10-07 16:30:10.617+00:00 | main | INFO  | GenerateBlockchainConfig | Writing genesis file.
+[3/5] Generating 2000 funded client accounts...
+Generating 2000 funded accounts...
+
+Generated 2000 accounts.
+Saved to: /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/accounts/accounts.json
+[4/5] Updating genesis alloc...
+Existing configured alloc accounts: 2
+Generated workload accounts: 2000
+
+Final genesis alloc contains 2002 accounts.
+[5/5] Verifying generated network...
+
+==========================================
+QBFT network generation complete
+==========================================
+
+Genesis:
+  /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/networkFiles/genesis.json
+
+Validators:
+  /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/networkFiles/keys/
+
+Client accounts:
+  /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/accounts/accounts.json
+
+Validator count:
+15
+
+Client account count:
+2000
+
+Genesis alloc count:
+2002
+
+First 10 client accounts:
+000 0x9cABFB793Ae32ae5D0f0A95bE51F63022b885BAF balance=1000000000000000000000
+001 0xeF78B3c6C26DA5b6ccf6Ad6d299Ab39eba3Ae043 balance=1000000000000000000000
+002 0xd76bF8895a990cad968743ECDB985b2884EB929a balance=1000000000000000000000
+003 0xBFcdddC6A50A780F1F84cdFCB059cDaFF6Dc648F balance=1000000000000000000000
+004 0xDC802A1A581f414f885193d281C7b5a8cb3af593 balance=1000000000000000000000
+005 0xF881Fd5B33D0d2419f2143C442A4980932FD4dD9 balance=1000000000000000000000
+006 0x66dc69CF7f3A663344A342076799ef23f28D6227 balance=1000000000000000000000
+007 0x915b96DC52Ec9a6984Eb460F83Ce6453D20Ea651 balance=1000000000000000000000
+008 0xfD3A2cb51abd08CA71E74d86e5Bf8D54126898E7 balance=1000000000000000000000
+009 0x49BC0b5b347D40bBA20623CD7EeA717D81e6b00d balance=1000000000000000000000
+
+==========================================
+IMPORTANT
+==========================================
+
+Client private keys are stored in:
+  /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/accounts/accounts.json
+
+Do NOT commit this file to Git.
+
+=== Step 2: generate the wan topology ===
+Wrote /tmp/zkroam-hw-22073-TarIRJ/net-heterogeneity/networkFiles/topology.json
+Region distribution: {'us-east': 3, 'us-west': 3, 'eu-west': 3, 'ap-southeast': 3, 'sa-east': 3}
+=== Step 3: start 15 isolated Apptainer-backed validators ===
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o link show
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkroam0 type bridge
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.1/24 dev zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkroam0 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh00
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh00 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh00 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh00 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1576733
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.10/24 dev eth0
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh01
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh01 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh01 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh01 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1577220
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.11/24 dev eth0
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh02
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh02 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh02 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh02 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1577862
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.12/24 dev eth0
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh03
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh03 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh03 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh03 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1578573
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.13/24 dev eth0
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh04
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh04 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh04 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh04 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1579410
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.14/24 dev eth0
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh05
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh05 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh05 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh05 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1580241
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.15/24 dev eth0
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh06
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh06 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh06 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh06 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1581042
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.16/24 dev eth0
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh07
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh07 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh07 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh07 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1581866
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.17/24 dev eth0
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh08
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh08 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh08 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh08 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1582713
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.18/24 dev eth0
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh09
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh09 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh09 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh09 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1583559
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.19/24 dev eth0
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh10
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh10 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh10 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh10 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1584439
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.20/24 dev eth0
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh11
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh11 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh11 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh11 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1585273
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.21/24 dev eth0
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh12
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh12 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh12 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh12 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1586115
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.22/24 dev eth0
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh13
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh13 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh13 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh13 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1586959
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.23/24 dev eth0
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh14
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link add zkh14 type veth peer name eth0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh14 master zkroam0
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set zkh14 up
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 netns 1587795
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set lo up
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip addr add 172.28.0.24/24 dev eth0
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link set eth0 up
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip route add default via 172.28.0.1
+Started 15 Apptainer-backed validators.
+=== Step 4: wait for every validator RPC and peer set ===
+{
+  "node00": {
+    "block": 2,
+    "peers": 14
+  },
+  "node01": {
+    "block": 2,
+    "peers": 14
+  },
+  "node02": {
+    "block": 2,
+    "peers": 14
+  },
+  "node03": {
+    "block": 2,
+    "peers": 14
+  },
+  "node04": {
+    "block": 2,
+    "peers": 14
+  },
+  "node05": {
+    "block": 2,
+    "peers": 13
+  },
+  "node06": {
+    "block": 2,
+    "peers": 13
+  },
+  "node07": {
+    "block": 2,
+    "peers": 13
+  },
+  "node08": {
+    "block": 2,
+    "peers": 13
+  },
+  "node09": {
+    "block": 2,
+    "peers": 13
+  },
+  "node10": {
+    "block": 2,
+    "peers": 13
+  },
+  "node11": {
+    "block": 2,
+    "peers": 13
+  },
+  "node12": {
+    "block": 2,
+    "peers": 13
+  },
+  "node13": {
+    "block": 2,
+    "peers": 13
+  },
+  "node14": {
+    "block": 2,
+    "peers": 6
+  }
+}
+All 15 nodes are ready.
+Apptainer wan network is up.
+
+$ /Utilisateurs/abellach/zkRoam/net-heterogeneity/venv/bin/python3 workload/deploy_verifiers.py --topology networkFiles/topology.json --accounts accounts/accounts.json
+Discovered RPC endpoints:
+------------------------------------------
+  node00     -> http://172.28.0.10:8545
+  node01     -> http://172.28.0.11:8545
+  node02     -> http://172.28.0.12:8545
+  node03     -> http://172.28.0.13:8545
+  node04     -> http://172.28.0.14:8545
+  node05     -> http://172.28.0.15:8545
+  node06     -> http://172.28.0.16:8545
+  node07     -> http://172.28.0.17:8545
+  node08     -> http://172.28.0.18:8545
+  node09     -> http://172.28.0.19:8545
+  node10     -> http://172.28.0.20:8545
+  node11     -> http://172.28.0.21:8545
+  node12     -> http://172.28.0.22:8545
+  node13     -> http://172.28.0.23:8545
+  node14     -> http://172.28.0.24:8545
+------------------------------------------
+Connecting to node00 (http://172.28.0.10:8545)...
+  Connected. chain_id=1337
+Connecting to node01 (http://172.28.0.11:8545)...
+  Connected. chain_id=1337
+Connecting to node02 (http://172.28.0.12:8545)...
+  Connected. chain_id=1337
+Connecting to node03 (http://172.28.0.13:8545)...
+  Connected. chain_id=1337
+Connecting to node04 (http://172.28.0.14:8545)...
+  Connected. chain_id=1337
+Connecting to node05 (http://172.28.0.15:8545)...
+  Connected. chain_id=1337
+Connecting to node06 (http://172.28.0.16:8545)...
+  Connected. chain_id=1337
+Connecting to node07 (http://172.28.0.17:8545)...
+  Connected. chain_id=1337
+Connecting to node08 (http://172.28.0.18:8545)...
+  Connected. chain_id=1337
+Connecting to node09 (http://172.28.0.19:8545)...
+  Connected. chain_id=1337
+Connecting to node10 (http://172.28.0.20:8545)...
+  Connected. chain_id=1337
+Connecting to node11 (http://172.28.0.21:8545)...
+  Connected. chain_id=1337
+Connecting to node12 (http://172.28.0.22:8545)...
+  Connected. chain_id=1337
+Connecting to node13 (http://172.28.0.23:8545)...
+  Connected. chain_id=1337
+Connecting to node14 (http://172.28.0.24:8545)...
+  Connected. chain_id=1337
+
+Deploying from 0x9cABFB793Ae32ae5D0f0A95bE51F63022b885BAF via http://172.28.0.10:8545 (chain_id=1337)
+
+Compiling CDRVerifier.sol ...
+Deploying CDRVerifier ...
+  submitted deploy tx 7cc07ea01be102f1d1b81de379366668fd6ca132751c6590bbbf120dea961822, waiting for receipt...
+  deployed at 0x8969Cb191FeAb3492e741F52Aea0a352c4398185  (gasUsed=465218)
+
+Compiling SnarkPackAggregateAnchor.sol ...
+Deploying SnarkPackAggregateAnchor ...
+  submitted deploy tx da6be9ed698ad473a0ad6cd0323b7bdd7c9967ca93f76cd301b699db3b4f76be, waiting for receipt...
+  deployed at 0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd  (gasUsed=1832981)
+
+verifier-pool-size=1: only accounts[0] is authorized as a verifier - fine as-is if you're relaying via relayAggregateProof (submission load spreads across the full account pool regardless of verifier count). Only increase this if you want multiple independent verifier keys for redundancy/threshold, or if you plan to use the direct anchorAggregateProof(onlyVerifier) path at any real volume.
+
+Wrote: deployed_contracts.json
+
+$ /Utilisateurs/abellach/zkRoam/net-heterogeneity/venv/bin/python3 workload/zkroam_workload.py --config results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/config.yml
+Discovered RPC endpoints:
+------------------------------------------
+  node00     -> http://172.28.0.10:8545
+  node01     -> http://172.28.0.11:8545
+  node02     -> http://172.28.0.12:8545
+  node03     -> http://172.28.0.13:8545
+  node04     -> http://172.28.0.14:8545
+  node05     -> http://172.28.0.15:8545
+  node06     -> http://172.28.0.16:8545
+  node07     -> http://172.28.0.17:8545
+  node08     -> http://172.28.0.18:8545
+  node09     -> http://172.28.0.19:8545
+  node10     -> http://172.28.0.20:8545
+  node11     -> http://172.28.0.21:8545
+  node12     -> http://172.28.0.22:8545
+  node13     -> http://172.28.0.23:8545
+  node14     -> http://172.28.0.24:8545
+------------------------------------------
+Connecting to node00 (http://172.28.0.10:8545)...
+  Connected. chain_id=1337
+Connecting to node01 (http://172.28.0.11:8545)...
+  Connected. chain_id=1337
+Connecting to node02 (http://172.28.0.12:8545)...
+  Connected. chain_id=1337
+Connecting to node03 (http://172.28.0.13:8545)...
+  Connected. chain_id=1337
+Connecting to node04 (http://172.28.0.14:8545)...
+  Connected. chain_id=1337
+Connecting to node05 (http://172.28.0.15:8545)...
+  Connected. chain_id=1337
+Connecting to node06 (http://172.28.0.16:8545)...
+  Connected. chain_id=1337
+Connecting to node07 (http://172.28.0.17:8545)...
+  Connected. chain_id=1337
+Connecting to node08 (http://172.28.0.18:8545)...
+  Connected. chain_id=1337
+Connecting to node09 (http://172.28.0.19:8545)...
+  Connected. chain_id=1337
+Connecting to node10 (http://172.28.0.20:8545)...
+  Connected. chain_id=1337
+Connecting to node11 (http://172.28.0.21:8545)...
+  Connected. chain_id=1337
+Connecting to node12 (http://172.28.0.22:8545)...
+  Connected. chain_id=1337
+Connecting to node13 (http://172.28.0.23:8545)...
+  Connected. chain_id=1337
+Connecting to node14 (http://172.28.0.24:8545)...
+  Connected. chain_id=1337
+
+Reading pending nonce for 2000 accounts (parallel)...
+
+
+Using real proof from fixtures/proof.json / fixtures/public.json
+individual leg -> real verifyProof() calls on 0x8969Cb191FeAb3492e741F52Aea0a352c4398185
+aggregate leg  -> real anchorAggregateProof() calls on 0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd
+
+workload.num_vmnos = 64 (total VMNO settlements submitted per sweep point; nproofs below is per-VMNO batch size, not workload size)
+
+============================================================
+nproofs/vmno=8  num_vmnos=64  run=1  (off-chain source: reference_fallback)
+============================================================
+
+>>> on-chain leg: individual_n8_vmnos64_r1 (512 tx total, 420B calldata, gas/tx=278265, to=0x8969Cb191FeAb3492e741F52Aea0a352c4398185)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 512/512
+Failed    : 0/512
+Duration  : 1.562s
+Rate      : 327.79 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 512
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 10/512 | Reverted: 0 | Pending: 502
+Confirmed: 50/512 | Reverted: 0 | Pending: 462
+Confirmed: 81/512 | Reverted: 0 | Pending: 431
+Confirmed: 112/512 | Reverted: 0 | Pending: 400
+Confirmed: 146/512 | Reverted: 0 | Pending: 366
+Confirmed: 180/512 | Reverted: 0 | Pending: 332
+Confirmed: 208/512 | Reverted: 0 | Pending: 304
+Confirmed: 214/512 | Reverted: 0 | Pending: 298
+Confirmed: 249/512 | Reverted: 0 | Pending: 263
+Confirmed: 273/512 | Reverted: 0 | Pending: 239
+Confirmed: 284/512 | Reverted: 0 | Pending: 228
+Confirmed: 317/512 | Reverted: 0 | Pending: 195
+Confirmed: 318/512 | Reverted: 0 | Pending: 194
+Confirmed: 352/512 | Reverted: 0 | Pending: 160
+Confirmed: 352/512 | Reverted: 0 | Pending: 160
+Confirmed: 386/512 | Reverted: 0 | Pending: 126
+Confirmed: 386/512 | Reverted: 0 | Pending: 126
+Confirmed: 420/512 | Reverted: 0 | Pending: 92
+Confirmed: 420/512 | Reverted: 0 | Pending: 92
+Confirmed: 420/512 | Reverted: 0 | Pending: 92
+Confirmed: 454/512 | Reverted: 0 | Pending: 58
+Confirmed: 454/512 | Reverted: 0 | Pending: 58
+Confirmed: 454/512 | Reverted: 0 | Pending: 58
+Confirmed: 487/512 | Reverted: 0 | Pending: 25
+Confirmed: 488/512 | Reverted: 0 | Pending: 24
+Confirmed: 488/512 | Reverted: 0 | Pending: 24
+Confirmed: 488/512 | Reverted: 0 | Pending: 24
+Confirmed: 488/512 | Reverted: 0 | Pending: 24
+Confirmed: 512/512 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 512
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.774s
+------------------------------------------
+
+>>> on-chain leg: aggregate_n8_vmnos64_r1 (64 tx total, 420B/tx x 64 distinct payloads, gas/tx=176674, to=0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 64/64
+Failed    : 0/64
+Duration  : 0.267s
+Rate      : 239.32 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 64
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 6/64 | Reverted: 0 | Pending: 58
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 13/64 | Reverted: 0 | Pending: 51
+Confirmed: 13/64 | Reverted: 0 | Pending: 51
+Confirmed: 13/64 | Reverted: 0 | Pending: 51
+Confirmed: 13/64 | Reverted: 0 | Pending: 51
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 23/64 | Reverted: 0 | Pending: 41
+Confirmed: 23/64 | Reverted: 0 | Pending: 41
+Confirmed: 23/64 | Reverted: 0 | Pending: 41
+Confirmed: 23/64 | Reverted: 0 | Pending: 41
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 43/64 | Reverted: 0 | Pending: 21
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 49/64 | Reverted: 0 | Pending: 15
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 64/64 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 64
+Reverted  : 0
+Timeout   : 0
+Duration  : 28.995s
+------------------------------------------
+
+============================================================
+nproofs/vmno=8  num_vmnos=64  run=2  (off-chain source: reference_fallback)
+============================================================
+
+>>> on-chain leg: individual_n8_vmnos64_r2 (512 tx total, 420B calldata, gas/tx=278265, to=0x8969Cb191FeAb3492e741F52Aea0a352c4398185)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 512/512
+Failed    : 0/512
+Duration  : 1.504s
+Rate      : 340.33 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 512
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 12/512 | Reverted: 0 | Pending: 500
+Confirmed: 50/512 | Reverted: 0 | Pending: 462
+Confirmed: 90/512 | Reverted: 0 | Pending: 422
+Confirmed: 124/512 | Reverted: 0 | Pending: 388
+Confirmed: 156/512 | Reverted: 0 | Pending: 356
+Confirmed: 183/512 | Reverted: 0 | Pending: 329
+Confirmed: 206/512 | Reverted: 0 | Pending: 306
+Confirmed: 240/512 | Reverted: 0 | Pending: 272
+Confirmed: 272/512 | Reverted: 0 | Pending: 240
+Confirmed: 301/512 | Reverted: 0 | Pending: 211
+Confirmed: 314/512 | Reverted: 0 | Pending: 198
+Confirmed: 342/512 | Reverted: 0 | Pending: 170
+Confirmed: 370/512 | Reverted: 0 | Pending: 142
+Confirmed: 376/512 | Reverted: 0 | Pending: 136
+Confirmed: 397/512 | Reverted: 0 | Pending: 115
+Confirmed: 410/512 | Reverted: 0 | Pending: 102
+Confirmed: 417/512 | Reverted: 0 | Pending: 95
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 512/512 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 512
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.694s
+------------------------------------------
+
+>>> on-chain leg: aggregate_n8_vmnos64_r2 (64 tx total, 420B/tx x 64 distinct payloads, gas/tx=176697, to=0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 64/64
+Failed    : 0/64
+Duration  : 0.273s
+Rate      : 234.13 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 64
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 19/64 | Reverted: 0 | Pending: 45
+Confirmed: 20/64 | Reverted: 0 | Pending: 44
+Confirmed: 20/64 | Reverted: 0 | Pending: 44
+Confirmed: 20/64 | Reverted: 0 | Pending: 44
+Confirmed: 23/64 | Reverted: 0 | Pending: 41
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 29/64 | Reverted: 0 | Pending: 35
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 32/64 | Reverted: 0 | Pending: 32
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 41/64 | Reverted: 0 | Pending: 23
+Confirmed: 45/64 | Reverted: 0 | Pending: 19
+Confirmed: 45/64 | Reverted: 0 | Pending: 19
+Confirmed: 45/64 | Reverted: 0 | Pending: 19
+Confirmed: 45/64 | Reverted: 0 | Pending: 19
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 55/64 | Reverted: 0 | Pending: 9
+Confirmed: 55/64 | Reverted: 0 | Pending: 9
+Confirmed: 55/64 | Reverted: 0 | Pending: 9
+Confirmed: 55/64 | Reverted: 0 | Pending: 9
+Confirmed: 55/64 | Reverted: 0 | Pending: 9
+Confirmed: 55/64 | Reverted: 0 | Pending: 9
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 64/64 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 64
+Reverted  : 0
+Timeout   : 0
+Duration  : 30.111s
+------------------------------------------
+
+============================================================
+nproofs/vmno=8  num_vmnos=64  run=3  (off-chain source: reference_fallback)
+============================================================
+
+>>> on-chain leg: individual_n8_vmnos64_r3 (512 tx total, 420B calldata, gas/tx=278265, to=0x8969Cb191FeAb3492e741F52Aea0a352c4398185)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 512/512
+Failed    : 0/512
+Duration  : 1.661s
+Rate      : 308.22 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 512
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 15/512 | Reverted: 0 | Pending: 497
+Confirmed: 52/512 | Reverted: 0 | Pending: 460
+Confirmed: 93/512 | Reverted: 0 | Pending: 419
+Confirmed: 128/512 | Reverted: 0 | Pending: 384
+Confirmed: 163/512 | Reverted: 0 | Pending: 349
+Confirmed: 190/512 | Reverted: 0 | Pending: 322
+Confirmed: 219/512 | Reverted: 0 | Pending: 293
+Confirmed: 238/512 | Reverted: 0 | Pending: 274
+Confirmed: 272/512 | Reverted: 0 | Pending: 240
+Confirmed: 307/512 | Reverted: 0 | Pending: 205
+Confirmed: 307/512 | Reverted: 0 | Pending: 205
+Confirmed: 342/512 | Reverted: 0 | Pending: 170
+Confirmed: 342/512 | Reverted: 0 | Pending: 170
+Confirmed: 376/512 | Reverted: 0 | Pending: 136
+Confirmed: 376/512 | Reverted: 0 | Pending: 136
+Confirmed: 410/512 | Reverted: 0 | Pending: 102
+Confirmed: 410/512 | Reverted: 0 | Pending: 102
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 512/512 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 512
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.490s
+------------------------------------------
+
+>>> on-chain leg: aggregate_n8_vmnos64_r3 (64 tx total, 420B/tx x 64 distinct payloads, gas/tx=176660, to=0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 64/64
+Failed    : 0/64
+Duration  : 0.279s
+Rate      : 229.71 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 64
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 10/64 | Reverted: 0 | Pending: 54
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 21/64 | Reverted: 0 | Pending: 43
+Confirmed: 21/64 | Reverted: 0 | Pending: 43
+Confirmed: 21/64 | Reverted: 0 | Pending: 43
+Confirmed: 21/64 | Reverted: 0 | Pending: 43
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 27/64 | Reverted: 0 | Pending: 37
+Confirmed: 31/64 | Reverted: 0 | Pending: 33
+Confirmed: 31/64 | Reverted: 0 | Pending: 33
+Confirmed: 31/64 | Reverted: 0 | Pending: 33
+Confirmed: 31/64 | Reverted: 0 | Pending: 33
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 36/64 | Reverted: 0 | Pending: 28
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 40/64 | Reverted: 0 | Pending: 24
+Confirmed: 42/64 | Reverted: 0 | Pending: 22
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 44/64 | Reverted: 0 | Pending: 20
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 49/64 | Reverted: 0 | Pending: 15
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 64/64 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 64
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.879s
+------------------------------------------
+
+============================================================
+nproofs/vmno=8  num_vmnos=64  run=4  (off-chain source: reference_fallback)
+============================================================
+
+>>> on-chain leg: individual_n8_vmnos64_r4 (512 tx total, 420B calldata, gas/tx=278265, to=0x8969Cb191FeAb3492e741F52Aea0a352c4398185)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 512/512
+Failed    : 0/512
+Duration  : 1.639s
+Rate      : 312.38 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 512
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 12/512 | Reverted: 0 | Pending: 500
+Confirmed: 57/512 | Reverted: 0 | Pending: 455
+Confirmed: 98/512 | Reverted: 0 | Pending: 414
+Confirmed: 135/512 | Reverted: 0 | Pending: 377
+Confirmed: 172/512 | Reverted: 0 | Pending: 340
+Confirmed: 200/512 | Reverted: 0 | Pending: 312
+Confirmed: 232/512 | Reverted: 0 | Pending: 280
+Confirmed: 258/512 | Reverted: 0 | Pending: 254
+Confirmed: 274/512 | Reverted: 0 | Pending: 238
+Confirmed: 308/512 | Reverted: 0 | Pending: 204
+Confirmed: 329/512 | Reverted: 0 | Pending: 183
+Confirmed: 342/512 | Reverted: 0 | Pending: 170
+Confirmed: 365/512 | Reverted: 0 | Pending: 147
+Confirmed: 376/512 | Reverted: 0 | Pending: 136
+Confirmed: 387/512 | Reverted: 0 | Pending: 125
+Confirmed: 410/512 | Reverted: 0 | Pending: 102
+Confirmed: 410/512 | Reverted: 0 | Pending: 102
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 512/512 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 512
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.671s
+------------------------------------------
+
+>>> on-chain leg: aggregate_n8_vmnos64_r4 (64 tx total, 420B/tx x 64 distinct payloads, gas/tx=176697, to=0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 64/64
+Failed    : 0/64
+Duration  : 0.402s
+Rate      : 159.30 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 64
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 1/64 | Reverted: 0 | Pending: 63
+Confirmed: 5/64 | Reverted: 0 | Pending: 59
+Confirmed: 5/64 | Reverted: 0 | Pending: 59
+Confirmed: 5/64 | Reverted: 0 | Pending: 59
+Confirmed: 10/64 | Reverted: 0 | Pending: 54
+Confirmed: 10/64 | Reverted: 0 | Pending: 54
+Confirmed: 10/64 | Reverted: 0 | Pending: 54
+Confirmed: 14/64 | Reverted: 0 | Pending: 50
+Confirmed: 14/64 | Reverted: 0 | Pending: 50
+Confirmed: 15/64 | Reverted: 0 | Pending: 49
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 22/64 | Reverted: 0 | Pending: 42
+Confirmed: 22/64 | Reverted: 0 | Pending: 42
+Confirmed: 22/64 | Reverted: 0 | Pending: 42
+Confirmed: 22/64 | Reverted: 0 | Pending: 42
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 27/64 | Reverted: 0 | Pending: 37
+Confirmed: 30/64 | Reverted: 0 | Pending: 34
+Confirmed: 30/64 | Reverted: 0 | Pending: 34
+Confirmed: 30/64 | Reverted: 0 | Pending: 34
+Confirmed: 30/64 | Reverted: 0 | Pending: 34
+Confirmed: 34/64 | Reverted: 0 | Pending: 30
+Confirmed: 34/64 | Reverted: 0 | Pending: 30
+Confirmed: 34/64 | Reverted: 0 | Pending: 30
+Confirmed: 34/64 | Reverted: 0 | Pending: 30
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 42/64 | Reverted: 0 | Pending: 22
+Confirmed: 42/64 | Reverted: 0 | Pending: 22
+Confirmed: 42/64 | Reverted: 0 | Pending: 22
+Confirmed: 42/64 | Reverted: 0 | Pending: 22
+Confirmed: 46/64 | Reverted: 0 | Pending: 18
+Confirmed: 46/64 | Reverted: 0 | Pending: 18
+Confirmed: 46/64 | Reverted: 0 | Pending: 18
+Confirmed: 46/64 | Reverted: 0 | Pending: 18
+Confirmed: 46/64 | Reverted: 0 | Pending: 18
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 50/64 | Reverted: 0 | Pending: 14
+Confirmed: 54/64 | Reverted: 0 | Pending: 10
+Confirmed: 54/64 | Reverted: 0 | Pending: 10
+Confirmed: 54/64 | Reverted: 0 | Pending: 10
+Confirmed: 54/64 | Reverted: 0 | Pending: 10
+Confirmed: 54/64 | Reverted: 0 | Pending: 10
+Confirmed: 54/64 | Reverted: 0 | Pending: 10
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 59/64 | Reverted: 0 | Pending: 5
+Confirmed: 64/64 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 64
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.140s
+------------------------------------------
+
+============================================================
+nproofs/vmno=8  num_vmnos=64  run=5  (off-chain source: reference_fallback)
+============================================================
+
+>>> on-chain leg: individual_n8_vmnos64_r5 (512 tx total, 420B calldata, gas/tx=278265, to=0x8969Cb191FeAb3492e741F52Aea0a352c4398185)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 512/512
+Failed    : 0/512
+Duration  : 1.797s
+Rate      : 284.95 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 512
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 13/512 | Reverted: 0 | Pending: 499
+Confirmed: 53/512 | Reverted: 0 | Pending: 459
+Confirmed: 98/512 | Reverted: 0 | Pending: 414
+Confirmed: 136/512 | Reverted: 0 | Pending: 376
+Confirmed: 170/512 | Reverted: 0 | Pending: 342
+Confirmed: 204/512 | Reverted: 0 | Pending: 308
+Confirmed: 236/512 | Reverted: 0 | Pending: 276
+Confirmed: 260/512 | Reverted: 0 | Pending: 252
+Confirmed: 274/512 | Reverted: 0 | Pending: 238
+Confirmed: 306/512 | Reverted: 0 | Pending: 206
+Confirmed: 331/512 | Reverted: 0 | Pending: 181
+Confirmed: 340/512 | Reverted: 0 | Pending: 172
+Confirmed: 374/512 | Reverted: 0 | Pending: 138
+Confirmed: 374/512 | Reverted: 0 | Pending: 138
+Confirmed: 409/512 | Reverted: 0 | Pending: 103
+Confirmed: 409/512 | Reverted: 0 | Pending: 103
+Confirmed: 433/512 | Reverted: 0 | Pending: 79
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 444/512 | Reverted: 0 | Pending: 68
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 478/512 | Reverted: 0 | Pending: 34
+Confirmed: 512/512 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 512
+Reverted  : 0
+Timeout   : 0
+Duration  : 29.666s
+------------------------------------------
+
+>>> on-chain leg: aggregate_n8_vmnos64_r5 (64 tx total, 420B/tx x 64 distinct payloads, gas/tx=176674, to=0x5FDEd00D4485a63F19EDAeD23d60EFFc7dCcB1dd)
+
+Starting transaction producer...
+Target submission rate : 500.00 tx/s
+Submission workers      : 48
+
+
+Producer finished.
+------------------------------------------
+Submitted : 64/64
+Failed    : 0/64
+Duration  : 0.311s
+Rate      : 205.52 tx/s
+------------------------------------------
+
+Starting receipt polling...
+------------------------------------------
+Transactions to confirm : 64
+Receipt workers         : 48
+Receipt timeout         : 120.0s
+------------------------------------------
+
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 0/64 | Reverted: 0 | Pending: 64
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 4/64 | Reverted: 0 | Pending: 60
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 8/64 | Reverted: 0 | Pending: 56
+Confirmed: 9/64 | Reverted: 0 | Pending: 55
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 12/64 | Reverted: 0 | Pending: 52
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 16/64 | Reverted: 0 | Pending: 48
+Confirmed: 18/64 | Reverted: 0 | Pending: 46
+Confirmed: 20/64 | Reverted: 0 | Pending: 44
+Confirmed: 20/64 | Reverted: 0 | Pending: 44
+Confirmed: 20/64 | Reverted: 0 | Pending: 44
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 24/64 | Reverted: 0 | Pending: 40
+Confirmed: 26/64 | Reverted: 0 | Pending: 38
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 28/64 | Reverted: 0 | Pending: 36
+Confirmed: 33/64 | Reverted: 0 | Pending: 31
+Confirmed: 33/64 | Reverted: 0 | Pending: 31
+Confirmed: 33/64 | Reverted: 0 | Pending: 31
+Confirmed: 33/64 | Reverted: 0 | Pending: 31
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 38/64 | Reverted: 0 | Pending: 26
+Confirmed: 43/64 | Reverted: 0 | Pending: 21
+Confirmed: 43/64 | Reverted: 0 | Pending: 21
+Confirmed: 43/64 | Reverted: 0 | Pending: 21
+Confirmed: 43/64 | Reverted: 0 | Pending: 21
+Confirmed: 43/64 | Reverted: 0 | Pending: 21
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 48/64 | Reverted: 0 | Pending: 16
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 52/64 | Reverted: 0 | Pending: 12
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 56/64 | Reverted: 0 | Pending: 8
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 60/64 | Reverted: 0 | Pending: 4
+Confirmed: 64/64 | Reverted: 0 | Pending: 0
+
+Receipt polling finished.
+------------------------------------------
+Confirmed : 64
+Reverted  : 0
+Timeout   : 0
+Duration  : 28.918s
+------------------------------------------
+Wrote: results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/zkroam_wan_64vmnos_64_500.0_48_48_resource_usage.csv
+
+Wrote: results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/zkroam_wan_64vmnos_64_500.0_48_48_sweep_summary.csv
+
+============================================================================
+SWEEP HIGHLIGHTS (median across runs per nproofs/VMNO level)
+============================================================================
+ nproofs  num_vmnos  ind_gas_total  agg_gas_total gas_save_%  pipeline_x
+       8         64    123,888,640      9,832,320      92.1%       1.87x
+============================================================================
+
+$ /Utilisateurs/abellach/zkRoam/net-heterogeneity/venv/bin/python3 monitoring/collect_metrics.py --logs-dir logs --rpc http://172.28.0.10:8545 --start-block 30 --end-block 217 --log-offsets results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/log_offsets_at_workload_start.json --out results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/consensus_robustness.csv
+Total view changes across all nodes: 0
+Blocks exceeding 2x block period (stall indicator): 0/188
+Wrote results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/consensus_robustness.csv
+
+$ /Utilisateurs/abellach/zkRoam/net-heterogeneity/venv/bin/python3 scripts/apptainer-network.py snapshot --out results/hardware-vmno-scaling/l3icalcul07/wan-nproof8-w48-rw48-rate500/vmnos-64/zkroam-wan-64vmnos/runtime_snapshot
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1576733 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1577220 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1577862 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1578573 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1579410 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1580241 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1581042 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1581866 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1582713 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1583559 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1584439 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1585273 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1586115 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1586959 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s qdisc show
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s class show
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif tc -s filter show
+$ nsenter -t 1587795 -n apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o addr show
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -details addr show zkroam0
+
+$ /Utilisateurs/abellach/zkRoam/net-heterogeneity/venv/bin/python3 scripts/apptainer-network.py stop
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip -o link show
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh00
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh01
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh02
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh03
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh04
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh05
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh06
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh07
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh08
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh09
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh10
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh11
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh12
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh13
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkh14
+$ apptainer exec --cleanenv /Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif ip link delete zkroam0

@@ -1,0 +1,261 @@
+{
+  "subnet": "172.28.0.0/24",
+  "nodes": [
+    {
+      "index": 0,
+      "name": "node00",
+      "tier": "core",
+      "address": "0x0b07ec8af49189a8e2a3e2ca832b1faec8914f6f",
+      "ip": "172.28.0.10",
+      "p2p_port": 30303,
+      "host_rpc_port": 8545,
+      "host_ws_port": 8576,
+      "profile": {
+        "delay_ms": 10,
+        "rate_mbit": 100,
+        "loss_pct": 0,
+        "jitter_ms": 0
+      },
+      "rpc_url": "http://172.28.0.10:8545"
+    },
+    {
+      "index": 1,
+      "name": "node01",
+      "tier": "core",
+      "address": "0x2642c6ea70e6537a27c581bb63fa7c48b1e403a5",
+      "ip": "172.28.0.11",
+      "p2p_port": 30303,
+      "host_rpc_port": 8546,
+      "host_ws_port": 8577,
+      "profile": {
+        "delay_ms": 10,
+        "rate_mbit": 100,
+        "loss_pct": 0,
+        "jitter_ms": 0
+      },
+      "rpc_url": "http://172.28.0.11:8545"
+    },
+    {
+      "index": 2,
+      "name": "node02",
+      "tier": "core",
+      "address": "0x2fa291b944de9dfd898e938754deb78cdcfb204f",
+      "ip": "172.28.0.12",
+      "p2p_port": 30303,
+      "host_rpc_port": 8547,
+      "host_ws_port": 8578,
+      "profile": {
+        "delay_ms": 10,
+        "rate_mbit": 100,
+        "loss_pct": 0,
+        "jitter_ms": 0
+      },
+      "rpc_url": "http://172.28.0.12:8545"
+    },
+    {
+      "index": 3,
+      "name": "node03",
+      "tier": "core",
+      "address": "0x31c28c083d96999c1d36349572c353a5aa17df13",
+      "ip": "172.28.0.13",
+      "p2p_port": 30303,
+      "host_rpc_port": 8548,
+      "host_ws_port": 8579,
+      "profile": {
+        "delay_ms": 10,
+        "rate_mbit": 100,
+        "loss_pct": 0,
+        "jitter_ms": 0
+      },
+      "rpc_url": "http://172.28.0.13:8545"
+    },
+    {
+      "index": 4,
+      "name": "node04",
+      "tier": "core",
+      "address": "0x8ce35377f6b89b2a69c4883c451461849ad196fb",
+      "ip": "172.28.0.14",
+      "p2p_port": 30303,
+      "host_rpc_port": 8549,
+      "host_ws_port": 8580,
+      "profile": {
+        "delay_ms": 10,
+        "rate_mbit": 100,
+        "loss_pct": 0,
+        "jitter_ms": 0
+      },
+      "rpc_url": "http://172.28.0.14:8545"
+    },
+    {
+      "index": 5,
+      "name": "node05",
+      "tier": "core",
+      "address": "0xab36ddfe6dea8ead6c8a4261f29ca46a8a68b33c",
+      "ip": "172.28.0.15",
+      "p2p_port": 30303,
+      "host_rpc_port": 8550,
+      "host_ws_port": 8581,
+      "profile": {
+        "delay_ms": 10,
+        "rate_mbit": 100,
+        "loss_pct": 0,
+        "jitter_ms": 0
+      },
+      "rpc_url": "http://172.28.0.15:8545"
+    },
+    {
+      "index": 6,
+      "name": "node06",
+      "tier": "edge",
+      "address": "0xc0b80293c48ab7fcf20cd3ecc96900eb3f67b35c",
+      "ip": "172.28.0.16",
+      "p2p_port": 30303,
+      "host_rpc_port": 8551,
+      "host_ws_port": 8582,
+      "profile": {
+        "delay_ms": 100,
+        "rate_mbit": 50,
+        "loss_pct": 0,
+        "jitter_ms": 10
+      },
+      "rpc_url": "http://172.28.0.16:8545"
+    },
+    {
+      "index": 7,
+      "name": "node07",
+      "tier": "edge",
+      "address": "0xce138a90cd8ba9a66737a51d2b030af1fd3de03b",
+      "ip": "172.28.0.17",
+      "p2p_port": 30303,
+      "host_rpc_port": 8552,
+      "host_ws_port": 8583,
+      "profile": {
+        "delay_ms": 100,
+        "rate_mbit": 50,
+        "loss_pct": 0,
+        "jitter_ms": 10
+      },
+      "rpc_url": "http://172.28.0.17:8545"
+    },
+    {
+      "index": 8,
+      "name": "node08",
+      "tier": "edge",
+      "address": "0xd1c17061bcbb9f1d01559764e086a49f4eea1bfa",
+      "ip": "172.28.0.18",
+      "p2p_port": 30303,
+      "host_rpc_port": 8553,
+      "host_ws_port": 8584,
+      "profile": {
+        "delay_ms": 100,
+        "rate_mbit": 50,
+        "loss_pct": 0,
+        "jitter_ms": 10
+      },
+      "rpc_url": "http://172.28.0.18:8545"
+    },
+    {
+      "index": 9,
+      "name": "node09",
+      "tier": "edge",
+      "address": "0xd2bf940892bedd2bc5a0edd43c476a11fdcbaba9",
+      "ip": "172.28.0.19",
+      "p2p_port": 30303,
+      "host_rpc_port": 8554,
+      "host_ws_port": 8585,
+      "profile": {
+        "delay_ms": 100,
+        "rate_mbit": 50,
+        "loss_pct": 0,
+        "jitter_ms": 10
+      },
+      "rpc_url": "http://172.28.0.19:8545"
+    },
+    {
+      "index": 10,
+      "name": "node10",
+      "tier": "edge",
+      "address": "0xd87d0b926bdfcd5e972622ff378e98a2ece0888d",
+      "ip": "172.28.0.20",
+      "p2p_port": 30303,
+      "host_rpc_port": 8555,
+      "host_ws_port": 8586,
+      "profile": {
+        "delay_ms": 100,
+        "rate_mbit": 50,
+        "loss_pct": 0,
+        "jitter_ms": 10
+      },
+      "rpc_url": "http://172.28.0.20:8545"
+    },
+    {
+      "index": 11,
+      "name": "node11",
+      "tier": "edge",
+      "address": "0xdce1c0c34cac5452f55548ee24adbf5467dd0f6d",
+      "ip": "172.28.0.21",
+      "p2p_port": 30303,
+      "host_rpc_port": 8556,
+      "host_ws_port": 8587,
+      "profile": {
+        "delay_ms": 100,
+        "rate_mbit": 50,
+        "loss_pct": 0,
+        "jitter_ms": 10
+      },
+      "rpc_url": "http://172.28.0.21:8545"
+    },
+    {
+      "index": 12,
+      "name": "node12",
+      "tier": "mobile",
+      "address": "0xeeb64e985ed8a99b0acc5cc5b81864fbe2938229",
+      "ip": "172.28.0.22",
+      "p2p_port": 30303,
+      "host_rpc_port": 8557,
+      "host_ws_port": 8588,
+      "profile": {
+        "delay_ms": 300,
+        "rate_mbit": 10,
+        "loss_pct": 5,
+        "jitter_ms": 50
+      },
+      "rpc_url": "http://172.28.0.22:8545"
+    },
+    {
+      "index": 13,
+      "name": "node13",
+      "tier": "mobile",
+      "address": "0xfd788d8d60f0a059e222b1176ed2cb816d275f80",
+      "ip": "172.28.0.23",
+      "p2p_port": 30303,
+      "host_rpc_port": 8558,
+      "host_ws_port": 8589,
+      "profile": {
+        "delay_ms": 300,
+        "rate_mbit": 10,
+        "loss_pct": 5,
+        "jitter_ms": 50
+      },
+      "rpc_url": "http://172.28.0.23:8545"
+    },
+    {
+      "index": 14,
+      "name": "node14",
+      "tier": "mobile",
+      "address": "0xfe6cbc3a3d2eb231a9d0f2a8656c47f79cf1086a",
+      "ip": "172.28.0.24",
+      "p2p_port": 30303,
+      "host_rpc_port": 8559,
+      "host_ws_port": 8590,
+      "profile": {
+        "delay_ms": 300,
+        "rate_mbit": 10,
+        "loss_pct": 5,
+        "jitter_ms": 50
+      },
+      "rpc_url": "http://172.28.0.24:8545"
+    }
+  ],
+  "runtime": "apptainer-netns"
+}

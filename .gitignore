@@ -17,16 +17,13 @@ venv
 aggregation/aggregation_bls12_381/tests/
 aggregation/aggregation_bls12_381/target/
 aggregation/aggregation_bls12_381/*.json
-aggregation/aggregation_bls12_381/
 aggregation/aggregation_bls12_381/cargo.lock
-aggregation/aggregation_bls12_381/output/*
 
 aggregation/aggregation_bn254/tests/
 aggregation/aggregation_bn254/target/
 aggregation/aggregation_bn254/*.json
-aggregation/aggregation_bn254/
 aggregation/aggregation_bn254/cargo.lock
-aggregation/aggregation_bn254/output/*
+
 
 .zkey
 .r1cs

@@ -1,0 +1,509 @@
+[node14] network interface=eth0
+[node14] region=sa-east applying per-destination WAN shaping from /config/tc.rules
+[node14] tc rules applied:
+qdisc htb 1: root refcnt 257 r2q 10 default 0x1 direct_packets_stat 0 direct_qlen 1000
+qdisc netem 120: parent 1:20 limit 1000 delay 60ms  3ms loss 0.1%
+qdisc netem 122: parent 1:22 limit 1000 delay 95ms  4.8ms loss 0.1%
+qdisc netem 113: parent 1:13 limit 1000 delay 160ms  8ms loss 0.1%
+qdisc netem 111: parent 1:11 limit 1000 delay 87.5ms  4.4ms loss 0.1%
+qdisc netem 115: parent 1:15 limit 1000 delay 60ms  3ms loss 0.1%
+qdisc netem 117: parent 1:17 limit 1000 delay 95ms  4.8ms loss 0.1%
+qdisc netem 119: parent 1:19 limit 1000 delay 1ms  99us
+qdisc netem 121: parent 1:21 limit 1000 delay 87.5ms  4.4ms loss 0.1%
+qdisc netem 123: parent 1:23 limit 1000 delay 160ms  8ms loss 0.1%
+qdisc netem 110: parent 1:10 limit 1000 delay 60ms  3ms loss 0.1%
+qdisc netem 112: parent 1:12 limit 1000 delay 95ms  4.8ms loss 0.1%
+qdisc netem 114: parent 1:14 limit 1000 delay 1ms  99us
+qdisc netem 118: parent 1:18 limit 1000 delay 160ms  8ms loss 0.1%
+qdisc netem 116: parent 1:16 limit 1000 delay 87.5ms  4.4ms loss 0.1%
+Setting logging level to INFO
+2026-10-07 16:39:38.878+00:00 | main | INFO  | Besu | Starting Besu
+2026-10-07 16:39:39.277+00:00 | main | WARN  | Besu | --graphql-http-host has been ignored because --graphql-http-enabled was not defined on the command line.
+2026-10-07 16:39:39.384+00:00 | main | INFO  | Besu | Connecting to 0 static nodes.
+2026-10-07 16:39:39.388+00:00 | main | INFO  | Besu | Forcing price bump for transaction replacement to 0, since min-gas-price is set to 0
+2026-10-07 16:39:39.388+00:00 | main | WARN  | Besu | Forcing tx-pool-min-gas-price=0, since it cannot be greater than the value of min-gas-price
+2026-10-07 16:39:39.859+00:00 | main | INFO  | Besu | 
+####################################################################################################
+#                                                                                                  #
+# Besu version 24.7.0                                                                              #
+#                                                                                                  #
+# Configuration:                                                                                   #
+# Network: Custom genesis file                                                                     #
+# /config/genesis.json                                                                             #
+# Network Id: 1337                                                                                 #
+# Data storage: Bonsai                                                                             #
+# Sync mode: Full                                                                                  #
+# RPC HTTP APIs: ETH,QBFT,NET,ADMIN,WEB3                                                           #
+# RPC HTTP port: 8545                                                                              #
+# Using LAYERED transaction pool implementation                                                    #
+# Using STACKED worldstate update mode                                                             #
+# Limit trie logs enabled: retention: 512; prune window: 30000                                     #
+#                                                                                                  #
+# Host:                                                                                            #
+# Java: openjdk-java-21                                                                            #
+# Maximum heap size: 29.50 GB                                                                      #
+# OS: linux-x86_64                                                                                 #
+# glibc: 2.39                                                                                      #
+# jemalloc: 5.3.0-0-g54eaed1d8b56b1aa528be3bdd1877e59c56fa90c                                      #
+# Total memory: 1007.68 GB                                                                         #
+# CPU cores: 256                                                                                   #
+#                                                                                                  #
+# Plugin Registration Summary:                                                                     #
+# No plugins have been registered.                                                                 #
+# TOTAL = 0 of 0 plugins successfully registered.                                                  #
+#                                                                                                  #
+####################################################################################################
+2026-10-07 16:39:39.860+00:00 | main | INFO  | Besu | Security Module: localfile
+2026-10-07 16:39:39.864+00:00 | main | INFO  | VersionMetadata | Lookup version metadata file in data directory: /data
+2026-10-07 16:39:39.864+00:00 | main | INFO  | VersionMetadata | No version data detected. Writing Besu version 24.7.0 to metadata file
+2026-10-07 16:39:39.980+00:00 | main | INFO  | Besu | Using the native implementation of alt bn128
+2026-10-07 16:39:40.066+00:00 | main | INFO  | Besu | Using the native implementation of modexp
+2026-10-07 16:39:40.066+00:00 | main | INFO  | Besu | Using the native implementation of the signature algorithm
+2026-10-07 16:39:40.075+00:00 | main | INFO  | Besu | Using the native implementation of the blake2bf algorithm
+2026-10-07 16:39:40.170+00:00 | main | INFO  | Besu | Forcing price bump for transaction replacement to 0, since min-gas-price is set to 0
+2026-10-07 16:39:40.171+00:00 | main | WARN  | Besu | Forcing tx-pool-min-gas-price=0, since it cannot be greater than the value of min-gas-price
+2026-10-07 16:39:40.174+00:00 | main | INFO  | KeyPairUtil | Attempting to load public key from /data/key.priv
+2026-10-07 16:39:40.198+00:00 | main | INFO  | KeyPairUtil | Loaded public key 0x01b8c0f5417d3e8d76b1b207ad33016bd8d8a42e978f5cbfa5aa6ff15cd723bdfd1804cf0e8a2be2d030b1a8b9cd4cd3f253cb02b5554e9ae4f9886deced8fbf from /data/key.priv
+2026-10-07 16:39:40.433+00:00 | main | INFO  | ProtocolScheduleBuilder | Protocol schedule created with milestones: [Berlin:0]
+2026-10-07 16:39:40.438+00:00 | main | INFO  | RocksDBKeyValueStorageFactory | No existing database at /data. Using default metadata for new db versionedStorageFormat=BaseVersionedStorageFormat{format=BONSAI, version=2}
+2026-10-07 16:39:40.767+00:00 | main | INFO  | FlatDbStrategyProvider | Bonsai flat db mode found FULL
+2026-10-07 16:39:40.778+00:00 | main | INFO  | FlatDbStrategyProvider | Bonsai db mode with code stored using code hash enabled = true
+2026-10-07 16:39:40.789+00:00 | main | INFO  | FlatDbStrategyProvider | Bonsai flat db mode found FULL
+2026-10-07 16:39:40.797+00:00 | main | INFO  | FlatDbStrategyProvider | Bonsai db mode with code stored using code hash enabled = true
+2026-10-07 16:39:41.324+00:00 | main | INFO  | TransactionPoolFactory | Enabling transaction pool
+2026-10-07 16:39:41.353+00:00 | main | INFO  | BesuControllerBuilder | TTD difficulty is not present, creating initial sync phase for PoW
+2026-10-07 16:39:41.410+00:00 | main | INFO  | TrieLogPruner | Loading first 30000 trie logs from database...
+2026-10-07 16:39:41.412+00:00 | main | INFO  | TrieLogPruner | Loaded 1 trie logs from database
+2026-10-07 16:39:41.419+00:00 | main | INFO  | RunnerBuilder | Resolved 5 bootnodes.
+2026-10-07 16:39:41.426+00:00 | main | INFO  | RunnerBuilder | Detecting NAT service.
+2026-10-07 16:39:41.664+00:00 | main | INFO  | Runner | Starting external services ... 
+2026-10-07 16:39:41.665+00:00 | main | INFO  | JsonRpcHttpService | Starting JSON-RPC service on 0.0.0.0:8545
+2026-10-07 16:39:41.896+00:00 | vert.x-eventloop-thread-1 | INFO  | JsonRpcHttpService | JSON-RPC service started and listening on 0.0.0.0:8545
+2026-10-07 16:39:41.899+00:00 | main | INFO  | WebSocketService | Starting Websocket service on 0.0.0.0:8546
+2026-10-07 16:39:41.902+00:00 | vert.x-eventloop-thread-1 | INFO  | WebSocketService | Websocket service started and listening on 0.0.0.0:8546
+2026-10-07 16:39:41.907+00:00 | main | INFO  | AutoTransactionLogBloomCachingService | Starting auto transaction log bloom caching service.
+2026-10-07 16:39:41.908+00:00 | main | INFO  | LogBloomCacheMetadata | Lookup cache metadata file in data directory: /data/caches
+2026-10-07 16:39:41.920+00:00 | main | INFO  | Runner | Starting Ethereum main loop ... 
+2026-10-07 16:39:41.920+00:00 | main | INFO  | NatService | No NAT environment detected so no service could be started
+2026-10-07 16:39:41.920+00:00 | main | INFO  | NetworkRunner | Starting Network.
+2026-10-07 16:39:41.940+00:00 | nioEventLoopGroup-2-1 | INFO  | RlpxAgent | P2P RLPx agent started and listening on /[0:0:0:0:0:0:0:0]:30303.
+2026-10-07 16:39:41.940+00:00 | main | INFO  | PeerDiscoveryAgent | Starting peer discovery agent on host=0.0.0.0, port=30303. IPv6 available.
+2026-10-07 16:39:41.959+00:00 | vert.x-eventloop-thread-1 | INFO  | VertxPeerDiscoveryAgent | Started peer discovery agent successfully, on effective host=0:0:0:0:0:0:0:0%0 and port=30303
+2026-10-07 16:39:41.962+00:00 | vert.x-eventloop-thread-1 | INFO  | PeerDiscoveryAgent | P2P peer discovery agent started and listening on /[0:0:0:0:0:0:0:0%0]:30303
+2026-10-07 16:39:42.088+00:00 | vert.x-eventloop-thread-1 | INFO  | PeerDiscoveryAgent | Writing node record to disk. NodeRecord{seq=1, publicKey=0x0301b8c0f5417d3e8d76b1b207ad33016bd8d8a42e978f5cbfa5aa6ff15cd723bd, udpAddress=Optional[/0.0.0.0:30303], tcpAddress=Optional[/0.0.0.0:30303], asBase64=-Je4QF0Hr8S6HBxDmJruJgc5uL5A7NW8AqiIfvIvzLMysMtqdK6yAFD-q4I4o4Dy_w74QD4XIKNBbMOz_5BbKK61gTABg2V0aMfGhCfzie2AgmlkgnY0gmlwhAAAAACJc2VjcDI1NmsxoQMBuMD1QX0-jXaxsgetMwFr2NikLpePXL-lqm_xXNcjvYN0Y3CCdl-DdWRwgnZf, nodeId=0x861d7173aee1b08c7e9b2319fbbf711238a3aea43c8f13d7c66f352516fcaedf, customFields={tcp=30303, udp=30303, ip=0x00000000, eth=[[0x27f389ed, 0x]], id=V4, secp256k1=0x0301b8c0f5417d3e8d76b1b207ad33016bd8d8a42e978f5cbfa5aa6ff15cd723bd}}
+2026-10-07 16:39:42.165+00:00 | main | INFO  | DefaultP2PNetwork | Enode URL enode://01b8c0f5417d3e8d76b1b207ad33016bd8d8a42e978f5cbfa5aa6ff15cd723bdfd1804cf0e8a2be2d030b1a8b9cd4cd3f253cb02b5554e9ae4f9886deced8fbf@0.0.0.0:30303
+2026-10-07 16:39:42.166+00:00 | main | INFO  | DefaultP2PNetwork | Node address 0xfbbf711238a3aea43c8f13d7c66f352516fcaedf
+2026-10-07 16:39:42.216+00:00 | main | INFO  | NetworkRunner | Supported capabilities: [eth/62, eth/63, eth/64, eth/65, eth/66, eth/67, eth/68], [istanbul/100], [snap/1]
+2026-10-07 16:39:42.216+00:00 | main | INFO  | DefaultSynchronizer | Starting synchronizer.
+2026-10-07 16:39:42.218+00:00 | main | INFO  | TransactionPoolFactory | Enabling transaction handling following initial sync
+2026-10-07 16:39:42.218+00:00 | main | INFO  | QbftBesuControllerBuilder | Starting QBFT mining coordinator following initial sync
+2026-10-07 16:39:42.230+00:00 | main | INFO  | FullSyncDownloader | Starting full sync.
+2026-10-07 16:39:42.231+00:00 | main | INFO  | FullSyncTargetManager | Unable to find sync target. Currently checking 0 peers for usefulness
+2026-10-07 16:39:42.244+00:00 | main | INFO  | Runner | Ethereum main loop is up.
+2026-10-07 16:39:42.448+00:00 | nioEventLoopGroup-3-3 | INFO  | FullSyncTargetManager | Unable to find sync target. Currently checking 1 peers for usefulness
+2026-10-07 16:39:43.338+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #2 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf81816ce37dc5c54465c922dbd7601da7bcb5df5c5369f7014c9fc1fca5f0168)
+2026-10-07 16:39:45.369+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #3 / 0 tx / 0 pending / 0 (0.0%) gas / (0x4e1a8922f3c487812b4a987dc689742d20796cc9b874039b63770870a5ae4abd)
+2026-10-07 16:39:47.344+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #4 / 0 tx / 0 pending / 0 (0.0%) gas / (0x7a480083c4d197c3fa211b7124419df986abec8beed7b9a43a068ce6a5da0194)
+2026-10-07 16:39:49.348+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #5 / 0 tx / 1 pending / 0 (0.0%) gas / (0xc206ca2545027de806cc39e42eb912f405be878662b1c581691d5c96c90fbf8c)
+2026-10-07 16:39:51.330+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #6 / 0 tx / 1 pending / 0 (0.0%) gas / (0x0ca9e1a5d1037b1d9aa630c7b5e81f303f3d0961e9f8f0aaebc5665403eb7ebc)
+2026-10-07 16:39:53.305+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #7 / 0 tx / 1 pending / 0 (0.0%) gas / (0x15f65d77e475cdfc18f5d95404b760efc5b3e676fb4efedefbf4cfc51eb83bbd)
+2026-10-07 16:39:55.382+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #8 / 0 tx / 1 pending / 0 (0.0%) gas / (0xfe8ead078f86cec2247a5ce99409640987f422128a52f926abf967f36466dffa)
+2026-10-07 16:39:55.388+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 8 (0xfe8ead078f86cec2247a5ce99409640987f422128a52f926abf967f36466dffa) is already imported
+2026-10-07 16:39:57.296+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 9 (0x74349de4c7b61a9ba8bba79bc66ff60111656d364d765dbd3a4e69c4e8f631a3) is already imported
+2026-10-07 16:39:57.296+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #9 / 0 tx / 1 pending / 0 (0.0%) gas / (0x74349de4c7b61a9ba8bba79bc66ff60111656d364d765dbd3a4e69c4e8f631a3)
+2026-10-07 16:39:59.310+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 10 (0x6b6b0127eaa1ad9e6ce1189ace99a92cabea855a201e44e11c3d046105d8fda2) is already imported
+2026-10-07 16:39:59.311+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #10 / 0 tx / 1 pending / 0 (0.0%) gas / (0x6b6b0127eaa1ad9e6ce1189ace99a92cabea855a201e44e11c3d046105d8fda2)
+2026-10-07 16:40:01.314+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #11 / 0 tx / 1 pending / 0 (0.0%) gas / (0x108cac09af2af77dabe668cb7bfa9c11a4da6b6b7c6a89a6674c6e08b82d067a)
+2026-10-07 16:40:03.342+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #12 / 0 tx / 1 pending / 0 (0.0%) gas / (0xa550167d50c15bcb5bba04379e7665ed3ab1856ae241ff5011b51183f33f23ab)
+2026-10-07 16:40:05.362+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #13 / 0 tx / 1 pending / 0 (0.0%) gas / (0x2283921286a7c32bbeb2675ca6561f779e715f51b2b304e8934de54dcb2da11a)
+2026-10-07 16:40:07.366+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #14 / 0 tx / 1 pending / 0 (0.0%) gas / (0x4aa4003482f7429dc646616c7dc9b43a50d341082a211350333b2298bd238e33)
+2026-10-07 16:40:09.409+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #15 / 1 tx / 0 pending / 465,218 (0.0%) gas / (0xdc26a32a31483a7d1bb5d21df9240341183100687b2a7e0e76876a977e12807f)
+2026-10-07 16:40:11.289+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #16 / 0 tx / 1 pending / 0 (0.0%) gas / (0x69ec03d00357d8c4b1a616d50a91483d1239a936a15164043fbeeba2b10d7305)
+2026-10-07 16:40:13.285+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #17 / 0 tx / 1 pending / 0 (0.0%) gas / (0x67456716e111c6ca86f45b5140de87ffd622b692fe137403f9ee08a3f9460029)
+2026-10-07 16:40:15.305+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #18 / 0 tx / 1 pending / 0 (0.0%) gas / (0x3967635e6a854e6d3b13379a4cde77bbb6c48749cb87b8caaecbe159bd706d06)
+2026-10-07 16:40:17.266+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #19 / 0 tx / 1 pending / 0 (0.0%) gas / (0x75e4cb92c342edbfba25c6f4533bc6bf319612ff2ae13f0c4ebeecbfa661b3ab)
+2026-10-07 16:40:19.274+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #20 / 0 tx / 1 pending / 0 (0.0%) gas / (0x486e8d375b8c8a718c208d8cff4b09a41306c24905631c8cdb02ca8982063e4f)
+2026-10-07 16:40:21.291+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #21 / 0 tx / 1 pending / 0 (0.0%) gas / (0xf020d4c289d4fca827902d45dfda346f4e98ecd79d42951420a5c6d89c57c077)
+2026-10-07 16:40:21.294+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 21 (0xf020d4c289d4fca827902d45dfda346f4e98ecd79d42951420a5c6d89c57c077) is already imported
+2026-10-07 16:40:23.276+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #22 / 0 tx / 1 pending / 0 (0.0%) gas / (0x0bfcb24167e36658f58518f6372a222a66bb82fe325467490245169898d9291f)
+2026-10-07 16:40:23.277+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 22 (0x0bfcb24167e36658f58518f6372a222a66bb82fe325467490245169898d9291f) is already imported
+2026-10-07 16:40:25.314+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 23 (0x2bb47f58f1d05413c4e4aa42423a8141f8373d226c35194d8d6e9582414088f5) is already imported
+2026-10-07 16:40:25.314+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #23 / 0 tx / 1 pending / 0 (0.0%) gas / (0x2bb47f58f1d05413c4e4aa42423a8141f8373d226c35194d8d6e9582414088f5)
+2026-10-07 16:40:27.282+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #24 / 0 tx / 1 pending / 0 (0.0%) gas / (0x73ebdfeea583894ddfb77b7a2b4ecf0ad11e28387d4efab25fb591335bd5ba06)
+2026-10-07 16:40:27.282+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #24 / 0 tx / 0 om / 0 (0.0%) gas / (0x73ebdfeea583894ddfb77b7a2b4ecf0ad11e28387d4efab25fb591335bd5ba06) in 0.005s. Peers: 14
+2026-10-07 16:40:29.270+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #25 / 0 tx / 1 pending / 0 (0.0%) gas / (0x20f0b14c26761fa106affcce8a12f554a538f3fcb7d6b6599059f90e00e0ea1e)
+2026-10-07 16:40:31.295+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #26 / 0 tx / 1 pending / 0 (0.0%) gas / (0x4e17f0382b3bcf03525a8376d3f05525bf683a3e029724cf92407f08f446566c)
+2026-10-07 16:40:33.290+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #27 / 0 tx / 0 om / 0 (0.0%) gas / (0x17f5346232622697590e1378f38bd25a55dd88766ac8eb3756584d8925a2fe93) in 0.002s. Peers: 14
+2026-10-07 16:40:33.291+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #27 / 0 tx / 1 pending / 0 (0.0%) gas / (0x17f5346232622697590e1378f38bd25a55dd88766ac8eb3756584d8925a2fe93)
+2026-10-07 16:40:35.307+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #28 / 0 tx / 1 pending / 0 (0.0%) gas / (0x32e8925a1b13d8bcb1779a4a6475290b22e60b440f7784c92cf66503d7ed7611)
+2026-10-07 16:40:37.294+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #29 / 0 tx / 1 pending / 0 (0.0%) gas / (0x52f34c1550ff1caef3e0c5d789c5ee8a765541782c8048413ad9c6fc7a798997)
+2026-10-07 16:40:37.294+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 29 (0x52f34c1550ff1caef3e0c5d789c5ee8a765541782c8048413ad9c6fc7a798997) is already imported
+2026-10-07 16:40:39.340+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #30 / 1 tx / 0 pending / 1,832,981 (0.0%) gas / (0x29a845c21e783b7df4ae3ebd4173f05b948abd473b641b05a914bee6dce65b12)
+2026-10-07 16:40:39.340+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 30 (0x29a845c21e783b7df4ae3ebd4173f05b948abd473b641b05a914bee6dce65b12) is already imported
+2026-10-07 16:40:41.295+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #31 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf7499f74426a197a4c797af7804adca98007332ac7bd19f86994fd8ccf6aa1f4)
+2026-10-07 16:40:43.280+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #32 / 0 tx / 0 pending / 0 (0.0%) gas / (0x5340caaebc75b3e21a05222f4b9d7c9fb81d5fce05a67a7de06fb74fa346ef51)
+2026-10-07 16:40:45.301+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #33 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf36ca36aaac1818566b9a5bd96f9e5b8faa5b0ddf4578a8472ce98836d41fb14)
+2026-10-07 16:40:45.301+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #33 / 0 tx / 0 om / 0 (0.0%) gas / (0xf36ca36aaac1818566b9a5bd96f9e5b8faa5b0ddf4578a8472ce98836d41fb14) in 0.002s. Peers: 14
+2026-10-07 16:40:47.278+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #34 / 0 tx / 0 pending / 0 (0.0%) gas / (0x504731886585d187beb52139a6c20716760a467a6921f0b738b9861ecea62fca)
+2026-10-07 16:40:49.288+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 35 (0x8d33385e2d984066e9d60b84bebf67d6fe6869e6ab6dc645e078b3cfee56a1aa) is already imported
+2026-10-07 16:40:49.288+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #35 / 0 tx / 0 pending / 0 (0.0%) gas / (0x8d33385e2d984066e9d60b84bebf67d6fe6869e6ab6dc645e078b3cfee56a1aa)
+2026-10-07 16:40:51.300+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 36 (0x2a2aad939c1d52aaadabcfec1c988fee79017f1b7bf4d290414264bfcbf3718c) is already imported
+2026-10-07 16:40:51.300+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #36 / 0 tx / 0 pending / 0 (0.0%) gas / (0x2a2aad939c1d52aaadabcfec1c988fee79017f1b7bf4d290414264bfcbf3718c)
+2026-10-07 16:40:53.297+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #37 / 0 tx / 0 om / 0 (0.0%) gas / (0xed3a22fe386ac3cc7bd415b356afa04c5b3dc55fd8b4cbd3f5fbec18d971f78d) in 0.006s. Peers: 14
+2026-10-07 16:40:53.299+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #37 / 0 tx / 0 pending / 0 (0.0%) gas / (0xed3a22fe386ac3cc7bd415b356afa04c5b3dc55fd8b4cbd3f5fbec18d971f78d)
+2026-10-07 16:40:55.313+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 38 (0x2709be06036f76aab9e7ce89ebbd1bf0db1db15f5afdcd40fc1781e408e4a2fd) is already imported
+2026-10-07 16:40:55.313+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #38 / 0 tx / 0 pending / 0 (0.0%) gas / (0x2709be06036f76aab9e7ce89ebbd1bf0db1db15f5afdcd40fc1781e408e4a2fd)
+2026-10-07 16:40:57.288+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #39 / 0 tx / 0 pending / 0 (0.0%) gas / (0x194901aac7feca690871e2db8b43a1a517a0156e4f8c4348c408db62af58afd7)
+2026-10-07 16:40:59.282+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #40 / 0 tx / 0 pending / 0 (0.0%) gas / (0x517c41d28cc28807927d456a2e8bad76f168144feb4d6369b7e8fce0ce3fc297)
+2026-10-07 16:41:01.289+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #41 / 0 tx / 0 pending / 0 (0.0%) gas / (0x2103596642178364fa1b432a6a123b691539c05c6aabff51ec46d17cde17cf92)
+2026-10-07 16:41:03.284+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #42 / 0 tx / 2 pending / 0 (0.0%) gas / (0x33c7d076e2f11c1f310a08117c94ebb96dff82ed993f4615ba5b8378df8e7ac6)
+2026-10-07 16:41:06.262+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #43 / 40 tx / 984 pending / 9,678,800 (0.0%) gas / (0xdb42e2f874198202b7e680df3f59ccbd2956558713d9091907e62a015cd5b211)
+2026-10-07 16:41:08.524+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 44 (0x7b5a041adc134d2984d950c8c20ae9c85da8d39796f7da7c45e0544f2e1b6a03) is already imported
+2026-10-07 16:41:08.527+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #44 / 68 tx / 916 pending / 16,453,960 (0.0%) gas / (0x7b5a041adc134d2984d950c8c20ae9c85da8d39796f7da7c45e0544f2e1b6a03)
+2026-10-07 16:41:10.411+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 45 (0x153035d329e737d7415872e5e971f9687e7db8d5eb395f25cae773937280242f) is already imported
+2026-10-07 16:41:10.414+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #45 / 69 tx / 847 pending / 16,695,930 (0.0%) gas / (0x153035d329e737d7415872e5e971f9687e7db8d5eb395f25cae773937280242f)
+2026-10-07 16:41:12.347+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #46 / 69 tx / 778 pending / 16,695,930 (0.0%) gas / (0x09d28ef1dfa9f97ee3383443a606dee17407556d4862d7f6d539212c125fdab3)
+2026-10-07 16:41:14.381+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #47 / 69 tx / 709 pending / 16,695,930 (0.0%) gas / (0x48baf9b70ea8a04ebf993eac91dd7240ca39103b1ea79e5fe14162f4034b28d5)
+2026-10-07 16:41:16.361+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #48 / 69 tx / 640 pending / 16,695,930 (0.0%) gas / (0x07904dbf29ee3aee695fe48bfa860b926d36ca7c86173903b7e5d7d0efc54855)
+2026-10-07 16:41:18.380+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 49 (0xf8f84fe6434808d914e9a0f53fb674e3212a617f405e99e6ea5d816509bb672c) is already imported
+2026-10-07 16:41:18.381+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #49 / 68 tx / 572 pending / 16,453,960 (0.0%) gas / (0xf8f84fe6434808d914e9a0f53fb674e3212a617f405e99e6ea5d816509bb672c)
+2026-10-07 16:41:20.424+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 50 (0x88f398f50e2db6bda03bb18d242f7b5f3ccb4e48e499b3bee1a0df7f5896d6fd) is already imported
+2026-10-07 16:41:20.425+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #50 / 68 tx / 504 pending / 16,453,960 (0.0%) gas / (0x88f398f50e2db6bda03bb18d242f7b5f3ccb4e48e499b3bee1a0df7f5896d6fd)
+2026-10-07 16:41:22.394+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 51 (0xe73fe87dc421133ee91ee0840adecd51590cf54c9a31dc9a1da0ac1d3d2c0af3) is already imported
+2026-10-07 16:41:22.395+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #51 / 68 tx / 436 pending / 16,453,960 (0.0%) gas / (0xe73fe87dc421133ee91ee0840adecd51590cf54c9a31dc9a1da0ac1d3d2c0af3)
+2026-10-07 16:41:24.272+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 52 (0xa0ba9358380b3930b9f61c10b0c790274db70901dd7b4da59af475114e93ee21) is already imported
+2026-10-07 16:41:24.273+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #52 / 68 tx / 368 pending / 16,453,960 (0.0%) gas / (0xa0ba9358380b3930b9f61c10b0c790274db70901dd7b4da59af475114e93ee21)
+2026-10-07 16:41:26.329+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #53 / 68 tx / 300 pending / 16,453,960 (0.0%) gas / (0x9fed677fdeaa9e97ae7c5d33085626cdafe8603ac6035a9e792b9a39500d37d6)
+2026-10-07 16:41:28.348+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 54 (0x0dee80f3f3744efb96f443bee7d91b813e0389279d9470e770473424ee6db10c) is already imported
+2026-10-07 16:41:28.349+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #54 / 68 tx / 232 pending / 16,453,960 (0.0%) gas / (0x0dee80f3f3744efb96f443bee7d91b813e0389279d9470e770473424ee6db10c)
+2026-10-07 16:41:30.411+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 55 (0xad05d60c5bb9d8affc0769fd2ca825e5e865a29723cf7d2677d22af5a6a1ed79) is already imported
+2026-10-07 16:41:30.411+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #55 / 68 tx / 164 pending / 16,453,960 (0.0%) gas / (0xad05d60c5bb9d8affc0769fd2ca825e5e865a29723cf7d2677d22af5a6a1ed79)
+2026-10-07 16:41:32.377+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 56 (0x286c8c2c421eddf270576b9c81c391cf4a625686b9f3906694bdf86248d1067b) is already imported
+2026-10-07 16:41:32.380+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #56 / 68 tx / 96 pending / 16,453,960 (0.0%) gas / (0x286c8c2c421eddf270576b9c81c391cf4a625686b9f3906694bdf86248d1067b)
+2026-10-07 16:41:34.374+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 57 (0xc68cb8bd21e39f37f330cc369c6384955c30af88dc15fc41bfed080af0dcaa85) is already imported
+2026-10-07 16:41:34.374+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #57 / 68 tx / 28 pending / 16,453,960 (0.0%) gas / (0xc68cb8bd21e39f37f330cc369c6384955c30af88dc15fc41bfed080af0dcaa85)
+2026-10-07 16:41:35.681+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #58 / 28 tx / 0 pending / 6,775,160 (0.0%) gas / (0x554c0fd4cd31ef47864351c913bcc993acd8e32745b4cdc770ac6635a498b1d7)
+2026-10-07 16:41:37.290+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #59 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf949e1f98e9876f841571f1f69cfba64c73969b2873dceab024c9a9f2db1996a)
+2026-10-07 16:41:39.264+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #60 / 0 tx / 0 pending / 0 (0.0%) gas / (0x0c8fb73f6dc309e12cd980881513ac59b6f66391a9813f4412253327b6fbae39)
+2026-10-07 16:41:41.271+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #61 / 0 tx / 0 pending / 0 (0.0%) gas / (0xfcd533ab2387c37bac387f6c4904c16b236d5cf24619d391fdec5b04e13bc3e9)
+2026-10-07 16:41:43.282+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #62 / 0 tx / 0 pending / 0 (0.0%) gas / (0xed0a6e72ff22b7392a34a101e7403ea6347b730c2d84d987acb1cfd28744a33e)
+2026-10-07 16:41:45.308+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #63 / 0 tx / 0 pending / 0 (0.0%) gas / (0x279cc69ebf5190beeb525c6cb94bcebf9d86860c64a16c90b0d5d14b9b28fb32)
+2026-10-07 16:41:45.308+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 63 (0x279cc69ebf5190beeb525c6cb94bcebf9d86860c64a16c90b0d5d14b9b28fb32) is already imported
+2026-10-07 16:41:47.289+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 64 (0x73c840c988d1280cb5d4d9d755551891debf92fa8c47d38ff95923903a86bee2) is already imported
+2026-10-07 16:41:47.290+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #64 / 0 tx / 0 pending / 0 (0.0%) gas / (0x73c840c988d1280cb5d4d9d755551891debf92fa8c47d38ff95923903a86bee2)
+2026-10-07 16:41:49.265+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #65 / 0 tx / 0 pending / 0 (0.0%) gas / (0xbbca247004387dc1d3bd9db3a8357dce175baf1321e224c8285133a735896515)
+2026-10-07 16:41:51.333+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 66 (0xec78335c5aa73a06dd5576253b82ecb15d41978330820b2efb7a4f22710f74f3) is already imported
+2026-10-07 16:41:51.333+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #66 / 4 tx / 106 pending / 614,580 (0.0%) gas / (0xec78335c5aa73a06dd5576253b82ecb15d41978330820b2efb7a4f22710f74f3)
+2026-10-07 16:41:53.331+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #67 / 9 tx / 115 pending / 1,382,742 (0.0%) gas / (0x377234e05e002b0dcb249c93891bd8d5ab59ae54b872d68482c1febb18613316)
+2026-10-07 16:41:53.331+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 67 (0x377234e05e002b0dcb249c93891bd8d5ab59ae54b872d68482c1febb18613316) is already imported
+2026-10-07 16:41:55.320+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #68 / 8 tx / 107 pending / 1,229,112 (0.0%) gas / (0x63b5e444202aa276ad947edfba4801a3f8452dd04b2cde6dcc7416abbd423659)
+2026-10-07 16:41:57.318+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 69 (0x0ed8cd92a4cffc365ab5988681e41d66f3aa1a386a5e0439b6502d0fbe3563a8) is already imported
+2026-10-07 16:41:57.319+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #69 / 8 tx / 99 pending / 1,229,080 (0.0%) gas / (0x0ed8cd92a4cffc365ab5988681e41d66f3aa1a386a5e0439b6502d0fbe3563a8)
+2026-10-07 16:41:59.330+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #70 / 8 tx / 91 pending / 1,229,072 (0.0%) gas / (0x8cc9541352439b87f7ca5b81a40ab3a00f2bcfd2f18a9f54a75f57d6181c1c7a)
+2026-10-07 16:41:59.330+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 70 (0x8cc9541352439b87f7ca5b81a40ab3a00f2bcfd2f18a9f54a75f57d6181c1c7a) is already imported
+2026-10-07 16:42:01.321+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #71 / 8 tx / 83 pending / 1,229,132 (0.0%) gas / (0x33dccade6c335edc1686bcfe4fa45d6a7ef075b013356ad1c728bdd74844b6fb)
+2026-10-07 16:42:01.321+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 71 (0x33dccade6c335edc1686bcfe4fa45d6a7ef075b013356ad1c728bdd74844b6fb) is already imported
+2026-10-07 16:42:03.361+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #72 / 8 tx / 75 pending / 1,229,084 (0.0%) gas / (0x8dd69d7bcc4016d6ff56569dbfb5f13664c29d15264a4fe7f3345c7ed751c59a)
+2026-10-07 16:42:03.365+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 72 (0x8dd69d7bcc4016d6ff56569dbfb5f13664c29d15264a4fe7f3345c7ed751c59a) is already imported
+2026-10-07 16:42:05.340+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #73 / 8 tx / 67 pending / 1,229,108 (0.0%) gas / (0x7f801fa8ba7c98df988b854da6d6fbb3e5d4b779b04767fb724a48975eb089a1)
+2026-10-07 16:42:05.340+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 73 (0x7f801fa8ba7c98df988b854da6d6fbb3e5d4b779b04767fb724a48975eb089a1) is already imported
+2026-10-07 16:42:07.404+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #74 / 8 tx / 59 pending / 1,229,124 (0.0%) gas / (0x7d51d841f027d00343ca690c2b13f9af1b948aa7c144f3f05d49ac3b78efc3c7)
+2026-10-07 16:42:09.339+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #75 / 9 tx / 50 pending / 1,382,750 (0.0%) gas / (0x9fa854b257d17b1732fd22601ec9d3bd49933b0b9bf5ff3d7718ac0aa9555a8f)
+2026-10-07 16:42:09.339+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 75 (0x9fa854b257d17b1732fd22601ec9d3bd49933b0b9bf5ff3d7718ac0aa9555a8f) is already imported
+2026-10-07 16:42:11.318+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #76 / 9 tx / 41 pending / 1,382,726 (0.0%) gas / (0xe5524b4a5c4c356019e7eb162b5d41ea45da1a48a4958e54eeb34e09b571278e)
+2026-10-07 16:42:13.371+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 77 (0xcd1bb9e85a6944b4a5b0a55fef9d053aae8cb9249fe4e74c4ab5d03b7f8a7b0a) is already imported
+2026-10-07 16:42:13.372+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #77 / 9 tx / 32 pending / 1,382,666 (0.0%) gas / (0xcd1bb9e85a6944b4a5b0a55fef9d053aae8cb9249fe4e74c4ab5d03b7f8a7b0a)
+2026-10-07 16:42:15.327+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #78 / 9 tx / 23 pending / 1,382,738 (0.0%) gas / (0x593316346d23074757517aa40616b5ea1dbbb99843ef9ea93acb6930f4748c67)
+2026-10-07 16:42:15.328+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 78 (0x593316346d23074757517aa40616b5ea1dbbb99843ef9ea93acb6930f4748c67) is already imported
+2026-10-07 16:42:17.365+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 79 (0x81fb0ae1e28ed2bf34933357a08346e08664139a325405a5ae8b10e49dbda624) is already imported
+2026-10-07 16:42:17.366+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #79 / 9 tx / 14 pending / 1,382,702 (0.0%) gas / (0x81fb0ae1e28ed2bf34933357a08346e08664139a325405a5ae8b10e49dbda624)
+2026-10-07 16:42:19.332+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #80 / 9 tx / 5 pending / 1,382,754 (0.0%) gas / (0xc4dce5484b01882303a6f18f8b5fc77be73ce816e4b4a96f53bbeaf49f7d64cd)
+2026-10-07 16:42:21.348+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #81 / 5 tx / 0 pending / 768,230 (0.0%) gas / (0x413671f4643076f77bb29408fbf73e55f4a75118bb31c1059fc607002ec0188a)
+2026-10-07 16:42:23.287+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #82 / 0 tx / 0 pending / 0 (0.0%) gas / (0xbbaebf7c39a0843974ee10f882b0f02db49fe29341c1e389219b95524193b2e3)
+2026-10-07 16:42:25.299+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #83 / 0 tx / 0 om / 0 (0.0%) gas / (0xb450227673968846aa04e03ce7b5da21628196a619e5e59483bcff0759013f72) in 0.001s. Peers: 14
+2026-10-07 16:42:27.299+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 84 (0xa72d26346c879861474cddbac4aa0f0576df5fc8e1613b6e3fe5fd58a0b7443e) is already imported
+2026-10-07 16:42:27.301+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #84 / 0 tx / 0 pending / 0 (0.0%) gas / (0xa72d26346c879861474cddbac4aa0f0576df5fc8e1613b6e3fe5fd58a0b7443e)
+2026-10-07 16:42:29.776+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 85 (0x7d25a3727e1ba30a22aad81ac891f9beac31e514fa695694943b99bc684372f8) is already imported
+2026-10-07 16:42:29.777+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #85 / 30 tx / 653 pending / 7,259,100 (0.0%) gas / (0x7d25a3727e1ba30a22aad81ac891f9beac31e514fa695694943b99bc684372f8)
+2026-10-07 16:42:32.283+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 86 (0x31c50d83e4075aa0b9aa12bae46890a41964e1ad53d7afb85f319a6a24265cb9) is already imported
+2026-10-07 16:42:32.284+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #86 / 68 tx / 926 pending / 16,453,960 (0.0%) gas / (0x31c50d83e4075aa0b9aa12bae46890a41964e1ad53d7afb85f319a6a24265cb9)
+2026-10-07 16:42:34.296+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #87 / 68 tx / 858 pending / 16,453,960 (0.0%) gas / (0xa9e92612eaefe0567a899f359e67565d3e509a2783bad0af7dd7880d326998bb)
+2026-10-07 16:42:36.277+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 88 (0x6a85e4e8c5f72a6325fd9e6f6e6a9cc2ea57c0eccfd12ddfceb0b68d35bfe360) is already imported
+2026-10-07 16:42:36.278+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #88 / 68 tx / 790 pending / 16,453,960 (0.0%) gas / (0x6a85e4e8c5f72a6325fd9e6f6e6a9cc2ea57c0eccfd12ddfceb0b68d35bfe360)
+2026-10-07 16:42:38.366+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 89 (0xdf355f1560039dae9126e87208308c70f45c122918dc2f97b25ecbd84622b609) is already imported
+2026-10-07 16:42:38.367+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #89 / 68 tx / 722 pending / 16,453,960 (0.0%) gas / (0xdf355f1560039dae9126e87208308c70f45c122918dc2f97b25ecbd84622b609)
+2026-10-07 16:42:40.319+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #90 / 69 tx / 653 pending / 16,695,930 (0.0%) gas / (0x7ac3e3b4d6f2cc6b8a32a6d56967c90ff32c73868e6a88ba2d229ef1fec28afd)
+2026-10-07 16:42:42.289+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #91 / 69 tx / 584 pending / 16,695,930 (0.0%) gas / (0x8dc986c48a83bb148985bda50dd8ff2c7e265066ee9c79403d7ee52d96407bcf)
+2026-10-07 16:42:44.358+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #92 / 69 tx / 515 pending / 16,695,930 (0.0%) gas / (0xf81af2f3f0f07d2c3e6accfe66bac7c1cbe28928d11b09147cf356a8e7dd9c28)
+2026-10-07 16:42:46.316+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 93 (0x5e571031aab5dcd3223ae52645ee88efdcbbf4f18bec61fbf57863e042080b11) is already imported
+2026-10-07 16:42:46.316+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #93 / 69 tx / 446 pending / 16,695,930 (0.0%) gas / (0x5e571031aab5dcd3223ae52645ee88efdcbbf4f18bec61fbf57863e042080b11)
+2026-10-07 16:42:48.279+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 94 (0xd8c5c20aab6a422186198b2d8c906dcbebcbc28de32ce88f853fd0d91c9c0edb) is already imported
+2026-10-07 16:42:48.279+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #94 / 68 tx / 378 pending / 16,453,960 (0.0%) gas / (0xd8c5c20aab6a422186198b2d8c906dcbebcbc28de32ce88f853fd0d91c9c0edb)
+2026-10-07 16:42:50.311+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 95 (0x96ca0cfc971e4eaed3ca4f844dda689136a2bc7aa057f1f09a9c26190fc7e262) is already imported
+2026-10-07 16:42:50.312+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #95 / 68 tx / 310 pending / 16,453,960 (0.0%) gas / (0x96ca0cfc971e4eaed3ca4f844dda689136a2bc7aa057f1f09a9c26190fc7e262)
+2026-10-07 16:42:52.310+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 96 (0x449a48017cf1f016f1f9e94311ecccecb7056ae15416ca821db8e0de5fd9ef9c) is already imported
+2026-10-07 16:42:52.310+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #96 / 68 tx / 242 pending / 16,453,960 (0.0%) gas / (0x449a48017cf1f016f1f9e94311ecccecb7056ae15416ca821db8e0de5fd9ef9c)
+2026-10-07 16:42:54.270+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #97 / 68 tx / 174 pending / 16,453,960 (0.0%) gas / (0x7add932e5c3132ff0400b2d4d81d4b587e240f2a50276729d8b9260e10cc2866)
+2026-10-07 16:42:56.305+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 98 (0x8e1bfc978b361a28b67a7211840f5ffa4dbd3bec9653999bdd0f3c1f7bfe9d02) is already imported
+2026-10-07 16:42:56.305+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #98 / 68 tx / 106 pending / 16,453,960 (0.0%) gas / (0x8e1bfc978b361a28b67a7211840f5ffa4dbd3bec9653999bdd0f3c1f7bfe9d02)
+2026-10-07 16:42:58.365+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #99 / 68 tx / 38 pending / 16,453,960 (0.0%) gas / (0x3d980b89d0c4a9ad2590d2dac8af03dc70a383e15fe3fa0a40f4f8684d5c7ed2)
+2026-10-07 16:42:58.365+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 99 (0x3d980b89d0c4a9ad2590d2dac8af03dc70a383e15fe3fa0a40f4f8684d5c7ed2) is already imported
+2026-10-07 16:42:59.844+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #100 / 38 tx / 0 pending / 9,194,860 (0.0%) gas / (0xa37110e65782f6684cb562f55e23f5a1e11aae6bfab3a41b02a67d0f0d1b33f2)
+2026-10-07 16:43:01.270+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #101 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf49c86d9a18f8c77ccd6dd78f1271dfec853e3159c6d57fc75b507298c0af520)
+2026-10-07 16:43:03.277+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 102 (0xdbda49aa31949e088ace91abc84a9a2d7ab0bc4cee9dcde4639f46b18bdeefd4) is already imported
+2026-10-07 16:43:03.278+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #102 / 0 tx / 0 pending / 0 (0.0%) gas / (0xdbda49aa31949e088ace91abc84a9a2d7ab0bc4cee9dcde4639f46b18bdeefd4)
+2026-10-07 16:43:05.307+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 103 (0x3c97a10c46504d23ddf26c394b114c2603e394d8a390d1163597cd093461c463) is already imported
+2026-10-07 16:43:05.307+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #103 / 0 tx / 0 pending / 0 (0.0%) gas / (0x3c97a10c46504d23ddf26c394b114c2603e394d8a390d1163597cd093461c463)
+2026-10-07 16:43:07.281+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 104 (0xed33fc297ea497a61e76c196c715e6411eefbece29570a09f88030c89fe18516) is already imported
+2026-10-07 16:43:07.281+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #104 / 0 tx / 0 pending / 0 (0.0%) gas / (0xed33fc297ea497a61e76c196c715e6411eefbece29570a09f88030c89fe18516)
+2026-10-07 16:43:09.287+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #105 / 0 tx / 0 pending / 0 (0.0%) gas / (0x6de981290134f6d4b0ae6e84840db72545dcc849c12bbece978e780db41b22b4)
+2026-10-07 16:43:11.289+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #106 / 0 tx / 0 pending / 0 (0.0%) gas / (0x487f7a91e411a4708f0b6ed9020550604684069100e2c466d280619acfc0df38)
+2026-10-07 16:43:13.280+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 107 (0x567b3188a648c0f33f260acb7adf2f860b1793358a6699b6ed7299cf2757b89b) is already imported
+2026-10-07 16:43:13.284+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #107 / 0 tx / 0 pending / 0 (0.0%) gas / (0x567b3188a648c0f33f260acb7adf2f860b1793358a6699b6ed7299cf2757b89b)
+2026-10-07 16:43:15.339+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #108 / 9 tx / 119 pending / 1,382,662 (0.0%) gas / (0xecd98703df38a26cf7e91e67aceef21243cb09640b1784a775ed83790efcd784)
+2026-10-07 16:43:15.339+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 108 (0xecd98703df38a26cf7e91e67aceef21243cb09640b1784a775ed83790efcd784) is already imported
+2026-10-07 16:43:17.338+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #109 / 9 tx / 110 pending / 1,382,754 (0.0%) gas / (0x0dc76b10d63fd15e107dba68aac876239a0bf9500222e1ce90914cf4353be380)
+2026-10-07 16:43:17.338+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 109 (0x0dc76b10d63fd15e107dba68aac876239a0bf9500222e1ce90914cf4353be380) is already imported
+2026-10-07 16:43:19.289+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #110 / 9 tx / 101 pending / 1,382,774 (0.0%) gas / (0x6a4c9e2705ce1c9597a5f08761cbc3db537c61de1dbff9117343d9e7ef78ae64)
+2026-10-07 16:43:21.319+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #111 / 9 tx / 92 pending / 1,382,738 (0.0%) gas / (0xf466cacb420cb1bb0b74c2c4e36a4f90bfe09a83ee3edf1b0d227ce8b2628e8c)
+2026-10-07 16:43:21.319+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 111 (0xf466cacb420cb1bb0b74c2c4e36a4f90bfe09a83ee3edf1b0d227ce8b2628e8c) is already imported
+2026-10-07 16:43:23.302+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #112 / 9 tx / 83 pending / 1,382,642 (0.0%) gas / (0x02211e267af0f8a5855f02a19c171260b5c03a1a755928a7dfe0fff6c8f3d357)
+2026-10-07 16:43:25.345+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 113 (0x55c674ee7c1487fbc80731f1f6ba8cbb263eeaa40e4873c5104d5b322bc132b5) is already imported
+2026-10-07 16:43:25.346+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #113 / 8 tx / 75 pending / 1,229,052 (0.0%) gas / (0x55c674ee7c1487fbc80731f1f6ba8cbb263eeaa40e4873c5104d5b322bc132b5)
+2026-10-07 16:43:27.338+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #114 / 8 tx / 67 pending / 1,229,044 (0.0%) gas / (0xbe0bede6cdad94b650c7af5b6e5eb8a4416e80ab9809edaa398a61fe1846716e)
+2026-10-07 16:43:27.339+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 114 (0xbe0bede6cdad94b650c7af5b6e5eb8a4416e80ab9809edaa398a61fe1846716e) is already imported
+2026-10-07 16:43:29.321+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #115 / 8 tx / 59 pending / 1,229,040 (0.0%) gas / (0x099b9b0b4bf1f98d73c68aad1a121e5f8f92d03efef9f4daa7b9a6f690a3cc01)
+2026-10-07 16:43:29.325+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 115 (0x099b9b0b4bf1f98d73c68aad1a121e5f8f92d03efef9f4daa7b9a6f690a3cc01) is already imported
+2026-10-07 16:43:31.325+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 116 (0x894cc0ac1051c77a368ecc5d9a87cdbe21631aa36cd44ac633c1659a049edaae) is already imported
+2026-10-07 16:43:31.325+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #116 / 8 tx / 51 pending / 1,229,104 (0.0%) gas / (0x894cc0ac1051c77a368ecc5d9a87cdbe21631aa36cd44ac633c1659a049edaae)
+2026-10-07 16:43:33.337+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 117 (0x39bb3ea1fb7004403ee305bbda38afc6e96d405f1b9a7609fa8239c940cbfb0b) is already imported
+2026-10-07 16:43:33.337+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #117 / 8 tx / 43 pending / 1,229,048 (0.0%) gas / (0x39bb3ea1fb7004403ee305bbda38afc6e96d405f1b9a7609fa8239c940cbfb0b)
+2026-10-07 16:43:35.364+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 118 (0x530e8b6b9765a9178fd1219e049f73f2e22c55b490e5efd26c43179ecc9f3630) is already imported
+2026-10-07 16:43:35.364+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #118 / 8 tx / 35 pending / 1,229,096 (0.0%) gas / (0x530e8b6b9765a9178fd1219e049f73f2e22c55b490e5efd26c43179ecc9f3630)
+2026-10-07 16:43:37.324+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #119 / 8 tx / 27 pending / 1,229,052 (0.0%) gas / (0xc9f918fc42f0728c146b1b6bcd60158a2e20f6fee0b144210e2b2b706a49941f)
+2026-10-07 16:43:37.326+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 119 (0xc9f918fc42f0728c146b1b6bcd60158a2e20f6fee0b144210e2b2b706a49941f) is already imported
+2026-10-07 16:43:39.340+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #120 / 9 tx / 18 pending / 1,382,710 (0.0%) gas / (0xb154486191c4a962421cd979633ca29b88431296f0160b59a8ffc6e2eb1161e3)
+2026-10-07 16:43:39.340+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 120 (0xb154486191c4a962421cd979633ca29b88431296f0160b59a8ffc6e2eb1161e3) is already imported
+2026-10-07 16:43:41.340+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 121 (0x3f1fda51662c5c28a587c6e683e54a00e115546da4c3059002a7668da25366f5) is already imported
+2026-10-07 16:43:41.341+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #121 / 9 tx / 9 pending / 1,382,694 (0.0%) gas / (0x3f1fda51662c5c28a587c6e683e54a00e115546da4c3059002a7668da25366f5)
+2026-10-07 16:43:43.345+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 122 (0x14e81fe0935862e649b40d4ce87fc235ebd2cb16c05ed452072e90967abb372f) is already imported
+2026-10-07 16:43:43.345+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #122 / 9 tx / 0 pending / 1,382,682 (0.0%) gas / (0x14e81fe0935862e649b40d4ce87fc235ebd2cb16c05ed452072e90967abb372f)
+2026-10-07 16:43:45.294+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #123 / 0 tx / 0 pending / 0 (0.0%) gas / (0x37285848b8af8bfa5a279c19b2d9455567c18045bbbb17ed6ca46936c4f08c99)
+2026-10-07 16:43:47.274+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 124 (0x8e3af17c7c16ed05633081e483de25a44a76c46d134a59de4e6158a8ce22a0d0) is already imported
+2026-10-07 16:43:47.274+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #124 / 0 tx / 0 pending / 0 (0.0%) gas / (0x8e3af17c7c16ed05633081e483de25a44a76c46d134a59de4e6158a8ce22a0d0)
+2026-10-07 16:43:49.275+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #125 / 0 tx / 0 pending / 0 (0.0%) gas / (0x4bdb50bc4cd06355986b060c4f79e7ac42cdbe84418450e6bcb0996d38765cf8)
+2026-10-07 16:43:49.277+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 125 (0x4bdb50bc4cd06355986b060c4f79e7ac42cdbe84418450e6bcb0996d38765cf8) is already imported
+2026-10-07 16:43:51.530+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #126 / 12 tx / 287 pending / 2,903,640 (0.0%) gas / (0xb6421677eaff80d8f003ceecad6da8a437cb35b1b765ebc15a80fcd9fc906435)
+2026-10-07 16:43:51.530+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 126 (0xb6421677eaff80d8f003ceecad6da8a437cb35b1b765ebc15a80fcd9fc906435) is already imported
+2026-10-07 16:43:54.133+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 127 (0xc5a31a0f8f1727d446ff7e42efa6959515ef541c572629eff13eb37c36cb3bbe) is already imported
+2026-10-07 16:43:54.134+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #127 / 54 tx / 958 pending / 13,066,380 (0.0%) gas / (0xc5a31a0f8f1727d446ff7e42efa6959515ef541c572629eff13eb37c36cb3bbe)
+2026-10-07 16:43:56.330+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 128 (0x70207dbd8198d82775198a51f4ac24aa1fb0df16f3eab91e4e56b5a160c94bef) is already imported
+2026-10-07 16:43:56.331+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #128 / 68 tx / 890 pending / 16,453,960 (0.0%) gas / (0x70207dbd8198d82775198a51f4ac24aa1fb0df16f3eab91e4e56b5a160c94bef)
+2026-10-07 16:43:58.285+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #129 / 68 tx / 822 pending / 16,453,960 (0.0%) gas / (0xae91fbaad70d8fb89ff07fbf212978724c6c5fb86b7b3cf8c1186f378250a7c2)
+2026-10-07 16:44:00.267+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 130 (0x0022596cc95b156ee5b56a7d6a00fbba38a169ab2d408be10ff738b903ed91aa) is already imported
+2026-10-07 16:44:00.268+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #130 / 68 tx / 754 pending / 16,453,960 (0.0%) gas / (0x0022596cc95b156ee5b56a7d6a00fbba38a169ab2d408be10ff738b903ed91aa)
+2026-10-07 16:44:02.371+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 131 (0x532a58235e47223a6a5ec5c96b12e0e4681573b5a8ec398e9a1afff34e78df53) is already imported
+2026-10-07 16:44:02.374+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #131 / 68 tx / 686 pending / 16,453,960 (0.0%) gas / (0x532a58235e47223a6a5ec5c96b12e0e4681573b5a8ec398e9a1afff34e78df53)
+2026-10-07 16:44:04.340+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #132 / 68 tx / 618 pending / 16,453,960 (0.0%) gas / (0x26b8e5cfcc8259e79d5efbf70991539b69ddd5df879c7d05c2c9cc597c1620a4)
+2026-10-07 16:44:06.258+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #133 / 68 tx / 550 pending / 16,453,960 (0.0%) gas / (0x8d3b11636f0b64ad17d65b611dc7f29380961461e3fc9349dccf8f34a2cbf712)
+2026-10-07 16:44:08.367+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 134 (0x36ae30a4022f2b142ac27ff72616715abd416afe7eaa53cd96f12851682bc0b8) is already imported
+2026-10-07 16:44:08.368+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #134 / 68 tx / 482 pending / 16,453,960 (0.0%) gas / (0x36ae30a4022f2b142ac27ff72616715abd416afe7eaa53cd96f12851682bc0b8)
+2026-10-07 16:44:10.341+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #135 / 69 tx / 413 pending / 16,695,930 (0.0%) gas / (0x0140a0512d8b82060f4af8290c88ce8d42f3da9091834998e7729d9ce8ab8916)
+2026-10-07 16:44:12.363+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 136 (0xecbd9000b7d2e85f5912cd9e09b77589aaafb0e35ca61bd93a76e9a41638e496) is already imported
+2026-10-07 16:44:12.363+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #136 / 69 tx / 344 pending / 16,695,930 (0.0%) gas / (0xecbd9000b7d2e85f5912cd9e09b77589aaafb0e35ca61bd93a76e9a41638e496)
+2026-10-07 16:44:14.378+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 137 (0x68c07fd3d2948e2c50516a6b397cad2a267e059cd138f065e8ad747992adb442) is already imported
+2026-10-07 16:44:14.379+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #137 / 69 tx / 275 pending / 16,695,930 (0.0%) gas / (0x68c07fd3d2948e2c50516a6b397cad2a267e059cd138f065e8ad747992adb442)
+2026-10-07 16:44:16.359+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 138 (0xbf29a480e47741c80da8a2eb8a96ef8dccc24157e5f4153b429942181caaa8fa) is already imported
+2026-10-07 16:44:16.360+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #138 / 69 tx / 206 pending / 16,695,930 (0.0%) gas / (0xbf29a480e47741c80da8a2eb8a96ef8dccc24157e5f4153b429942181caaa8fa)
+2026-10-07 16:44:18.293+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #139 / 68 tx / 138 pending / 16,453,960 (0.0%) gas / (0xe97feb8d9285f5caad0805bf87ae7d9f33b2253ffc8def3fddd62372cec8325d)
+2026-10-07 16:44:20.347+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 140 (0xb67fedc6b04e614b5486de04306398389f6ebbb025ea999a3035cacd68821bdc) is already imported
+2026-10-07 16:44:20.347+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #140 / 68 tx / 70 pending / 16,453,960 (0.0%) gas / (0xb67fedc6b04e614b5486de04306398389f6ebbb025ea999a3035cacd68821bdc)
+2026-10-07 16:44:22.135+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 141 (0xb6f727dc711bb72dda5a27fcffa9bd465d38e2f3d0a78bf31942e16bbba09051) is already imported
+2026-10-07 16:44:22.135+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #141 / 56 tx / 14 pending / 13,550,320 (0.0%) gas / (0xb6f727dc711bb72dda5a27fcffa9bd465d38e2f3d0a78bf31942e16bbba09051)
+2026-10-07 16:44:23.551+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 142 (0x5d4007be7952882881a81f237ac48fd96b218364f9ba9ce98849be4dbda88bc5) is already imported
+2026-10-07 16:44:23.551+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #142 / 14 tx / 0 pending / 3,387,580 (0.0%) gas / (0x5d4007be7952882881a81f237ac48fd96b218364f9ba9ce98849be4dbda88bc5)
+2026-10-07 16:44:25.304+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #143 / 0 tx / 0 om / 0 (0.0%) gas / (0x935c545aa098d78434af3f5475e88ab84a9058ccda975540bb75afa9bda27878) in 0.003s. Peers: 14
+2026-10-07 16:44:27.278+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #144 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf019bbef0f44cf2f5545b03225c63bac90172e907038deaba2edde5f8e32f885)
+2026-10-07 16:44:27.279+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 144 (0xf019bbef0f44cf2f5545b03225c63bac90172e907038deaba2edde5f8e32f885) is already imported
+2026-10-07 16:44:29.272+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #145 / 0 tx / 0 pending / 0 (0.0%) gas / (0x50ca839a16a49271956777f4daab44b25f43fa12600c0b2b04185002ebd39689)
+2026-10-07 16:44:31.295+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #146 / 0 tx / 0 pending / 0 (0.0%) gas / (0xfd26e8d92800a7b6100f48c70ff2908dc6547c8036482fc4fbea0f8b307fa21f)
+2026-10-07 16:44:33.300+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #147 / 0 tx / 0 pending / 0 (0.0%) gas / (0xd10d6ba4bddb56dae665db2d8cb3e8b6f7f8183951e073a568e88aa5be3f9c94)
+2026-10-07 16:44:33.300+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 147 (0xd10d6ba4bddb56dae665db2d8cb3e8b6f7f8183951e073a568e88aa5be3f9c94) is already imported
+2026-10-07 16:44:35.325+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #148 / 0 tx / 0 pending / 0 (0.0%) gas / (0x7558ae670d283ff8f944ad109460775e9599cd46d410c1497526ca39dd66b7c0)
+2026-10-07 16:44:35.326+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 148 (0x7558ae670d283ff8f944ad109460775e9599cd46d410c1497526ca39dd66b7c0) is already imported
+2026-10-07 16:44:37.284+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #149 / 0 tx / 0 pending / 0 (0.0%) gas / (0x4b83b2d67d19e3a53ef8d47f074fb815bd3a1145e267f74c3e4a2880015127a2)
+2026-10-07 16:44:37.286+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 149 (0x4b83b2d67d19e3a53ef8d47f074fb815bd3a1145e267f74c3e4a2880015127a2) is already imported
+2026-10-07 16:44:39.295+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 150 (0xaeefc954552f3ea79498da7441b4f9ae54f5798750ed069b19028efdd706ded5) is already imported
+2026-10-07 16:44:39.295+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #150 / 0 tx / 0 pending / 0 (0.0%) gas / (0xaeefc954552f3ea79498da7441b4f9ae54f5798750ed069b19028efdd706ded5)
+2026-10-07 16:44:41.279+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #151 / 0 tx / 0 pending / 0 (0.0%) gas / (0x93c60284bd0ea2cb1a403a4fee5b379a29c485eb7e0c8b81b6c9355a31812148)
+2026-10-07 16:44:43.332+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 152 (0xa54abf375cd7d9b4c037c78d38dbe0b7038eace5a6c236eecff5f60976f4c843) is already imported
+2026-10-07 16:44:43.332+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #152 / 9 tx / 119 pending / 1,382,754 (0.0%) gas / (0xa54abf375cd7d9b4c037c78d38dbe0b7038eace5a6c236eecff5f60976f4c843)
+2026-10-07 16:44:45.390+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #153 / 9 tx / 110 pending / 1,382,734 (0.0%) gas / (0xc804f086f58b72c9306d4a86f2b493e35864e4c65e46551e8140574a516bdb51)
+2026-10-07 16:44:47.356+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #154 / 9 tx / 101 pending / 1,382,666 (0.0%) gas / (0x9b49531eb8f1a718a82bd3741ab09a264a2d0628d0eab3022737796d051154f4)
+2026-10-07 16:44:49.318+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 155 (0xecc567f743decb657c904a53589058ac13274a47594382ec93a46d92bdb46811) is already imported
+2026-10-07 16:44:49.318+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #155 / 9 tx / 92 pending / 1,382,698 (0.0%) gas / (0xecc567f743decb657c904a53589058ac13274a47594382ec93a46d92bdb46811)
+2026-10-07 16:44:51.372+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 156 (0xe42417fdd1f0e5f74b514d006b02d60c46ff30176a28c3105ca90a8fba5d7ee7) is already imported
+2026-10-07 16:44:51.372+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #156 / 9 tx / 83 pending / 1,382,614 (0.0%) gas / (0xe42417fdd1f0e5f74b514d006b02d60c46ff30176a28c3105ca90a8fba5d7ee7)
+2026-10-07 16:44:53.356+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 157 (0x5fa2088e4c453eaee38de4a212c7768e501b21567eda731d039762015bf157cb) is already imported
+2026-10-07 16:44:53.357+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #157 / 9 tx / 74 pending / 1,382,602 (0.0%) gas / (0x5fa2088e4c453eaee38de4a212c7768e501b21567eda731d039762015bf157cb)
+2026-10-07 16:44:55.315+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #158 / 8 tx / 66 pending / 1,229,044 (0.0%) gas / (0xde272aa3b4f5fe8714d7161fc82667afdb67e8be842ec714dbc8bc18e74f26b8)
+2026-10-07 16:44:57.363+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #159 / 8 tx / 58 pending / 1,229,104 (0.0%) gas / (0x1437e05c4175033e23c37d12500c7ffb2aebf1b8f14a9ca2033a2aeabbbed8c1)
+2026-10-07 16:44:57.363+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 159 (0x1437e05c4175033e23c37d12500c7ffb2aebf1b8f14a9ca2033a2aeabbbed8c1) is already imported
+2026-10-07 16:44:59.320+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 160 (0x45c484bbd37097f1787132c77054f48bce196f656ec74894749476508e063998) is already imported
+2026-10-07 16:44:59.320+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #160 / 8 tx / 50 pending / 1,229,020 (0.0%) gas / (0x45c484bbd37097f1787132c77054f48bce196f656ec74894749476508e063998)
+2026-10-07 16:45:01.340+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 161 (0xa2f15118ab98cbe8602af3aabcbd79f1c87dee432af0ae13dc75a351be9d0eda) is already imported
+2026-10-07 16:45:01.340+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #161 / 8 tx / 42 pending / 1,229,020 (0.0%) gas / (0xa2f15118ab98cbe8602af3aabcbd79f1c87dee432af0ae13dc75a351be9d0eda)
+2026-10-07 16:45:03.346+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 162 (0x87f7527e15330e04e939f3ee97c9d5eece6724624b4702d44d9ec79d43fcc3dd) is already imported
+2026-10-07 16:45:03.346+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #162 / 8 tx / 34 pending / 1,229,044 (0.0%) gas / (0x87f7527e15330e04e939f3ee97c9d5eece6724624b4702d44d9ec79d43fcc3dd)
+2026-10-07 16:45:05.373+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #163 / 8 tx / 26 pending / 1,229,056 (0.0%) gas / (0xe883b860df075e5a6b338935dbba68a9b713a78d4dac2fc09596f36e1dd87813)
+2026-10-07 16:45:07.353+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 164 (0xb3580d6fad252a86082f1499558f423c6f22563461b2201f33e637c00a126119) is already imported
+2026-10-07 16:45:07.354+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #164 / 8 tx / 18 pending / 1,229,084 (0.0%) gas / (0xb3580d6fad252a86082f1499558f423c6f22563461b2201f33e637c00a126119)
+2026-10-07 16:45:09.348+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 165 (0xef780c76bae875d86d1cfefdb9fa786d398243b64dda310f84230afb27876af9) is already imported
+2026-10-07 16:45:09.349+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #165 / 9 tx / 9 pending / 1,382,754 (0.0%) gas / (0xef780c76bae875d86d1cfefdb9fa786d398243b64dda310f84230afb27876af9)
+2026-10-07 16:45:11.357+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #166 / 9 tx / 0 pending / 1,382,690 (0.0%) gas / (0x27177fa309f3213b8459803843bde451f2f369d8cbe430d7f8e0dea5e6f7dffe)
+2026-10-07 16:45:13.272+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #167 / 0 tx / 0 pending / 0 (0.0%) gas / (0xec568a1d4f801f8cfbda9586d8e0f27804536294e41bff11fbf500b1c2d36310)
+2026-10-07 16:45:15.294+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #168 / 0 tx / 0 pending / 0 (0.0%) gas / (0x5f91ec67855c7144b8f5b4a31c2cb53d1ba05a5aa0cf58c6667ad468377e94fe)
+2026-10-07 16:45:17.283+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #169 / 0 tx / 0 pending / 0 (0.0%) gas / (0x5c81abb62ee5fd71589f01e2c208ac1cde04c8c467142b1251e78648a2917111)
+2026-10-07 16:45:19.438+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #170 / 7 tx / 184 pending / 1,693,790 (0.0%) gas / (0x784ae19caf423b0033f905e921c0a8f05741f87d8af27d8179e2f30e0d06def7)
+2026-10-07 16:45:22.108+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #171 / 54 tx / 963 pending / 13,066,380 (0.0%) gas / (0x1bb1e70a16a28a7f42f9c33c9b93383a52d12801f7446343fe0e79db0d52f90b)
+2026-10-07 16:45:24.403+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 172 (0x0adecd0d6f13def10fec7ae47831248c18b6f2f878817880195d7ad6eb61e02d) is already imported
+2026-10-07 16:45:24.404+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #172 / 68 tx / 895 pending / 16,453,960 (0.0%) gas / (0x0adecd0d6f13def10fec7ae47831248c18b6f2f878817880195d7ad6eb61e02d)
+2026-10-07 16:45:26.356+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 173 (0xae4203533f40576353522b6cf3b26dcca13a697453884f40ff3e8d085187ded3) is already imported
+2026-10-07 16:45:26.357+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #173 / 68 tx / 827 pending / 16,453,960 (0.0%) gas / (0xae4203533f40576353522b6cf3b26dcca13a697453884f40ff3e8d085187ded3)
+2026-10-07 16:45:28.387+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #174 / 68 tx / 759 pending / 16,453,960 (0.0%) gas / (0xe65aaef021509c1b63189f0a056f9a2da607a808597fceda8e856982b8d3849b)
+2026-10-07 16:45:28.388+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 174 (0xe65aaef021509c1b63189f0a056f9a2da607a808597fceda8e856982b8d3849b) is already imported
+2026-10-07 16:45:30.362+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 175 (0xb81ce163ce2143e38fbfbe773055dcb60e14052307104e16144ea1adb5bc24dd) is already imported
+2026-10-07 16:45:30.362+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #175 / 68 tx / 691 pending / 16,453,960 (0.0%) gas / (0xb81ce163ce2143e38fbfbe773055dcb60e14052307104e16144ea1adb5bc24dd)
+2026-10-07 16:45:32.302+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #176 / 68 tx / 623 pending / 16,453,960 (0.0%) gas / (0xd9f3c0040d3c7385a68387b3eb3db28f8c947a1475194b7935d90d438e297137)
+2026-10-07 16:45:34.433+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #177 / 68 tx / 555 pending / 16,453,960 (0.0%) gas / (0x0464d231933f36fe436d2392b07f71ef917263091b43594ed31d341b27144a67)
+2026-10-07 16:45:36.314+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #178 / 68 tx / 487 pending / 16,453,960 (0.0%) gas / (0x6eacebee28ad67f36f1e59a26cf38141e7b22d8e69b56c86ea330521a3c936e5)
+2026-10-07 16:45:36.313+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 178 (0x6eacebee28ad67f36f1e59a26cf38141e7b22d8e69b56c86ea330521a3c936e5) is already imported
+2026-10-07 16:45:38.308+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #179 / 68 tx / 419 pending / 16,453,960 (0.0%) gas / (0x8b8608d0b3c339176700098808ca963024161fb7cc0599f68d26d5e08a36c0db)
+2026-10-07 16:45:40.362+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 180 (0xe8e6fc9422e3445a18719cc54e06281fae146faf6c1da7e67373e34bfd4ae44e) is already imported
+2026-10-07 16:45:40.363+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #180 / 69 tx / 350 pending / 16,695,930 (0.0%) gas / (0xe8e6fc9422e3445a18719cc54e06281fae146faf6c1da7e67373e34bfd4ae44e)
+2026-10-07 16:45:42.329+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #181 / 69 tx / 281 pending / 16,695,930 (0.0%) gas / (0x9e5ed03ca70020529817f42c5d3c3b7716dc8124951b13a27f48ebd912852c33)
+2026-10-07 16:45:44.349+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #182 / 69 tx / 212 pending / 16,695,930 (0.0%) gas / (0x4231e3fa8515a1db37366f714264630d9d16b00d6ecff8f306a671a2729037e1)
+2026-10-07 16:45:46.317+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #183 / 69 tx / 143 pending / 16,695,930 (0.0%) gas / (0xdd405dbbc1b5a56ba0489b31c8e50233ba27bf19e52b7a37c7d00432f8248b82)
+2026-10-07 16:45:48.336+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #184 / 68 tx / 75 pending / 16,453,960 (0.0%) gas / (0xa61dcb1c9ae0b73e015a1feebfc150c301810d5f9e990beee489992be0065d58)
+2026-10-07 16:45:50.219+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 185 (0xa689f273bfe97f553c4b43f9bd6660af45cfab063d4f4db2e0602710f0c8d959) is already imported
+2026-10-07 16:45:50.219+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #185 / 61 tx / 14 pending / 14,760,170 (0.0%) gas / (0xa689f273bfe97f553c4b43f9bd6660af45cfab063d4f4db2e0602710f0c8d959)
+2026-10-07 16:45:51.570+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 186 (0xc1b52e8253feaeae94e4bd0cf23e6470ca6851951d1a376c56f47f2243a9ef7c) is already imported
+2026-10-07 16:45:51.570+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #186 / 14 tx / 0 pending / 3,387,580 (0.0%) gas / (0xc1b52e8253feaeae94e4bd0cf23e6470ca6851951d1a376c56f47f2243a9ef7c)
+2026-10-07 16:45:53.295+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #187 / 0 tx / 0 pending / 0 (0.0%) gas / (0x779b338cfabfe6bfaa74430da7a7b0b45f3e605d3916a0894d0258179667344c)
+2026-10-07 16:45:53.299+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 187 (0x779b338cfabfe6bfaa74430da7a7b0b45f3e605d3916a0894d0258179667344c) is already imported
+2026-10-07 16:45:55.309+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Imported #188 / 0 tx / 0 om / 0 (0.0%) gas / (0xae79b28dc93017178f2ecfb9a7b2d75068ac2999504677f17fec6864a6e21c9f) in 0.001s. Peers: 14
+2026-10-07 16:45:57.276+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #189 / 0 tx / 0 pending / 0 (0.0%) gas / (0xeb4c458e73d2a09ec0db1512cce119e7aa89733d53cd149e94c8d02d821a0da4)
+2026-10-07 16:45:59.279+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #190 / 0 tx / 0 pending / 0 (0.0%) gas / (0x36b7dc22575ec93a98f53b52cbcb17ecccb51c4672c5a272930bfe2658e139fa)
+2026-10-07 16:46:01.289+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #191 / 0 tx / 0 pending / 0 (0.0%) gas / (0x5ef5cc1d9a37fb2feb83a771bfe7302a9d67b7ba7dbc7ba77a94b86c0c4856a6)
+2026-10-07 16:46:03.283+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #192 / 0 tx / 0 pending / 0 (0.0%) gas / (0x2ddf85b7bd4b28034c4dc4cebfed90a7c3a09a6ce6bdfe76c8b2ebcb6c0e9dfb)
+2026-10-07 16:46:05.287+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #193 / 0 tx / 0 pending / 0 (0.0%) gas / (0x971b906c1531f6372d11184434c070327fda589d7b9ff3f4e137acf5823d7a7a)
+2026-10-07 16:46:07.269+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #194 / 0 tx / 0 pending / 0 (0.0%) gas / (0x34a24d05f847a0869892eb96fa86995a9f2f199d3a123566a4065381172c4b99)
+2026-10-07 16:46:09.294+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #195 / 9 tx / 119 pending / 1,382,654 (0.0%) gas / (0xc73e5a9f4028a2e1c23ad5f93620c0017db06ca0876703f666d20b56e20f54cc)
+2026-10-07 16:46:11.313+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #196 / 9 tx / 110 pending / 1,382,678 (0.0%) gas / (0x0d220e262cf333ea5de958ec5a882891fd76ef18039fa1bda58ae23f9f146871)
+2026-10-07 16:46:13.351+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #197 / 9 tx / 101 pending / 1,382,654 (0.0%) gas / (0x47e4db92a3bb8929b09738fc108beab0a8610bb5f715d503e57600b2f3147956)
+2026-10-07 16:46:15.368+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #198 / 9 tx / 92 pending / 1,382,758 (0.0%) gas / (0x4690bccf67025f471106a18e069709290df2fe8b7d9f168267a3e5cc7efad1d5)
+2026-10-07 16:46:15.368+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 198 (0x4690bccf67025f471106a18e069709290df2fe8b7d9f168267a3e5cc7efad1d5) is already imported
+2026-10-07 16:46:17.362+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 199 (0xfaae28f9eeea0950784fe73a3af57c9fe4ac8939ead3e48e4f3cee1b12e6bf8f) is already imported
+2026-10-07 16:46:17.363+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #199 / 9 tx / 83 pending / 1,382,670 (0.0%) gas / (0xfaae28f9eeea0950784fe73a3af57c9fe4ac8939ead3e48e4f3cee1b12e6bf8f)
+2026-10-07 16:46:19.334+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 200 (0xbfe90be2fe9c9c1a3d48f0a6dedaecfbcc4884535886219c7371e1711ff02193) is already imported
+2026-10-07 16:46:19.334+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #200 / 9 tx / 74 pending / 1,382,674 (0.0%) gas / (0xbfe90be2fe9c9c1a3d48f0a6dedaecfbcc4884535886219c7371e1711ff02193)
+2026-10-07 16:46:21.315+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #201 / 9 tx / 65 pending / 1,382,690 (0.0%) gas / (0xdef290f02dedde6d9750a0ce607c5ac66ebae81139faccb9706367acf039558a)
+2026-10-07 16:46:23.350+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 202 (0x76b2e3b2315839c7b109661169dbeb39cc71992ac840c820bd3ed5caeb5742e2) is already imported
+2026-10-07 16:46:23.351+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #202 / 9 tx / 56 pending / 1,382,734 (0.0%) gas / (0x76b2e3b2315839c7b109661169dbeb39cc71992ac840c820bd3ed5caeb5742e2)
+2026-10-07 16:46:25.326+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #203 / 8 tx / 48 pending / 1,229,108 (0.0%) gas / (0xb517de86e620a679ae3db93d8e8fb635eeaf35cd7f075d2293216a02c6c94b64)
+2026-10-07 16:46:27.362+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #204 / 8 tx / 40 pending / 1,229,116 (0.0%) gas / (0xdcb926b507b579080ecf379532ce7321095c0b5cba26e9db0cdb5b19db33fad2)
+2026-10-07 16:46:29.300+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #205 / 8 tx / 32 pending / 1,229,092 (0.0%) gas / (0x796463ef5bace2eed050312316f10e7326f28b3c8b101af5851d1b08d93893a4)
+2026-10-07 16:46:31.326+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #206 / 8 tx / 24 pending / 1,229,080 (0.0%) gas / (0xf6e2a3a6ab01c9279e4a178c6ed815c079a865699c04dedd4f33089b9aba60f3)
+2026-10-07 16:46:31.327+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 206 (0xf6e2a3a6ab01c9279e4a178c6ed815c079a865699c04dedd4f33089b9aba60f3) is already imported
+2026-10-07 16:46:33.348+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 207 (0xe0c782753c27a831fdadc57bd30d749ec991997c9e912db79be49c38cb60aef7) is already imported
+2026-10-07 16:46:33.348+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #207 / 8 tx / 16 pending / 1,229,060 (0.0%) gas / (0xe0c782753c27a831fdadc57bd30d749ec991997c9e912db79be49c38cb60aef7)
+2026-10-07 16:46:35.320+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #208 / 8 tx / 8 pending / 1,229,080 (0.0%) gas / (0xfa44bf5b3d8e1135f56635aff0281cf7102bba076522f3fb2676a18dc0662ede)
+2026-10-07 16:46:37.298+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #209 / 8 tx / 0 pending / 1,229,036 (0.0%) gas / (0xd30bcea56f7a5d9aa7f1a4c394b8ba6a335d9a2abf1ebfad4a94310c4a1f5bcf)
+2026-10-07 16:46:39.259+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #210 / 0 tx / 0 pending / 0 (0.0%) gas / (0xcded7f075120614c1cc4085456ae67d22de0e76cd0ddbeae2bd890a9e4094a68)
+2026-10-07 16:46:41.277+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #211 / 0 tx / 0 pending / 0 (0.0%) gas / (0x8ae91d4e92f2c6288013494ba8a77b3edb5aa0a4746ca68d68db16a57bb4d583)
+2026-10-07 16:46:43.277+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #212 / 0 tx / 0 pending / 0 (0.0%) gas / (0xd61471783a47cb0bba8b860c2a5267ad9ddf468584ae2b15916b615e29d1ca4e)
+2026-10-07 16:46:45.606+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #213 / 19 tx / 410 pending / 4,597,430 (0.0%) gas / (0x229c592794b1bd0492e3d0f9e41583d231d53d39dd68935e5f26471941d3fffc)
+2026-10-07 16:46:48.234+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 214 (0x6f0916a63625bffc2c27c574a1ccb5cd53ca6565f84aed693ae4d6acc2b62a83) is already imported
+2026-10-07 16:46:48.235+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #214 / 62 tx / 943 pending / 15,002,140 (0.0%) gas / (0x6f0916a63625bffc2c27c574a1ccb5cd53ca6565f84aed693ae4d6acc2b62a83)
+2026-10-07 16:46:50.391+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 215 (0x173530ad6ad4afde44b580ba3c2d68c2ac410b50a7fdbf3e9b2f2c2ef09980a8) is already imported
+2026-10-07 16:46:50.392+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #215 / 68 tx / 875 pending / 16,453,960 (0.0%) gas / (0x173530ad6ad4afde44b580ba3c2d68c2ac410b50a7fdbf3e9b2f2c2ef09980a8)
+2026-10-07 16:46:52.290+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 216 (0x5e7a2564d43799be32ae9e898714974549dedb9802ebce5298a96455bbc1bd28) is already imported
+2026-10-07 16:46:52.290+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #216 / 68 tx / 807 pending / 16,453,960 (0.0%) gas / (0x5e7a2564d43799be32ae9e898714974549dedb9802ebce5298a96455bbc1bd28)
+2026-10-07 16:46:54.335+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 217 (0x712303043756bf0cddaa416589749190d28b383cecab119380c1243a57f9afe1) is already imported
+2026-10-07 16:46:54.336+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #217 / 68 tx / 739 pending / 16,453,960 (0.0%) gas / (0x712303043756bf0cddaa416589749190d28b383cecab119380c1243a57f9afe1)
+2026-10-07 16:46:56.325+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #218 / 68 tx / 671 pending / 16,453,960 (0.0%) gas / (0x17a5f48ae0171b691f7d738ee9b9ba2b7b8f138f4580bafb3eb85fed31bd1077)
+2026-10-07 16:46:58.350+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #219 / 68 tx / 603 pending / 16,453,960 (0.0%) gas / (0xa65fd8b09e80fabb773dfe7a478fa5be8394f71d332027d515dcce18c05ea571)
+2026-10-07 16:47:00.235+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #220 / 68 tx / 535 pending / 16,453,960 (0.0%) gas / (0x8e765e4b0d2cd85c94b5d0d337213798521823223f719d6bcc15ae1269256916)
+2026-10-07 16:47:02.330+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 221 (0xf66c9c3e785857ddd735bb156ab9e6a762d9f6a668c1951c873b8d97d949b8b0) is already imported
+2026-10-07 16:47:02.331+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #221 / 68 tx / 467 pending / 16,453,960 (0.0%) gas / (0xf66c9c3e785857ddd735bb156ab9e6a762d9f6a668c1951c873b8d97d949b8b0)
+2026-10-07 16:47:04.337+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 222 (0xe23468a68825d282e65f20d9d426e7d2fc60fde98d30bd3cc968f27f3f0192de) is already imported
+2026-10-07 16:47:04.338+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #222 / 68 tx / 399 pending / 16,453,960 (0.0%) gas / (0xe23468a68825d282e65f20d9d426e7d2fc60fde98d30bd3cc968f27f3f0192de)
+2026-10-07 16:47:06.297+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 223 (0x1c3381bc921ec5cd66f6fd12db4168d58e7fadafb56cf435947268d309228233) is already imported
+2026-10-07 16:47:06.298+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #223 / 68 tx / 331 pending / 16,453,960 (0.0%) gas / (0x1c3381bc921ec5cd66f6fd12db4168d58e7fadafb56cf435947268d309228233)
+2026-10-07 16:47:08.296+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 224 (0x69526c59add2140e494f10e00c0cfb5619bd90fa9b3fb575832523f46a461ed3) is already imported
+2026-10-07 16:47:08.297+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #224 / 68 tx / 263 pending / 16,453,960 (0.0%) gas / (0x69526c59add2140e494f10e00c0cfb5619bd90fa9b3fb575832523f46a461ed3)
+2026-10-07 16:47:10.331+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 225 (0x2900aa7edb812a7b512ef8e2a4fe649ad00f9048eacef5ba964d6024238b1a25) is already imported
+2026-10-07 16:47:10.332+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #225 / 69 tx / 194 pending / 16,695,930 (0.0%) gas / (0x2900aa7edb812a7b512ef8e2a4fe649ad00f9048eacef5ba964d6024238b1a25)
+2026-10-07 16:47:12.315+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #226 / 69 tx / 125 pending / 16,695,930 (0.0%) gas / (0xafaa852b19569f8e39be3ece5e24a5d73722524d51c472bd33e31616a726374f)
+2026-10-07 16:47:12.318+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 226 (0xafaa852b19569f8e39be3ece5e24a5d73722524d51c472bd33e31616a726374f) is already imported
+2026-10-07 16:47:14.352+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 227 (0xb688307d18cf9e881bcf09a825088f592575e6363d6198c462a1d9695e49538b) is already imported
+2026-10-07 16:47:14.353+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #227 / 69 tx / 56 pending / 16,695,930 (0.0%) gas / (0xb688307d18cf9e881bcf09a825088f592575e6363d6198c462a1d9695e49538b)
+2026-10-07 16:47:16.031+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #228 / 50 tx / 6 pending / 12,098,500 (0.0%) gas / (0x3eb43110f27ad9cb6a0f4fe3da019fde036976ddf1c8723e4b037c594faa446e)
+2026-10-07 16:47:17.474+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #229 / 6 tx / 0 pending / 1,451,820 (0.0%) gas / (0x8c9f95769825517f9fb524793cddadbb7ddc201386f38963d1b07a63b2b097c9)
+2026-10-07 16:47:17.474+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 229 (0x8c9f95769825517f9fb524793cddadbb7ddc201386f38963d1b07a63b2b097c9) is already imported
+2026-10-07 16:47:19.277+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 230 (0xaab79d0086f7c9b448410f73e4d94887115f212abe0fc59b249b4ac45b6470f4) is already imported
+2026-10-07 16:47:19.277+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #230 / 0 tx / 0 pending / 0 (0.0%) gas / (0xaab79d0086f7c9b448410f73e4d94887115f212abe0fc59b249b4ac45b6470f4)
+2026-10-07 16:47:21.294+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #231 / 0 tx / 0 pending / 0 (0.0%) gas / (0x938f38520049b11e22e031163a569a5c63710ef4a07644f009971562cae830a8)
+2026-10-07 16:47:23.274+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #232 / 0 tx / 0 pending / 0 (0.0%) gas / (0xeb8e24b5fe28a44120dcb4c6d6cdb0e173da6ba4dc8724b343fca47c35b2156a)
+2026-10-07 16:47:23.276+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 232 (0xeb8e24b5fe28a44120dcb4c6d6cdb0e173da6ba4dc8724b343fca47c35b2156a) is already imported
+2026-10-07 16:47:25.313+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 233 (0xf76a7236d915c12176fd6eeb36d1dbcd8ef76a1bf1a0e1ae7ec1bfd237fea8a0) is already imported
+2026-10-07 16:47:25.313+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #233 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf76a7236d915c12176fd6eeb36d1dbcd8ef76a1bf1a0e1ae7ec1bfd237fea8a0)
+2026-10-07 16:47:27.281+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 234 (0x17baf83ad7b2e0fa255085e86ca3a20a5699ff58b8848055004317e7dc4c1ed5) is already imported
+2026-10-07 16:47:27.281+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #234 / 0 tx / 0 pending / 0 (0.0%) gas / (0x17baf83ad7b2e0fa255085e86ca3a20a5699ff58b8848055004317e7dc4c1ed5)
+2026-10-07 16:47:29.273+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #235 / 0 tx / 0 pending / 0 (0.0%) gas / (0x34ade9d1cc049993d34350fd7884b59966ec429b729a7c42986a8f74e08a2532)
+2026-10-07 16:47:31.277+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #236 / 0 tx / 0 pending / 0 (0.0%) gas / (0xacceceef6db7bf04f2cf1c8204745b5c61f64ab8f29569b3639fd4154368059c)
+2026-10-07 16:47:33.318+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #237 / 8 tx / 120 pending / 1,229,104 (0.0%) gas / (0x87864172135e10f178ae4885796dc1d6ad41c646bb383c3c11a71c93879c0cc8)
+2026-10-07 16:47:35.377+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 238 (0xa8ab38fe47429aca0d0053350ec0cd0539c464918fe113389ff083bc1bc290e3) is already imported
+2026-10-07 16:47:35.377+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #238 / 8 tx / 112 pending / 1,229,084 (0.0%) gas / (0xa8ab38fe47429aca0d0053350ec0cd0539c464918fe113389ff083bc1bc290e3)
+2026-10-07 16:47:37.303+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #239 / 8 tx / 104 pending / 1,229,036 (0.0%) gas / (0x5d01529f82b545f618e9fd32e7f1549cc629886921eda3bc6140776387fd610b)
+2026-10-07 16:47:39.301+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #240 / 9 tx / 95 pending / 1,382,658 (0.0%) gas / (0x0820d5700af9dea4fd986b6f3bbed84fb986ec14046f141625e94a493fdba684)
+2026-10-07 16:47:41.321+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #241 / 9 tx / 86 pending / 1,382,658 (0.0%) gas / (0x5a2d7933bae0332c05b7c2d4bfd97934db68832f21c399c592f44d1e39a48fca)
+2026-10-07 16:47:43.330+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #242 / 9 tx / 77 pending / 1,382,686 (0.0%) gas / (0x1dd3e3f1d51469d44e34793c97e1f0f87dc30b13a5a934786baad6bb7a2f728e)
+2026-10-07 16:47:45.403+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 243 (0x858a50261e90909c4aebcdd448b285e4b72cd1240d1a4c68c8ab04312fcd526a) is already imported
+2026-10-07 16:47:45.403+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #243 / 9 tx / 68 pending / 1,382,674 (0.0%) gas / (0x858a50261e90909c4aebcdd448b285e4b72cd1240d1a4c68c8ab04312fcd526a)
+2026-10-07 16:47:47.387+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #244 / 9 tx / 59 pending / 1,382,726 (0.0%) gas / (0x8546e2de4321e383e0ba8b11922236baac5b78811bd155b9f7353e436da6cace)
+2026-10-07 16:47:47.387+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 244 (0x8546e2de4321e383e0ba8b11922236baac5b78811bd155b9f7353e436da6cace) is already imported
+2026-10-07 16:47:49.323+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #245 / 9 tx / 50 pending / 1,382,642 (0.0%) gas / (0x523a4fa1bbffb3342909198e95f2e7a427bdf604a213fc3806e79753213eaf5d)
+2026-10-07 16:47:49.322+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 245 (0x523a4fa1bbffb3342909198e95f2e7a427bdf604a213fc3806e79753213eaf5d) is already imported
+2026-10-07 16:47:51.323+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #246 / 9 tx / 41 pending / 1,382,730 (0.0%) gas / (0x9223387ab1717599a5e73464d0aa83022dff2c094b1d78ac13ca30a935eedb7a)
+2026-10-07 16:47:53.358+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 247 (0xbb89a35ff1cddb6ec0b9005191550c045bd1c6ed9219735357e3b924835389fd) is already imported
+2026-10-07 16:47:53.358+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #247 / 9 tx / 32 pending / 1,382,706 (0.0%) gas / (0xbb89a35ff1cddb6ec0b9005191550c045bd1c6ed9219735357e3b924835389fd)
+2026-10-07 16:47:55.350+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 248 (0x584296582ab76571a41235181c9dc9a974aea0a10c90129f917f0f288c5a97c2) is already imported
+2026-10-07 16:47:55.350+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #248 / 8 tx / 24 pending / 1,229,052 (0.0%) gas / (0x584296582ab76571a41235181c9dc9a974aea0a10c90129f917f0f288c5a97c2)
+2026-10-07 16:47:57.340+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #249 / 8 tx / 16 pending / 1,229,092 (0.0%) gas / (0x1742d6d088d24c73183f155496415f9aba3f22405073bb392a1b01015d9a6c8d)
+2026-10-07 16:47:59.328+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 250 (0xbff34d276e7e3510f9917b4fd3670620543a987f1da174b625650f4afa6fff4a) is already imported
+2026-10-07 16:47:59.328+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #250 / 8 tx / 8 pending / 1,229,072 (0.0%) gas / (0xbff34d276e7e3510f9917b4fd3670620543a987f1da174b625650f4afa6fff4a)
+2026-10-07 16:48:01.351+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #251 / 8 tx / 0 pending / 1,229,036 (0.0%) gas / (0x55c115418dd1ed5ccf310f05bb922ae0aa045a7eb67d41597921e122b53048c0)
+2026-10-07 16:48:03.283+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #252 / 0 tx / 0 pending / 0 (0.0%) gas / (0x45c9935250df9beb8a013966a03b79a6eb1cce4601f8563dbdfa0d3762776fb9)
+2026-10-07 16:48:05.295+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #253 / 0 tx / 0 pending / 0 (0.0%) gas / (0x65c8a20353dc1bb506876c548a09c5683c7362a070caa80001c9c9cf3e277a75)
+2026-10-07 16:48:07.288+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Produced #254 / 0 tx / 0 pending / 0 (0.0%) gas / (0x89ed40f1b988289e3e0a5ef34f1c86355a23a6febe6d14b4245231c04a8b871a)
+2026-10-07 16:48:09.263+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #255 / 0 tx / 0 pending / 0 (0.0%) gas / (0xf46df61e57eae1a9ba4afecdd12f1d768413d8329aa7d38dc5ab569924f3d888)
+2026-10-07 16:48:11.271+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #256 / 0 tx / 0 pending / 0 (0.0%) gas / (0x79a08e3e46695a9dd22346d112c72a3952147d416a624f6faa9549a5a3a15218)
+2026-10-07 16:48:13.284+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 257 (0x0c13634ee13e462343367d80dfc5943a9361dfd7842e28aa75f9edfca2feb119) is already imported
+2026-10-07 16:48:13.285+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #257 / 0 tx / 0 pending / 0 (0.0%) gas / (0x0c13634ee13e462343367d80dfc5943a9361dfd7842e28aa75f9edfca2feb119)
+2026-10-07 16:48:15.309+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 258 (0xb32d5a29139dffd06f49d89a4a790d849008172c4952d9c019daf511a0db581f) is already imported
+2026-10-07 16:48:15.310+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #258 / 0 tx / 0 pending / 0 (0.0%) gas / (0xb32d5a29139dffd06f49d89a4a790d849008172c4952d9c019daf511a0db581f)
+2026-10-07 16:48:17.281+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 259 (0x21797a415493554cf7010cc9026a19aaa7863832de8b055f7cb7781344e2fa1c) is already imported
+2026-10-07 16:48:17.282+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #259 / 0 tx / 0 pending / 0 (0.0%) gas / (0x21797a415493554cf7010cc9026a19aaa7863832de8b055f7cb7781344e2fa1c)
+2026-10-07 16:48:19.273+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 260 (0x735759a927c430869dbcbfacfe16eb4c2efe80b5b8d978250ab400152dbcdfc7) is already imported
+2026-10-07 16:48:19.273+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #260 / 0 tx / 0 pending / 0 (0.0%) gas / (0x735759a927c430869dbcbfacfe16eb4c2efe80b5b8d978250ab400152dbcdfc7)
+2026-10-07 16:48:21.278+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #261 / 0 tx / 0 pending / 0 (0.0%) gas / (0x6ac797226ef79a1e2176345bcb11459475a2d588f9cf15a22a25f33c6b889120)
+2026-10-07 16:48:21.278+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 261 (0x6ac797226ef79a1e2176345bcb11459475a2d588f9cf15a22a25f33c6b889120) is already imported
+2026-10-07 16:48:23.278+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 262 (0xbbed6aa3664923d3e56155e00e486eb0d6c06ace52edcaa64f9ae5a25d53f5a7) is already imported
+2026-10-07 16:48:23.279+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #262 / 0 tx / 0 pending / 0 (0.0%) gas / (0xbbed6aa3664923d3e56155e00e486eb0d6c06ace52edcaa64f9ae5a25d53f5a7)
+2026-10-07 16:48:25.304+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 263 (0xa321be1abfcb2f576bedf4cf1a7061fa95d57eab7924378e6f5e289b5339edf2) is already imported
+2026-10-07 16:48:25.304+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #263 / 0 tx / 0 pending / 0 (0.0%) gas / (0xa321be1abfcb2f576bedf4cf1a7061fa95d57eab7924378e6f5e289b5339edf2)
+2026-10-07 16:48:27.269+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 264 (0x909897ba1b7d7819d5b78ebb7d717b1adbd9e684ccc70a2d8b1842cbfed9fd8c) is already imported
+2026-10-07 16:48:27.269+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #264 / 0 tx / 0 pending / 0 (0.0%) gas / (0x909897ba1b7d7819d5b78ebb7d717b1adbd9e684ccc70a2d8b1842cbfed9fd8c)
+2026-10-07 16:48:29.264+00:00 | EthScheduler-Workers-0 | INFO  | PersistBlockTask | Block 265 (0x0a455acf87152ea04e1cd9fb372b580364135b9a693fa1135f491971c6393cf9) is already imported
+2026-10-07 16:48:29.264+00:00 | BftProcessorExecutor-QBFT-0 | INFO  | QbftBesuControllerBuilder | Imported #265 / 0 tx / 0 pending / 0 (0.0%) gas / (0x0a455acf87152ea04e1cd9fb372b580364135b9a693fa1135f491971c6393cf9)

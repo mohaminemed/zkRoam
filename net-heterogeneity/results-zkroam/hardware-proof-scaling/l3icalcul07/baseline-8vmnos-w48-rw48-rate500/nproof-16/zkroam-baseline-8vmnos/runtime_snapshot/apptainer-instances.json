@@ -1,0 +1,161 @@
+{
+  "runtime": "apptainer-netns",
+  "image": "/Utilisateurs/abellach/zkRoam/net-heterogeneity/zkroam-besu.sif",
+  "image_sha256": "0a5ba1e4465b3dcb5e3290295d2307ca0ccb65426bbf83c842fdce120f5a1b0d",
+  "job_id": "22072",
+  "runtime_root": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072",
+  "bridge": "zkroam0",
+  "gateway": "172.28.0.1",
+  "nodes": [
+    {
+      "name": "node00",
+      "ip": "172.28.0.10",
+      "rpc_url": "http://172.28.0.10:8545",
+      "host_iface": "zkh00",
+      "holder_pid": 1135323,
+      "process_pid": 1135753,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node00/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node00"
+    },
+    {
+      "name": "node01",
+      "ip": "172.28.0.11",
+      "rpc_url": "http://172.28.0.11:8545",
+      "host_iface": "zkh01",
+      "holder_pid": 1135792,
+      "process_pid": 1136337,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node01/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node01"
+    },
+    {
+      "name": "node02",
+      "ip": "172.28.0.12",
+      "rpc_url": "http://172.28.0.12:8545",
+      "host_iface": "zkh02",
+      "holder_pid": 1136386,
+      "process_pid": 1137000,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node02/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node02"
+    },
+    {
+      "name": "node03",
+      "ip": "172.28.0.13",
+      "rpc_url": "http://172.28.0.13:8545",
+      "host_iface": "zkh03",
+      "holder_pid": 1137043,
+      "process_pid": 1137646,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node03/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node03"
+    },
+    {
+      "name": "node04",
+      "ip": "172.28.0.14",
+      "rpc_url": "http://172.28.0.14:8545",
+      "host_iface": "zkh04",
+      "holder_pid": 1137696,
+      "process_pid": 1138443,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node04/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node04"
+    },
+    {
+      "name": "node05",
+      "ip": "172.28.0.15",
+      "rpc_url": "http://172.28.0.15:8545",
+      "host_iface": "zkh05",
+      "holder_pid": 1138566,
+      "process_pid": 1139217,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node05/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node05"
+    },
+    {
+      "name": "node06",
+      "ip": "172.28.0.16",
+      "rpc_url": "http://172.28.0.16:8545",
+      "host_iface": "zkh06",
+      "holder_pid": 1139331,
+      "process_pid": 1140055,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node06/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node06"
+    },
+    {
+      "name": "node07",
+      "ip": "172.28.0.17",
+      "rpc_url": "http://172.28.0.17:8545",
+      "host_iface": "zkh07",
+      "holder_pid": 1140107,
+      "process_pid": 1140829,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node07/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node07"
+    },
+    {
+      "name": "node08",
+      "ip": "172.28.0.18",
+      "rpc_url": "http://172.28.0.18:8545",
+      "host_iface": "zkh08",
+      "holder_pid": 1140888,
+      "process_pid": 1141612,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node08/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node08"
+    },
+    {
+      "name": "node09",
+      "ip": "172.28.0.19",
+      "rpc_url": "http://172.28.0.19:8545",
+      "host_iface": "zkh09",
+      "holder_pid": 1141659,
+      "process_pid": 1142421,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node09/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node09"
+    },
+    {
+      "name": "node10",
+      "ip": "172.28.0.20",
+      "rpc_url": "http://172.28.0.20:8545",
+      "host_iface": "zkh10",
+      "holder_pid": 1142480,
+      "process_pid": 1143220,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node10/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node10"
+    },
+    {
+      "name": "node11",
+      "ip": "172.28.0.21",
+      "rpc_url": "http://172.28.0.21:8545",
+      "host_iface": "zkh11",
+      "holder_pid": 1143275,
+      "process_pid": 1143934,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node11/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node11"
+    },
+    {
+      "name": "node12",
+      "ip": "172.28.0.22",
+      "rpc_url": "http://172.28.0.22:8545",
+      "host_iface": "zkh12",
+      "holder_pid": 1144054,
+      "process_pid": 1144696,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node12/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node12"
+    },
+    {
+      "name": "node13",
+      "ip": "172.28.0.23",
+      "rpc_url": "http://172.28.0.23:8545",
+      "host_iface": "zkh13",
+      "holder_pid": 1144817,
+      "process_pid": 1145516,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node13/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node13"
+    },
+    {
+      "name": "node14",
+      "ip": "172.28.0.24",
+      "rpc_url": "http://172.28.0.24:8545",
+      "host_iface": "zkh14",
+      "holder_pid": 1145592,
+      "process_pid": 1146346,
+      "data_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/runtime/apptainer-22072/node14/data",
+      "log_dir": "/tmp/zkroam-hw-22072-QwfJVj/net-heterogeneity/logs/node14"
+    }
+  ]
+}

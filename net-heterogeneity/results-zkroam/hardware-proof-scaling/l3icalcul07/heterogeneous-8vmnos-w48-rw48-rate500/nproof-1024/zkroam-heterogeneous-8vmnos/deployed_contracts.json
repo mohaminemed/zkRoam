@@ -1,0 +1,416 @@
+{
+  "chain_id": 1337,
+  "cdr_verifier": {
+    "address": "0x691994bC60cB872b63ddf1C5E037420BCf7e420D",
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256[2]",
+            "name": "_pA",
+            "type": "uint256[2]"
+          },
+          {
+            "internalType": "uint256[2][2]",
+            "name": "_pB",
+            "type": "uint256[2][2]"
+          },
+          {
+            "internalType": "uint256[2]",
+            "name": "_pC",
+            "type": "uint256[2]"
+          },
+          {
+            "internalType": "uint256[5]",
+            "name": "_pubSignals",
+            "type": "uint256[5]"
+          }
+        ],
+        "name": "verifyProof",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
+  },
+  "aggregate_anchor": {
+    "address": "0xA8546d8A4071c79f9cf01E8eEfA5cb907742f98D",
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "initialVerifier",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidSignature",
+        "type": "error"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "bytes32",
+            "name": "settlementId",
+            "type": "bytes32"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "verifier",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes32",
+            "name": "commitment",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          }
+        ],
+        "name": "Anchored",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "bytes32",
+            "name": "settlementId",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes32",
+            "name": "commitment",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          }
+        ],
+        "name": "Finalized",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "v",
+            "type": "address"
+          }
+        ],
+        "name": "addVerifier",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes",
+            "name": "aggregateProof",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes",
+            "name": "publicInputs",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          }
+        ],
+        "name": "aggregateCommitment",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "name": "agreementCount",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "settlementId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "commitment",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          }
+        ],
+        "name": "anchorAggregateProof",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "attestations",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "commitment",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "timestamp",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "name": "finalizedCommitment",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "settlementId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "verifier",
+            "type": "address"
+          }
+        ],
+        "name": "getAttestation",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "commitment",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "timestamp",
+            "type": "uint64"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "name": "isFinalized",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "isVerifier",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "settlementId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "commitment",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "nproofs",
+            "type": "uint64"
+          },
+          {
+            "internalType": "address[]",
+            "name": "signers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "signatures",
+            "type": "bytes[]"
+          }
+        ],
+        "name": "relayAggregateProof",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "t",
+            "type": "uint256"
+          }
+        ],
+        "name": "setThreshold",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "threshold",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "verifierCount",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ],
+    "verifier_addresses": [
+      "0x2E092deD41C555e84F45d708f272a3fEC945fdd8"
+    ]
+  }
+}
