@@ -1,0 +1,807 @@
+
+$ bash scripts/04b-run-baseline.sh
+=== Step 0: tear down any previous experiment ===
+=== Step 1: generate genesis + validator keys ===
+==========================================
+Generating QBFT test network
+==========================================
+
+Validators : 15
+Client accounts : 2000
+Balance/account : 1000000000000000000000 wei
+
+[1/5] Cleaning previous network files...
+[2/5] Generating QBFT validators and genesis...
+2026-10-09 07:35:52.385+00:00 | main | INFO  | GenerateBlockchainConfig | Generating 15 nodes keys.
+2026-10-09 07:35:52.389+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 0.
+2026-10-09 07:35:52.438+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 1.
+2026-10-09 07:35:52.441+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 2.
+2026-10-09 07:35:52.443+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 3.
+2026-10-09 07:35:52.445+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 4.
+2026-10-09 07:35:52.446+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 5.
+2026-10-09 07:35:52.447+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 6.
+2026-10-09 07:35:52.449+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 7.
+2026-10-09 07:35:52.450+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 8.
+2026-10-09 07:35:52.451+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 9.
+2026-10-09 07:35:52.452+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 10.
+2026-10-09 07:35:52.453+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 11.
+2026-10-09 07:35:52.454+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 12.
+2026-10-09 07:35:52.455+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 13.
+2026-10-09 07:35:52.456+00:00 | main | INFO  | GenerateBlockchainConfig | Generating keypair for node 14.
+2026-10-09 07:35:52.457+00:00 | main | INFO  | GenerateBlockchainConfig | Generating QBFT extra data.
+2026-10-09 07:35:52.461+00:00 | main | INFO  | GenerateBlockchainConfig | Writing genesis file.
+[3/5] Generating 2000 funded client accounts...
+Generating 2000 funded accounts...
+
+Generated 2000 accounts.
+Saved to: /home/mbouchiha/zkRoam/experiments/accounts/accounts.json
+[4/5] Updating genesis alloc...
+Existing configured alloc accounts: 2
+Generated workload accounts: 2000
+
+Final genesis alloc contains 2002 accounts.
+[5/5] Verifying generated network...
+
+==========================================
+QBFT network generation complete
+==========================================
+
+Genesis:
+  /home/mbouchiha/zkRoam/experiments/networkFiles/genesis.json
+
+Validators:
+  /home/mbouchiha/zkRoam/experiments/networkFiles/keys/
+
+Client accounts:
+  /home/mbouchiha/zkRoam/experiments/accounts/accounts.json
+
+Validator count:
+15
+
+Client account count:
+2000
+
+Genesis alloc count:
+2002
+
+First 10 client accounts:
+000 0xef36dB622e2b4BD1e238d134dD4981956bb3E9c8 balance=1000000000000000000000
+001 0x72C9055D5c6A233c3a69C185E78FF77751666fC2 balance=1000000000000000000000
+002 0x1b0540CB99830114B43c236686585294E9Ae9AC8 balance=1000000000000000000000
+003 0x15a3D8ad2B5a69c1D4624cf2CD3a12EDfBAC00F7 balance=1000000000000000000000
+004 0xB2FE67de2dEc0A1B2955eb631A0Bf5C5999F5426 balance=1000000000000000000000
+005 0xcA70CBA0C16eeA94A39DED2166d31a69814d9493 balance=1000000000000000000000
+006 0x33a798F0d11E74cbFCF1D2671C58BFE220ae4904 balance=1000000000000000000000
+007 0xa80D8eb68B7BBf0E8fc431C4a35979883be98d3C balance=1000000000000000000000
+008 0xAef0680bDDADFBb5f7aeF41c9302D74B25103c1A balance=1000000000000000000000
+009 0xd7D51C6d9C3C6a86204d67C19Dd5A1AF1173DC7A balance=1000000000000000000000
+
+==========================================
+IMPORTANT
+==========================================
+
+Client private keys are stored in:
+  /home/mbouchiha/zkRoam/experiments/accounts/accounts.json
+
+Do NOT commit this file to Git.
+
+=== Step 2: assign nodes to tiers ===
+Wrote baseline topology (24 core-profile nodes) to /home/mbouchiha/zkRoam/experiments/networkFiles/topology.json
+=== Step 3: generate docker-compose.yml ===
+Wrote /home/mbouchiha/zkRoam/experiments/docker-compose.yml with 15 services (per-node profiles).
+Bootnodes (3, core-tier nodes): ['node00', 'node01', 'node02']
+=== Step 4: build + launch 15-node network ===
+time="2026-10-09T09:35:55+02:00" level=warning msg="Docker Compose is configured to build using Bake, but buildx isn't installed"
+#0 building with "default" instance using docker driver
+
+#1 [node05 internal] load build definition from Dockerfile
+#1 transferring dockerfile: 290B done
+#1 DONE 0.0s
+
+#2 [node00 internal] load build definition from Dockerfile
+#2 transferring dockerfile: 290B done
+#2 DONE 0.0s
+
+#3 [node10 internal] load build definition from Dockerfile
+#3 transferring dockerfile: 290B done
+#3 DONE 0.0s
+
+#4 [node12 internal] load build definition from Dockerfile
+#4 transferring dockerfile: 290B done
+#4 DONE 0.0s
+
+#5 [node04 internal] load build definition from Dockerfile
+#5 transferring dockerfile: 290B done
+#5 DONE 0.1s
+
+#6 [node06 internal] load build definition from Dockerfile
+#6 transferring dockerfile: 290B done
+#6 DONE 0.1s
+
+#7 [node02 internal] load build definition from Dockerfile
+#7 transferring dockerfile: 290B done
+#7 DONE 0.1s
+
+#8 [node11 internal] load build definition from Dockerfile
+#8 transferring dockerfile: 290B done
+#8 DONE 0.1s
+
+#9 [node05 internal] load .dockerignore
+#9 transferring context: 2B done
+#9 DONE 0.0s
+
+#10 [node02 internal] load metadata for docker.io/hyperledger/besu:24.7.0
+#10 DONE 0.1s
+
+#11 [node14 internal] load build definition from Dockerfile
+#11 transferring dockerfile: 290B done
+#11 DONE 0.1s
+
+#12 [node10 internal] load .dockerignore
+#12 transferring context: 2B done
+#12 DONE 0.1s
+
+#13 [node01 internal] load build definition from Dockerfile
+#13 transferring dockerfile: 290B done
+#13 DONE 0.1s
+
+#14 [node00 internal] load .dockerignore
+#14 transferring context: 2B done
+#14 DONE 0.1s
+
+#15 [node07 internal] load build definition from Dockerfile
+#15 transferring dockerfile: 290B done
+#15 DONE 0.1s
+
+#16 [node13 internal] load build definition from Dockerfile
+#16 transferring dockerfile: 290B done
+#16 DONE 0.2s
+
+#17 [node12 internal] load .dockerignore
+#17 transferring context: 2B done
+#17 DONE 0.1s
+
+#18 [node03 internal] load build definition from Dockerfile
+#18 transferring dockerfile: 290B done
+#18 DONE 0.2s
+
+#19 [node05 1/4] FROM docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02
+#19 resolve docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02 0.0s done
+#19 CACHED
+
+#20 [node13 internal] load .dockerignore
+#20 DONE 0.0s
+
+#21 [node07 internal] load .dockerignore
+#21 DONE 0.0s
+
+#22 [node00 2/4] RUN apt-get update &&     apt-get install -y --no-install-recommends iproute2 &&     rm -rf /var/lib/apt/lists/*
+#22 ...
+
+#19 [node06 1/4] FROM docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02
+#19 resolve docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02 0.0s done
+#19 CACHED
+
+#23 [node04 internal] load .dockerignore
+#23 transferring context: 2B done
+#23 DONE 0.1s
+
+#24 [node11 internal] load .dockerignore
+#24 transferring context: 2B done
+#24 DONE 0.1s
+
+#25 [node08 internal] load build definition from Dockerfile
+#25 transferring dockerfile: 290B done
+#25 DONE 0.2s
+
+#26 [node09 internal] load build definition from Dockerfile
+#26 transferring dockerfile: 290B done
+#26 DONE 0.2s
+
+#27 [node05 internal] load build context
+#27 transferring context: 35B done
+#27 DONE 0.1s
+
+#28 [node10 internal] load build context
+#28 transferring context: 35B done
+#28 DONE 0.1s
+
+#29 [node06 internal] load .dockerignore
+#29 transferring context: 2B done
+#29 DONE 0.2s
+
+#10 [node09 internal] load metadata for docker.io/hyperledger/besu:24.7.0
+#10 DONE 0.2s
+
+#30 [node00 internal] load build context
+#30 transferring context: 35B done
+#30 DONE 0.1s
+
+#31 [node06 internal] load build context
+#31 DONE 0.0s
+
+#32 [node02 internal] load .dockerignore
+#32 transferring context: 2B done
+#32 DONE 0.2s
+
+#22 [node06 2/4] RUN apt-get update &&     apt-get install -y --no-install-recommends iproute2 &&     rm -rf /var/lib/apt/lists/*
+#22 ...
+
+#19 [node14 1/4] FROM docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02
+#19 resolve docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02 0.0s done
+#19 CACHED
+
+#33 [node12 internal] load build context
+#33 transferring context: 35B done
+#33 DONE 0.1s
+
+#34 [node08 internal] load .dockerignore
+#34 transferring context: 2B done
+#34 DONE 0.1s
+
+#31 [node06 internal] load build context
+#31 transferring context: 35B done
+#31 DONE 0.0s
+
+#35 [node04 internal] load build context
+#35 transferring context: 35B done
+#35 DONE 0.1s
+
+#36 [node11 internal] load build context
+#36 transferring context: 35B done
+#36 DONE 0.1s
+
+#37 [node01 internal] load .dockerignore
+#37 transferring context: 2B done
+#37 DONE 0.2s
+
+#38 [node14 internal] load .dockerignore
+#38 transferring context: 2B done
+#38 DONE 0.2s
+
+#39 [node09 internal] load .dockerignore
+#39 transferring context: 2B done
+#39 DONE 0.1s
+
+#20 [node13 internal] load .dockerignore
+#20 transferring context: 2B done
+#20 DONE 0.2s
+
+#40 [node03 internal] load .dockerignore
+#40 transferring context: 2B done
+#40 DONE 0.2s
+
+#22 [node14 2/4] RUN apt-get update &&     apt-get install -y --no-install-recommends iproute2 &&     rm -rf /var/lib/apt/lists/*
+#22 ...
+
+#19 [node07 1/4] FROM docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02
+#19 resolve docker.io/hyperledger/besu:24.7.0@sha256:f0183f865b1e5cb07de97cfa2b1f31a9232b39e538bedc52696dfe294cd05f02 0.0s done
+#19 CACHED
+
+#41 [node01 internal] load build context
+#41 transferring context: 35B done
+#41 DONE 0.0s
+
+#42 [node02 internal] load build context
+#42 transferring context: 35B done
+#42 DONE 0.1s
+
+#21 [node07 internal] load .dockerignore
+#21 transferring context: 2B done
+#21 DONE 0.2s
+
+#43 [node08 internal] load build context
+#43 transferring context: 35B done
+#43 DONE 0.1s
+
+#44 [node09 internal] load build context
+#44 transferring context: 35B done
+#44 DONE 0.1s
+
+#45 [node14 internal] load build context
+#45 transferring context: 35B done
+#45 DONE 0.1s
+
+#46 [node13 internal] load build context
+#46 transferring context: 35B done
+#46 DONE 0.1s
+
+#47 [node03 internal] load build context
+#47 transferring context: 35B done
+#47 DONE 0.1s
+
+#48 [node07 internal] load build context
+#48 transferring context: 35B done
+#48 DONE 0.1s
+
+#22 [node07 2/4] RUN apt-get update &&     apt-get install -y --no-install-recommends iproute2 &&     rm -rf /var/lib/apt/lists/*
+#22 0.389 Get:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+#22 0.448 Get:2 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+#22 0.571 Get:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1377 kB]
+#22 0.692 Get:4 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+#22 0.752 Get:5 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+#22 0.812 Get:6 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+#22 0.886 Get:7 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2066 kB]
+#22 0.915 Get:8 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1546 kB]
+#22 0.940 Get:9 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [61.4 kB]
+#22 1.417 Get:10 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+#22 1.430 Get:11 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+#22 1.432 Get:12 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+#22 1.464 Get:13 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1702 kB]
+#22 1.642 Get:14 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2177 kB]
+#22 1.720 Get:15 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [67.4 kB]
+#22 1.721 Get:16 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2166 kB]
+#22 1.735 Get:17 http://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [671 B]
+#22 1.735 Get:18 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [36.0 kB]
+#22 1.735 Get:19 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.0 kB]
+#22 2.026 Fetched 33.5 MB in 2s (19.8 MB/s)
+#22 2.026 Reading package lists...
+#22 2.598 Reading package lists...
+#22 3.189 Building dependency tree...
+#22 3.439 Reading state information...
+#22 3.593 The following additional packages will be installed:
+#22 3.594   libbpf1 libcap2 libcap2-bin libelf1t64 libmnl0 libxtables12
+#22 3.595 Suggested packages:
+#22 3.595   iproute2-doc python3:any
+#22 3.595 Recommended packages:
+#22 3.595   libatm1t64 libpam-cap
+#22 3.657 The following NEW packages will be installed:
+#22 3.658   iproute2 libbpf1 libcap2-bin libelf1t64 libmnl0 libxtables12
+#22 3.659 The following packages will be upgraded:
+#22 3.659   libcap2
+#22 3.792 1 upgraded, 6 newly installed, 0 to remove and 72 not upgraded.
+#22 3.792 Need to get 1456 kB of archives.
+#22 3.792 After this operation, 4034 kB of additional disk space will be used.
+#22 3.792 Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libcap2 amd64 1:2.66-5ubuntu2.4 [30.5 kB]
+#22 3.907 Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libelf1t64 amd64 0.190-1.1ubuntu0.1 [57.8 kB]
+#22 3.966 Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 libbpf1 amd64 1:1.3.0-2build2 [166 kB]
+#22 4.064 Get:4 http://archive.ubuntu.com/ubuntu noble/main amd64 libmnl0 amd64 1.0.5-2build1 [12.3 kB]
+#22 4.067 Get:5 http://archive.ubuntu.com/ubuntu noble/main amd64 libxtables12 amd64 1.8.10-3ubuntu2 [35.7 kB]
+#22 4.075 Get:6 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libcap2-bin amd64 1:2.66-5ubuntu2.4 [34.1 kB]
+#22 4.089 Get:7 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 iproute2 amd64 6.1.0-1ubuntu6.4 [1120 kB]
+#22 4.518 debconf: delaying package configuration, since apt-utils is not installed
+#22 4.574 Fetched 1456 kB in 1s (2445 kB/s)
+#22 4.623 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 5313 files and directories currently installed.)
+#22 4.645 Preparing to unpack .../libcap2_1%3a2.66-5ubuntu2.4_amd64.deb ...
+#22 4.668 Unpacking libcap2:amd64 (1:2.66-5ubuntu2.4) over (1:2.66-5ubuntu2) ...
+#22 4.766 Setting up libcap2:amd64 (1:2.66-5ubuntu2.4) ...
+#22 4.836 Selecting previously unselected package libelf1t64:amd64.
+#22 4.836 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 5313 files and directories currently installed.)
+#22 4.845 Preparing to unpack .../0-libelf1t64_0.190-1.1ubuntu0.1_amd64.deb ...
+#22 4.852 Unpacking libelf1t64:amd64 (0.190-1.1ubuntu0.1) ...
+#22 4.905 Selecting previously unselected package libbpf1:amd64.
+#22 4.907 Preparing to unpack .../1-libbpf1_1%3a1.3.0-2build2_amd64.deb ...
+#22 4.913 Unpacking libbpf1:amd64 (1:1.3.0-2build2) ...
+#22 4.973 Selecting previously unselected package libmnl0:amd64.
+#22 4.975 Preparing to unpack .../2-libmnl0_1.0.5-2build1_amd64.deb ...
+#22 4.980 Unpacking libmnl0:amd64 (1.0.5-2build1) ...
+#22 5.034 Selecting previously unselected package libxtables12:amd64.
+#22 5.035 Preparing to unpack .../3-libxtables12_1.8.10-3ubuntu2_amd64.deb ...
+#22 5.041 Unpacking libxtables12:amd64 (1.8.10-3ubuntu2) ...
+#22 5.091 Selecting previously unselected package libcap2-bin.
+#22 5.093 Preparing to unpack .../4-libcap2-bin_1%3a2.66-5ubuntu2.4_amd64.deb ...
+#22 5.099 Unpacking libcap2-bin (1:2.66-5ubuntu2.4) ...
+#22 5.166 Selecting previously unselected package iproute2.
+#22 5.167 Preparing to unpack .../5-iproute2_6.1.0-1ubuntu6.4_amd64.deb ...
+#22 5.175 Unpacking iproute2 (6.1.0-1ubuntu6.4) ...
+#22 5.289 Setting up libelf1t64:amd64 (0.190-1.1ubuntu0.1) ...
+#22 5.307 Setting up libcap2-bin (1:2.66-5ubuntu2.4) ...
+#22 5.323 Setting up libmnl0:amd64 (1.0.5-2build1) ...
+#22 5.339 Setting up libxtables12:amd64 (1.8.10-3ubuntu2) ...
+#22 5.357 Setting up libbpf1:amd64 (1:1.3.0-2build2) ...
+#22 5.373 Setting up iproute2 (6.1.0-1ubuntu6.4) ...
+#22 5.517 debconf: unable to initialize frontend: Dialog
+#22 5.517 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#22 5.517 debconf: falling back to frontend: Readline
+#22 5.518 debconf: unable to initialize frontend: Readline
+#22 5.518 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.38.2 /usr/local/share/perl/5.38.2 /usr/lib/x86_64-linux-gnu/perl5/5.38 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.38 /usr/share/perl/5.38 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8.)
+#22 5.518 debconf: falling back to frontend: Teletype
+#22 5.564 Processing triggers for libc-bin (2.39-0ubuntu8.2) ...
+#22 DONE 5.7s
+
+#49 [node08 3/4] COPY entrypoint.sh /entrypoint.sh
+#49 DONE 0.1s
+
+#50 [node14 4/4] RUN chmod +x /entrypoint.sh
+#50 DONE 0.2s
+
+#51 [node02] exporting to image
+#51 exporting layers
+#51 exporting layers 0.4s done
+#51 exporting manifest sha256:7c89909d27e7d47213083bd7cfb3398e4b2eca0929346b14f2d099ce7a94dddc
+#51 exporting manifest sha256:7c89909d27e7d47213083bd7cfb3398e4b2eca0929346b14f2d099ce7a94dddc 0.2s done
+#51 exporting config sha256:4317e6011976888434a04511030d7d754d55219f4991acd7cda0123ddb4877a9
+#51 exporting config sha256:4317e6011976888434a04511030d7d754d55219f4991acd7cda0123ddb4877a9 0.2s done
+#51 exporting attestation manifest sha256:47b99a21548dcc6b138fd15d3d64d943565e76d1f991872470eea9d2231ac95c
+#51 exporting attestation manifest sha256:47b99a21548dcc6b138fd15d3d64d943565e76d1f991872470eea9d2231ac95c 0.7s done
+#51 exporting manifest list sha256:1df10985d93392da8b1c2d2df6337f06a69e4402a7ac351b5df26da268a4aeb0
+#51 exporting manifest list sha256:1df10985d93392da8b1c2d2df6337f06a69e4402a7ac351b5df26da268a4aeb0 0.1s done
+#51 naming to docker.io/library/experiments-node02:latest
+#51 naming to docker.io/library/experiments-node02:latest 0.0s done
+#51 unpacking to docker.io/library/experiments-node02:latest
+#51 unpacking to docker.io/library/experiments-node02:latest 0.3s done
+#51 DONE 2.3s
+
+#52 [node04] exporting to image
+#52 exporting layers 0.4s done
+#52 exporting manifest sha256:6bf57b37d78900feb662ba3b59e34729137162236b00dc51c9eb753441164d35 0.2s done
+#52 exporting config sha256:886c7bf9920bb4c6aee8847dbf26e0c71ccc8517cf7bae514a85e594e28003f6 0.2s done
+#52 exporting attestation manifest sha256:908e0a9c5cdf89bc4da380dd12515fd3f74715222207707c60cf59351a1d4797 0.5s done
+#52 exporting manifest list sha256:59e94a7373109617eb923be2712a008d3b91b3ebdadb8947e16da20044c8a726 0.2s done
+#52 naming to docker.io/library/experiments-node04:latest 0.1s done
+#52 unpacking to docker.io/library/experiments-node04:latest 0.3s done
+#52 DONE 2.3s
+
+#53 [node01] exporting to image
+#53 exporting layers 0.4s done
+#53 exporting manifest sha256:29838ef37e8fc588e5a29650278ec50ded2d2f2cda2920d383f8d1aeeef00382 0.2s done
+#53 exporting config sha256:a28993ce121a036db868609f7a4d900876a6c0bb8b8ae6e42cabd840fbfba0ed 0.2s done
+#53 exporting attestation manifest sha256:a2860701b4c223df0f268f76a4a078a149fc4a60e3f28d828607fd59f20b4d3c 0.5s done
+#53 exporting manifest list sha256:2ddeef0e5627148cd1a3967c66928a3afe97559d0a78356b83122626f56919ed 0.2s done
+#53 naming to docker.io/library/experiments-node01:latest 0.1s done
+#53 unpacking to docker.io/library/experiments-node01:latest 0.3s done
+#53 DONE 2.3s
+
+#54 [node10] exporting to image
+#54 exporting layers 0.4s done
+#54 exporting manifest sha256:bbe26276e4fff4ce4db4a38cfd29637318d5699b2bde985ce6656f2a88abea5b 0.2s done
+#54 exporting config sha256:a643cb6faa0102454e92fbf787791cc3d56cafceb749cedcdae775f0863e406d 0.2s done
+#54 exporting attestation manifest sha256:bad001fd7834fc35bd7b6ae681a8eea21b133d416a77991e6fe35a37ebc9db9b 0.5s done
+#54 exporting manifest list sha256:d49f5dcc47f9fcc46ddb3ea4225ef98ac168aba61e6c54276b886b9b950b44e8 0.2s done
+#54 naming to docker.io/library/experiments-node10:latest 0.1s done
+#54 unpacking to docker.io/library/experiments-node10:latest 0.3s done
+#54 DONE 2.3s
+
+#55 [node11] exporting to image
+#55 exporting layers 0.4s done
+#55 exporting manifest sha256:116f2089dcef1001e75cfbb25c80db204d85c02405634190da916518c6ee4745 0.2s done
+#55 exporting config sha256:3914025ae30eaf102eb04c02f7d3ce763da04d3793376c13457af96470d801b3 0.2s done
+#55 exporting attestation manifest sha256:1542316311c8a7e771876fd9d22f8ca14f4a449a25c0cb656772135aab45baf9 0.6s done
+#55 exporting manifest list sha256:995681755831f7b7ddf9f7bbce4e23e39f58373a5818db8ae07bd29454f9548b 0.2s done
+#55 naming to docker.io/library/experiments-node11:latest 0.1s done
+#55 unpacking to docker.io/library/experiments-node11:latest 0.3s done
+#55 DONE 2.3s
+
+#56 [node09] exporting to image
+#56 exporting layers 0.4s done
+#56 exporting manifest sha256:2b2d76506eac8342ac17d87de33d90806d585764048fcecce693f6e29dc5ee8f 0.2s done
+#56 exporting config sha256:cf21189949800c408905b47ccc23c91e962a8d137d634d10b82fbd878a1298cd 0.2s done
+#56 exporting attestation manifest sha256:a3dd34ffb01e47b1cf521b2bd8bac6980d32feb56cb3f1aa10644b03e0a4f40e 0.6s done
+#56 exporting manifest list sha256:efd774c3f4be749f2807642f716769669e70dd3355c7a58acc11587bd459c29e 0.2s done
+#56 naming to docker.io/library/experiments-node09:latest 0.1s done
+#56 unpacking to docker.io/library/experiments-node09:latest 0.3s done
+#56 DONE 2.3s
+
+#57 [node03] exporting to image
+#57 exporting layers 0.4s done
+#57 exporting manifest sha256:e57e6e5396bbbcd92cf20a37e7eb7185b98eb055063d5f220ab550449452837b 0.2s done
+#57 exporting config sha256:549113ff8ae25537677a4ee63b1bee193f14b1fdac0dbad6c5634efabba7c276 0.2s done
+#57 exporting attestation manifest sha256:bd194761b5cfe1e72c48dd152bf2ceb4981f6119eec768abd85cfe3367485bb4 0.6s done
+#57 exporting manifest list sha256:a9557600d8fb1147ab91c20899de91ebdbb481b123c9b6a80261cc6722c2ed44 0.2s done
+#57 naming to docker.io/library/experiments-node03:latest 0.0s done
+#57 unpacking to docker.io/library/experiments-node03:latest 0.3s done
+#57 DONE 2.3s
+
+#58 [node08] exporting to image
+#58 exporting layers 0.4s done
+#58 exporting manifest sha256:463da3e510840e26fb4a9c1df9109d33e230ad4a851c26b38a6807d522749fd5 0.2s done
+#58 exporting config sha256:fa653d17c6de3e429155a2781eaaa9004930f19d3348ba2a6663f76098c53c44 0.2s done
+#58 exporting attestation manifest sha256:5796ac2234de35e5682019b4a6b5056f1ced86fa06aae9175f07362f8e7e0c1a 0.5s done
+#58 exporting manifest list sha256:ccd699332faec659d3a06c9d48bd8b22aa0cb482afe0656ba1fb3ef859d20b64 0.2s done
+#58 naming to docker.io/library/experiments-node08:latest 0.1s done
+#58 unpacking to docker.io/library/experiments-node08:latest 0.3s done
+#58 DONE 2.3s
+
+#59 [node00] exporting to image
+#59 exporting layers 0.4s done
+#59 exporting manifest sha256:7e66d439bde6419a6de2c43d99c0be41a55fc1f703805a80aed243f20d3df798 0.2s done
+#59 exporting config sha256:b46f2facdeda2c64befe2251375271590ab17098a5915e35b96195777bb1257c 0.2s done
+#59 exporting attestation manifest sha256:40df7bfb5afb7d8adb2d8a4e68633c5881f718593b9178fbf2daf1de4c1e0ac3 0.5s done
+#59 exporting manifest list sha256:59415099a7804318d9651deea9de4c6fdb8ee1cdb510fca692afb1b5aa48c3b7 0.2s done
+#59 naming to docker.io/library/experiments-node00:latest 0.1s done
+#59 unpacking to docker.io/library/experiments-node00:latest 0.3s done
+#59 DONE 2.3s
+
+#60 [node07] exporting to image
+#60 exporting layers 0.4s done
+#60 exporting manifest sha256:11dc19ef238473472d1d0ac5e4dd391d6d455e9c4b386d45f871f08325dd9945 0.2s done
+#60 exporting config sha256:cdeff7e711beb1b8d15c39084a54daa25ab083abada5349dd989b2122fbfdcda 0.2s done
+#60 exporting attestation manifest sha256:538d1a5cdfd33e0f9947ada71d1ed4836d741e18fbae7150a1552e798f1aa891 0.6s done
+#60 exporting manifest list sha256:fc725adba00440f0f63d3481ab8614bc90cfb86a20702047554c08acf517e11f 0.2s done
+#60 naming to docker.io/library/experiments-node07:latest 0.0s done
+#60 unpacking to docker.io/library/experiments-node07:latest 0.3s done
+#60 DONE 2.3s
+
+#61 [node05] exporting to image
+#61 exporting layers 0.4s done
+#61 exporting manifest sha256:a5d9679003db4fa2e70a288f624b0585966b4aa5c3e9c7815fe175a8d3139c9e 0.2s done
+#61 exporting config sha256:61b907fbb27bfaafb8ed3814ddcf6a0c3567f7ed027f87ff55d9e6966dccdf97 0.2s done
+#61 exporting attestation manifest sha256:03ce1d78314395fe038c0a0afae465491dfe94fcb6189ddc9a647d8be323f898 0.5s done
+#61 exporting manifest list sha256:3d06a87282587f754b31cba5b2991e001d07c156c5c4bc69aeafa6b317a384e0 0.2s done
+#61 naming to docker.io/library/experiments-node05:latest 0.1s done
+#61 unpacking to docker.io/library/experiments-node05:latest 0.3s done
+#61 DONE 2.3s
+
+#62 [node14] exporting to image
+#62 exporting layers 0.4s done
+#62 exporting manifest sha256:9deb980a6910ef50eff6199210a7233342f18798e27607ca1316e3b909f942ae 0.2s done
+#62 exporting config sha256:c613cb92c8c749ad9a04e2a9d63ee950a3e35a6a948132cb86fd4a20b49036d7 0.2s done
+#62 exporting attestation manifest sha256:883fa25ec25efb1dfbb34e05a6edbb58761b11684ba582220ec186bd257bd623 0.5s done
+#62 exporting manifest list sha256:621e8f389453738e9a43d0274033268bd596c51b43876fe00db6fa2536c58450 0.2s done
+#62 naming to docker.io/library/experiments-node14:latest 0.1s done
+#62 unpacking to docker.io/library/experiments-node14:latest 0.4s done
+#62 DONE 2.4s
+
+#63 [node12] exporting to image
+#63 exporting layers 0.4s done
+#63 exporting manifest sha256:14efc2fee5d9b7f3607c1186106eb0b56d06dca81c9ce3dbf21b40d3304220e7 0.2s done
+#63 exporting config sha256:da2f1062e9681824c5e8585acfd8ad1ae93d99528cb5504c2c071838f28f47d3 0.2s done
+#63 exporting attestation manifest sha256:cf5ed3093000baae190da39c77954261d66cf27caabe50a0671c993a0ef0666e 0.5s done
+#63 exporting manifest list sha256:1741644d2fb30744860003a009366f74af5e3cfd65162b5282ec6a3e97c719b0 0.2s done
+#63 naming to docker.io/library/experiments-node12:latest 0.1s done
+#63 unpacking to docker.io/library/experiments-node12:latest 0.4s done
+#63 DONE 2.3s
+
+#64 [node06] exporting to image
+#64 exporting layers 0.4s done
+#64 exporting manifest sha256:30909d0b6b35a184b04ca613eb341ba593645e79dcfe1b18e5bca54595772d61 0.2s done
+#64 exporting config sha256:ecc29d61f53dce2e4bcc9450cb247807913edc21405bdda3330f69eb8e7f3e4d 0.2s done
+#64 exporting attestation manifest sha256:bd49c659f2fb17701dc7c09b549b6c5c9e9efcb8c231c23d4a17f7b6819724d4 0.5s done
+#64 exporting manifest list sha256:553c167f1ec3834439283369cbf78b8780d8389dc7f0a61671fcffee1b6e7713 0.2s done
+#64 naming to docker.io/library/experiments-node06:latest 0.1s done
+#64 unpacking to docker.io/library/experiments-node06:latest 0.4s done
+#64 DONE 2.4s
+
+#65 [node13] exporting to image
+#65 exporting layers 0.4s done
+#65 exporting manifest sha256:07372e0ac2a89298e7e6d7c11476b53c79f77f99951e1679df5a5ea9533691a8 0.2s done
+#65 exporting config sha256:2c6ad0448b44c96a0a76aacbf87e501f1c6acc1fb827699bfa3ff05f6efce274 0.2s done
+#65 exporting attestation manifest sha256:866f67d46e4d4fa18efeb275b17b4c7bb841018e2c09074cd3778e588a4d1d6a 0.5s done
+#65 exporting manifest list sha256:6a6d33bfe8bcb9c2a32788eb0edaee0eea188ba17e1b724050a8c1bd25115094 0.2s done
+#65 naming to docker.io/library/experiments-node13:latest 0.1s done
+#65 unpacking to docker.io/library/experiments-node13:latest 0.4s done
+#65 DONE 2.4s
+
+#66 [node14] resolving provenance for metadata file
+#66 ...
+
+#67 [node00] resolving provenance for metadata file
+#67 DONE 0.1s
+
+#68 [node11] resolving provenance for metadata file
+#68 DONE 0.1s
+
+#69 [node04] resolving provenance for metadata file
+#69 DONE 0.1s
+
+#70 [node06] resolving provenance for metadata file
+#70 DONE 0.1s
+
+#71 [node02] resolving provenance for metadata file
+#71 DONE 0.1s
+
+#72 [node01] resolving provenance for metadata file
+#72 DONE 0.1s
+
+#73 [node08] resolving provenance for metadata file
+#73 DONE 0.1s
+
+#74 [node09] resolving provenance for metadata file
+#74 DONE 0.1s
+
+#75 [node12] resolving provenance for metadata file
+#75 DONE 0.1s
+
+#76 [node05] resolving provenance for metadata file
+#76 DONE 0.1s
+
+#77 [node13] resolving provenance for metadata file
+#77 DONE 0.1s
+
+#78 [node10] resolving provenance for metadata file
+#78 DONE 0.1s
+
+#79 [node03] resolving provenance for metadata file
+#79 DONE 0.1s
+
+#80 [node07] resolving provenance for metadata file
+#80 DONE 0.1s
+
+#66 [node14] resolving provenance for metadata file
+#66 DONE 0.1s
+ node00  Built
+ node01  Built
+ node02  Built
+ node03  Built
+ node04  Built
+ node05  Built
+ node06  Built
+ node07  Built
+ node08  Built
+ node09  Built
+ node10  Built
+ node11  Built
+ node12  Built
+ node13  Built
+ node14  Built
+ Network experiments_gurubft-net  Creating
+ Network experiments_gurubft-net  Created
+ Container node06  Creating
+ Container node05  Creating
+ Container node09  Creating
+ Container node08  Creating
+ Container node13  Creating
+ Container node14  Creating
+ Container node11  Creating
+ Container node10  Creating
+ Container node00  Creating
+ Container node04  Creating
+ Container node02  Creating
+ Container node12  Creating
+ Container node03  Creating
+ Container node07  Creating
+ Container node01  Creating
+ Container node07  Created
+ Container node05  Created
+ Container node11  Created
+ Container node12  Created
+ Container node14  Created
+ Container node08  Created
+ Container node10  Created
+ Container node04  Created
+ Container node02  Created
+ Container node00  Created
+ Container node13  Created
+ Container node03  Created
+ Container node06  Created
+ Container node01  Created
+ Container node09  Created
+ Container node13  Starting
+ Container node00  Starting
+ Container node08  Starting
+ Container node01  Starting
+ Container node14  Starting
+ Container node09  Starting
+ Container node10  Starting
+ Container node02  Starting
+ Container node04  Starting
+ Container node03  Starting
+ Container node11  Starting
+ Container node05  Starting
+ Container node07  Starting
+ Container node06  Starting
+ Container node12  Starting
+ Container node13  Started
+ Container node01  Started
+ Container node05  Started
+ Container node14  Started
+ Container node06  Started
+ Container node03  Started
+ Container node00  Started
+ Container node10  Started
+ Container node07  Started
+ Container node09  Started
+ Container node08  Started
+ Container node02  Started
+ Container node11  Started
+ Container node04  Started
+ Container node12  Started
+=== Waiting for node00 RPC (up to 120s) ===
+=== Letting QBFT settle ===
+=== Node00 block number: ===
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": "0x8"
+}
+Network is up.
+
+$ /home/mbouchiha/zkRoam/experiments/venv/bin/python3 workload/deploy_verifiers.py --topology networkFiles/topology.json --accounts accounts/accounts.json
+Discovered RPC endpoints:
+------------------------------------------
+  node00     -> http://localhost:8545
+  node01     -> http://localhost:8546
+  node02     -> http://localhost:8547
+  node03     -> http://localhost:8548
+  node04     -> http://localhost:8549
+  node05     -> http://localhost:8550
+  node06     -> http://localhost:8551
+  node07     -> http://localhost:8552
+  node08     -> http://localhost:8553
+  node09     -> http://localhost:8554
+  node10     -> http://localhost:8555
+  node11     -> http://localhost:8556
+  node12     -> http://localhost:8557
+  node13     -> http://localhost:8558
+  node14     -> http://localhost:8559
+------------------------------------------
+Connecting to node00 (http://localhost:8545)...
+  Connected. chain_id=1337
+Connecting to node01 (http://localhost:8546)...
+  Connected. chain_id=1337
+Connecting to node02 (http://localhost:8547)...
+  Connected. chain_id=1337
+Connecting to node03 (http://localhost:8548)...
+  Connected. chain_id=1337
+Connecting to node04 (http://localhost:8549)...
+  Connected. chain_id=1337
+Connecting to node05 (http://localhost:8550)...
+  Connected. chain_id=1337
+Connecting to node06 (http://localhost:8551)...
+  Connected. chain_id=1337
+Connecting to node07 (http://localhost:8552)...
+  Connected. chain_id=1337
+Connecting to node08 (http://localhost:8553)...
+  Connected. chain_id=1337
+Connecting to node09 (http://localhost:8554)...
+  Connected. chain_id=1337
+Connecting to node10 (http://localhost:8555)...
+  Connected. chain_id=1337
+Connecting to node11 (http://localhost:8556)...
+  Connected. chain_id=1337
+Connecting to node12 (http://localhost:8557)...
+  Connected. chain_id=1337
+Connecting to node13 (http://localhost:8558)...
+  Connected. chain_id=1337
+Connecting to node14 (http://localhost:8559)...
+  Connected. chain_id=1337
+
+Deploying from 0xef36dB622e2b4BD1e238d134dD4981956bb3E9c8 via http://localhost:8545 (chain_id=1337)
+
+Compiling CDRVerifier.sol ...
+Deploying CDRVerifier ...
+  submitted deploy tx 000f5a90145b7e6ef9937cfdbd5ce3f7d048a82c7fd30799ed1b27e3e4c9fdd4, waiting for receipt...
+  deployed at 0xd573Fab076E808d158e6e6085707292CD513D927  (gasUsed=465218)
+
+Compiling SnarkPackAggregateAnchor.sol ...
+Deploying SnarkPackAggregateAnchor ...
+  submitted deploy tx d87114053afc6d3f76d8cba4870dd36ba633c15f8f98877be0dd6b1d8b9fb0de, waiting for receipt...
+  deployed at 0x4ce68B4CC34A3Dd8960360ea6eaa2bF7C8D523B0  (gasUsed=1832981)
+
+verifier-pool-size=1: only accounts[0] is authorized as a verifier - fine as-is if you're relaying via relayAggregateProof (submission load spreads across the full account pool regardless of verifier count). Only increase this if you want multiple independent verifier keys for redundancy/threshold, or if you plan to use the direct anchorAggregateProof(onlyVerifier) path at any real volume.
+
+Wrote: deployed_contracts.json
+
+$ /home/mbouchiha/zkRoam/experiments/venv/bin/python3 workload/zkroam_workload.py --config results/zkroam-baseline-8vmnos/config.yml

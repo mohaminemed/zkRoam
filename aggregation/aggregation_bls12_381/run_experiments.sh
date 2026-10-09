@@ -10,7 +10,7 @@ BINARY=./target/release/aggregation_bls12_381
 
 RUNS=10
 
-PROOFS=(8) # 64 128 256 512 1024 2048)
+PROOFS=(16 32) # 64 128 256 512 1024 2048)
 
 # src/main.rs writes directly to output/experiment_log_<nproofs>_<run>.json
 # (see the File::create(...) call near the bottom of main()) - OUTDIR must
