@@ -1,0 +1,447 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AlreadySettled",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "reason",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidCDR",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint32",
+          "name": "vmno",
+          "type": "uint32"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint32",
+          "name": "hmno",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint128",
+          "name": "charge",
+          "type": "uint128"
+        }
+      ],
+      "name": "SessionSettled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint32",
+          "name": "vmno",
+          "type": "uint32"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint32",
+          "name": "hmno",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "ratePerSecond",
+          "type": "uint64"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "ratePerKB",
+          "type": "uint64"
+        }
+      ],
+      "name": "TariffSet",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_BATCH_SIZE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_SESSION_SECONDS",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "vmno",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "hmno",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "startTime",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "endTime",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "volumeKB",
+          "type": "uint64"
+        }
+      ],
+      "name": "expectedCharge",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isSettled",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "owed",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "vmno",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "hmno",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "ratePerSecond",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "ratePerKB",
+          "type": "uint64"
+        }
+      ],
+      "name": "setTariff",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "sessionId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "vmno",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "hmno",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "startTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "endTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "volumeKB",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint128",
+              "name": "charge",
+              "type": "uint128"
+            }
+          ],
+          "internalType": "struct PlainRoamingSettlement.CDR[]",
+          "name": "cdrs",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "settleBatch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "sessionId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "vmno",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "hmno",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "startTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "endTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "volumeKB",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint128",
+              "name": "charge",
+              "type": "uint128"
+            }
+          ],
+          "internalType": "struct PlainRoamingSettlement.CDR",
+          "name": "c",
+          "type": "tuple"
+        }
+      ],
+      "name": "settlePlain",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "settledHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "name": "tariffs",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "ratePerSecond",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "ratePerKB",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "sessionId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "vmno",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "hmno",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "startTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "endTime",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "volumeKB",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint128",
+              "name": "charge",
+              "type": "uint128"
+            }
+          ],
+          "internalType": "struct PlainRoamingSettlement.CDR",
+          "name": "c",
+          "type": "tuple"
+        }
+      ],
+      "name": "verifyPlain",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50600080546001600160a01b03191633179055610cab806100326000396000f3fe608060405234801561001057600080fd5b50600436106100b45760003560e01c8063bd07f3c911610071578063bd07f3c914610172578063cca480e3146101a4578063cfdbf254146101c6578063de8cb24c146101ce578063f2820255146101e1578063f482cdb2146101f457600080fd5b806321d6d1f4146100b95780634c453b61146100ce57806351ff98a914610101578063881fc09d1461011457806388c32d9d146101275780638da5cb5b14610147575b600080fd5b6100cc6100c736600461095c565b61025d565b005b6100ee6100dc366004610974565b60026020526000908152604090205481565b6040519081526020015b60405180910390f35b6100cc61010f36600461098d565b61026b565b6100cc610122366004610a31565b610331565b6100ee610135366004610a85565b60036020526000908152604090205481565b60005461015a906001600160a01b031681565b6040516001600160a01b0390911681526020016100f8565b610194610180366004610974565b600090815260026020526040902054151590565b60405190151581526020016100f8565b6101ae6201518081565b6040516001600160401b0390911681526020016100f8565b6100ee60c881565b6101946101dc36600461095c565b6104be565b6100ee6101ef366004610aa7565b6104d4565b610235610202366004610a85565b6001602052600090815260409020546001600160401b0380821691600160401b810490911690600160801b900460ff1683565b604080516001600160401b0394851681529390921660208401521515908201526060016100f8565b61026881600061057f565b50565b80806102ac5760405162461bcd60e51b815260206004820152600b60248201526a0cadae0e8f240c4c2e8c6d60ab1b60448201526064015b60405180910390fd5b60c88111156102ef5760405162461bcd60e51b815260206004820152600f60248201526e626174636820746f6f206c6172676560881b60448201526064016102a3565b60005b8181101561032b5761031b84848381811061030f5761030f610b0c565b905060e002018261057f565b61032481610b38565b90506102f2565b50505050565b6000546001600160a01b031633146103775760405162461bcd60e51b81526020600482015260096024820152683737ba1037bbb732b960b91b60448201526064016102a3565b8263ffffffff168463ffffffff16036103c25760405162461bcd60e51b815260206004820152600d60248201526c39b0b6b29037b832b930ba37b960991b60448201526064016102a3565b604080516060810182526001600160401b0380851682528316602082015260019181018290529060006103f5878761071d565b6001600160401b03908116825260208083019390935260409182016000208451815494860151958401511515600160801b0260ff60801b19968416600160401b026fffffffffffffffffffffffffffffffff19909616919093161793909317939093169290921790555163ffffffff80851691908616907f1c7f8458a668b12b98bb94aa5a1d9766b319c8b1e921e000af56770caea6647a906104b090869086906001600160401b0392831681529116602082015260400190565b60405180910390a350505050565b6000806104ca8361073b565b60ff161492915050565b600080600160006104e5898961071d565b6001600160401b0390811682526020808301939093526040918201600020825160608101845290548083168252600160401b810490921693810193909352600160801b900460ff1615801591830191909152909150806105575750846001600160401b0316846001600160401b031611155b15610566576000915050610576565b610572818686866108f6565b9150505b95945050505050565b600061058a8361073b565b905060ff8116156105ba5760405163413e908160e01b815260ff82166004820152602481018390526044016102a3565b8235600090815260026020526040902054156105ec576040516358cb522560e11b8152833560048201526024016102a3565b826040516020016105fd9190610b68565b60408051601f19818403018152918152815160209283012085356000908152600290935291205561063460e0840160c08501610c02565b6001600160801b0316600360006106696106546040880160208901610c1d565b6106646060890160408a01610c1d565b61071d565b6001600160401b03166001600160401b0316815260200190815260200160002060008282546106989190610c38565b909155506106ae90506060840160408501610c1d565b63ffffffff166106c46040850160208601610c1d565b63ffffffff1684357fb54bb81fb9d1774efe852483eaa269145f4b0fc2374f4ed392e700d1c038dea86106fd60e0880160c08901610c02565b6040516001600160801b03909116815260200160405180910390a4505050565b67ffffffff00000000602083901b1663ffffffff8216175b92915050565b600061074d6060830160408401610c1d565b63ffffffff166107636040840160208501610c1d565b63ffffffff160361077657506001919050565b600060018161079e61078e6040870160208801610c1d565b6106646060880160408901610c1d565b6001600160401b0390811682526020808301939093526040918201600020825160608101845290548083168252600160401b810490921693810193909352600160801b900460ff1615159082018190529091506107fe5750600292915050565b61080e6080840160608501610a85565b6001600160401b031661082760a0850160808601610a85565b6001600160401b03161161083e5750600392915050565b620151806108526080850160608601610a85565b6001600160401b031661086b60a0860160808701610a85565b6001600160401b031661087e9190610c4b565b111561088d5750600492915050565b61089d60e0840160c08501610c02565b6001600160801b03166108df826108ba6080870160608801610a85565b6108ca60a0880160808901610a85565b6108da60c0890160a08a01610a85565b6108f6565b146108ed5750600592915050565b50600092915050565b60008061090f6001600160401b03808716908616610c4b565b905085602001516001600160401b0316836001600160401b03166109339190610c5e565b8651610948906001600160401b031683610c5e565b6109529190610c38565b9695505050505050565b600060e0828403121561096e57600080fd5b50919050565b60006020828403121561098657600080fd5b5035919050565b600080602083850312156109a057600080fd5b82356001600160401b03808211156109b757600080fd5b818501915085601f8301126109cb57600080fd5b8135818111156109da57600080fd5b86602060e0830285010111156109ef57600080fd5b60209290920196919550909350505050565b803563ffffffff81168114610a1557600080fd5b919050565b80356001600160401b0381168114610a1557600080fd5b60008060008060808587031215610a4757600080fd5b610a5085610a01565b9350610a5e60208601610a01565b9250610a6c60408601610a1a565b9150610a7a60608601610a1a565b905092959194509250565b600060208284031215610a9757600080fd5b610aa082610a1a565b9392505050565b600080600080600060a08688031215610abf57600080fd5b610ac886610a01565b9450610ad660208701610a01565b9350610ae460408701610a1a565b9250610af260608701610a1a565b9150610b0060808701610a1a565b90509295509295909350565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b600060018201610b4a57610b4a610b22565b5060010190565b80356001600160801b0381168114610a1557600080fd5b8135815260e08101610b7c60208401610a01565b63ffffffff808216602085015280610b9660408701610a01565b1660408501525050610baa60608401610a1a565b6001600160401b03808216606085015280610bc760808701610a1a565b16608085015280610bda60a08701610a1a565b1660a085015250506001600160801b03610bf660c08501610b51565b1660c083015292915050565b600060208284031215610c1457600080fd5b610aa082610b51565b600060208284031215610c2f57600080fd5b610aa082610a01565b8082018082111561073557610735610b22565b8181038181111561073557610735610b22565b808202811582820484141761073557610735610b2256fea26469706673582212205f6864afd2e5deaf719aa40dbf99509c2bce3727d1e439affaa254a30539babb64736f6c63430008130033"
+}

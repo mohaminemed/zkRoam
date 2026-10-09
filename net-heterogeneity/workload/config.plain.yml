@@ -1,0 +1,38 @@
+# Plain (no-ZK, no-aggregation) baseline - config for plain_workload.py
+experiment:
+  name: plain_baseline
+
+network:
+  topology: networkFiles/topology.json
+  accounts: accounts/accounts.json
+
+sweep:
+  nproofs: [8, 64]          # CDRs per VMNO settlement (same sweep as zkroam_workload.py)
+  runs: 3
+  mode: all             # stateless | stateful | batch | all
+
+workload:
+  num_vmnos: 8          # same meaning as in zkroam_workload.py
+  num_operators: 8      # distinct operator ids in the CDRs (>= 2)
+  batch_chunk: 50       # max CDRs per settleBatch tx (contract cap: 200)
+  rate_per_second: 3
+  rate_per_kb: 2
+
+contracts:
+  deployed_contracts: deployed_contracts.json   # add "plain_settlement": {"address": "0x..."}
+  plain_artifact: null  # compiled JSON (abi + bytecode) to deploy if the address is missing
+  deployer_key_index: 0 # accounts[i] that owns the contract and sets tariffs
+
+execution:
+  rate: 500.0
+  workers: 32
+  receipt_workers: 16
+  receipt_timeout: 120.0
+  poll_interval: 0.25
+
+monitoring:
+  enabled: true
+  interval: 1.0
+
+output:
+  out_dir: results/plain
