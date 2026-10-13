@@ -41,7 +41,7 @@ workload:
   # This is the actual number of concurrent operator accounts.
   num_vmnos: 8
   # Whether to include a commit transaction in the workload
-  include_commit: false
+  include_commit: true
   # number of authorized verifiers signing each aggregate attestation
   num_attesters: 5
   # anchor finalization threshold; null = leave the on-chain value unchanged

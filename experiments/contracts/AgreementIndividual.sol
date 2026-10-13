@@ -56,12 +56,14 @@ contract AgreementIndividual is AgreementBase {
 
         // Anyone may call: only the VMNO can produce a valid proof, and funds
         // only ever go to the two agreement parties.
+        // Order must match the circuit's public signals (snarkjs public.json):
+        // [r_sms, r_mb, r_voice, t (total cost), hash_cdr]
         uint256[5] memory publicInputs = [
-            totalCost,
-            uint256(cdrHash),
             rates.sms,
             rates.data,
-            rates.voice
+            rates.voice,
+            totalCost,
+            uint256(cdrHash)
         ];
         if (!groth16Verifier.verifyProof(pointA_, pointB_, pointC_, publicInputs)) revert InvalidProof();
 

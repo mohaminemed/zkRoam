@@ -2,88 +2,47 @@
 """
 zkroam_workload.py
 
-Custom transaction WORKLOAD for the Besu QBFT benchmark harness
-(besu_benchmark.py), modeling the on-chain leg of the zkRoam CDR circuit
-+ SnarkPack aggregation pipeline (snarkpack_aggregation/).
+zkRoam on-chain workload, run against the REAL settlement contracts:
 
-WHAT THIS MODELS
-------------------------------------------------------------------
-The Rust binary already measures the OFF-CHAIN cost of a roaming
-settlement: generating `nproofs` Groth16 CDR proofs, then aggregating
-them with SnarkPack (output/experiment_log_<n>_<run>.json).
+  AgreementIndividual  one Groth16 verifyProof per session (UE commits h_cdr first)
+  AgreementAggregate   SnarkPack aggregate attested through SnarkPackAggregateAnchor,
+                       then ONE settleBatch per VMNO. No per-session commit.
 
-This script models what happens next: getting a settlement result
-on-chain. It benchmarks two competing strategies:
+Same session model, escrow, rates and payouts as AgreementPlain (plain_workload.py),
+so the three paths differ only in how the cost is validated.
 
-  * "individual" - post each of the `nproofs` Groth16 CDR proofs as
-    its own transaction (no aggregation).
-  * "aggregate"  - do the SnarkPack aggregation off-chain and post ONE
-    transaction per VMNO carrying the aggregate attestation.
+  sweep.nproofs      -> sessions ONE VMNO settles together
+  workload.num_vmnos -> number of VMNOs (groups of sessions)
 
-    individual pipeline = max(proof_gen_i) + individual confirm duration
-    aggregate  pipeline = max(proof_gen_i) + aggregation_time
-                          + aggregation_verify_time (+ serialize, if logged)
-                          + aggregate confirm duration
+Legs (setup - deploy, mint, approve, startRoamingSession - is not measured):
 
-WORKLOAD SIZE: nproofs (per-VMNO) vs num_vmnos (total workload)
-------------------------------------------------------------------
-    individual leg -> nproofs * num_vmnos total transactions
-    aggregate  leg -> num_vmnos total transactions
+  individual  commit    N txs   UE -> submitCDR(sessionId, h_cdr)
+              individual N txs  terminateRoamingSession(sessionId, proof, cost)
+  aggregate   anchor    num_vmnos txs  relayAggregateProof (exactly t = threshold signatures,
+                                         taken from a committee of num_attesters)
+              settle    num_vmnos txs  settleBatch(ueSigs, batchId, aggProofHash, ids, costs, cdrHashes)
+              (no submitCDR: each UE signs (agreement, chainid, sessionId, cdrHash) off-chain,
+               settleBatch verifies that signature on-chain against Session.ueAddress)
 
-OUTPUT SCHEMA
-------------------------------------------------------------------
-The sweep summary CSV always has the columns listed in
-SWEEP_SUMMARY_FIELDS (same order as the reference output). Columns that
-do not apply to the selected mode, or that the off-chain log does not
-provide, are left empty.
+Each leg runs on a FRESH agreement instance. Columns: individual_commit_*,
+individual_*, aggregate_anchor_*, aggregate_settle_*, aggregate_* (combined),
+e2e_* (individual = commit + settle, aggregate = anchor + settle, no commit),
+gas_savings_pct (settlement only), e2e_gas_savings_pct, *_valid_all
+(False when any tx of the path failed: do not compare it).
 
-  offchain_proof_ms_total            = sum of per-proof times (one VMNO)
-  offchain_proof_work_ms_all_vmnos   = offchain_proof_ms_total * num_vmnos
-  offchain_aggregate_work_ms_all_vmnos
-                                     = (agg + agg_verify [+ serialize]) * num_vmnos
-  *_latency_p50_s / *_latency_p99_s  = per-tx latency from the tx's OWN submission
-                                       to the block that mined it (block time), so
-                                       time spent submitting the rest of the batch
-                                       and receipt-poller delay are NOT counted
-  aggregate_latency_s                = p50 of that per-tx latency
-  aggregate_first_tx_latency_s       = confirmation latency of the first tx
+VERIFIER MODE: without contracts.proof_json/public_json the individual leg settles
+through BenchGroth16Verifier (real pairing, returns true; ~3k gas wrapper overhead,
+see column individual_verifier_mode). With a real snarkjs proof it calls the real
+Groth16Verifier and the rates are taken from the proof's public inputs.
 
-CONFIG FILE
-------------------------------------------------------------------
-All configuration lives in a YAML file (default: config.yml, override
-with --config path/to/file.yml).
+TRUST NOTE: the aggregate proof is verified OFF-CHAIN by the attesters; on-chain
+only their threshold attestation is checked. The aggregate path has no on-chain UE
+commit; instead cdrHash provenance is enforced on-chain by a per-session UE
+signature (EIP-2098, 64 B/session) checked in settleBatch. A UE can still sign two
+hashes for one session (no write-once commit), which gas numbers do not capture.
 
-COMMIT LEG (per-session commit(sid, h_cdr))
-------------------------------------------------------------------
-    commit leg     -> nproofs * num_vmnos total transactions (one per session)
-    e2e ZK-individual per session = commit + verifyProof gas
-    e2e ZK-aggregate  per session = commit + anchor gas / nproofs
-Needs contracts.deployed_contracts to hold a "cdr_commit" entry (see
-deploy_cdr_commit.py); otherwise calldata + COMMIT_EXEC_COST is used.
-Disable with workload.include_commit: false.
-
-ATTESTERS (aggregate leg)
-------------------------------------------------------------------
-    workload.num_attesters (default 4): number of authorized verifiers that
-    sign each aggregate attestation. relayAggregateProof() is called with
-    num_attesters (signer, signature) pairs, so the anchor tx pays for
-    num_attesters ecrecovers + attestation writes. Attesters are
-    accounts[contracts.verifier_key_index : +num_attesters]; any that are not yet
-    authorized on the anchor are added once at start-up (addVerifier, sent by the
-    anchor's owner, which must be one of the funded accounts).
-    workload.threshold (default null): if set, setThreshold(t) is applied at
-    start-up; null leaves the on-chain threshold untouched.
-
-IMPORTANT ASSUMPTIONS
-------------------------------------------------------------------
-1. Without deployed contracts only CALLDATA cost is modeled (EIP-2028);
-   with contracts.deployed_contracts pointing at a deploy_verifiers.py
-   output, real calls are made and real gasUsed is read from receipts.
-2. SnarkPack aggregate-proof size is estimated analytically unless the
-   Rust log provides "aggregate_proof_bytes".
-3. "individual" mode posts a full compressed Groth16 proof (192 bytes)
-   per transaction.
-------------------------------------------------------------------
+Off-chain proving/aggregation times come from snarkpack_aggregation/output
+(experiment_log_<n>_<run>.json) or the reference fallback.
 """
 
 import argparse
@@ -96,97 +55,27 @@ import secrets
 import statistics
 import time
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 
 import yaml
-
-from besu_benchmark import (  # the pasted script, save it as besu_benchmark.py
-    ResourceMonitor,
-    build_rpc_endpoints,
-    connect_web3,
-    load_accounts,
-    assign_accounts,
-    load_nonces,
-    submit_all,
-    poll_all_receipts,
-    compute_statistics,
-    compute_rpc_statistics,
-    percentile,
-    load_json,
-)
-
 from web3 import Web3
 from eth_abi import encode as eth_abi_encode
 from eth_keys import keys as eth_keys
 
+from besu_benchmark import (
+    ResourceMonitor, build_rpc_endpoints, connect_web3, load_accounts,
+    assign_accounts, load_json,
+)
+from agreement_common import (
+    Env, Token, run_leg, settle_leg, estimate_gas, check_gas_fits_block,
+    leg_columns, deploy_agreement, deploy_contract, load_artifact, forge_artifact,
+    make_ue_accounts, fund_ue_accounts, session_plan, field_cdr_hash,
+    start_sessions, commit_leg, _send_and_wait,
+)
 
 # ============================================================
-# Sweep-summary schema (order matters: matches the reference CSV)
+# Anchor ABI + EIP-712 attestation signing (unchanged)
 # ============================================================
-
-SWEEP_SUMMARY_FIELDS = [
-    "nproofs_per_vmno", "num_vmnos", "run",
-    "offchain_source",
-    "offchain_proof_ms_max", "offchain_proof_ms_avg", "offchain_proof_ms_total",
-    "offchain_param_ms", "offchain_single_verify_ms",
-    "offchain_agg_ms", "offchain_agg_serialize_ms", "offchain_agg_verify_ms",
-    "offchain_peak_mb", "offchain_total_experiment_ms",
-    "offchain_proof_work_ms_all_vmnos", "offchain_aggregate_work_ms_all_vmnos",
-    "individual_total_tx", "individual_bytes_per_tx",
-    "individual_gas_limit_per_tx", "individual_gas_used_per_tx",
-    "individual_total_gas_used", "individual_contract_called",
-    "individual_confirmed", "individual_success_rate_pct",
-    "individual_submit_throughput_tx_s", "individual_confirm_throughput_tx_s",
-    "individual_latency_p50_s", "individual_latency_p99_s",
-    "individual_confirm_duration_s", "individual_pipeline_latency_s",
-    "aggregate_total_tx", "aggregate_proof_bytes", "aggregate_proof_bytes_is_measured",
-    "aggregate_gas_limit_per_tx", "aggregate_gas_used_per_tx",
-    "aggregate_total_gas_used", "aggregate_contract_called",
-    "aggregate_confirmed", "aggregate_success_rate_pct",
-    "aggregate_submit_throughput_tx_s", "aggregate_confirm_throughput_tx_s",
-    "aggregate_latency_p50_s", "aggregate_latency_p99_s",
-    "aggregate_latency_s", "aggregate_first_tx_latency_s",
-    "aggregate_confirm_duration_s", "aggregate_pipeline_latency_s",
-    "gas_savings_pct", "pipeline_speedup_x",
-    # --- per-session commitment tx (sid, h_cdr) + end-to-end accounting ---
-    "commit_total_tx", "commit_bytes_per_tx",
-    "commit_gas_limit_per_tx", "commit_gas_used_per_tx",
-    "commit_total_gas_used", "commit_contract_called",
-    "commit_confirmed", "commit_success_rate_pct",
-    "commit_submit_throughput_tx_s", "commit_confirm_throughput_tx_s",
-    "commit_latency_p50_s", "commit_latency_p99_s", "commit_confirm_duration_s",
-    "e2e_individual_gas_per_session", "e2e_aggregate_gas_per_session",
-    "e2e_individual_total_gas", "e2e_aggregate_total_gas",
-    "e2e_gas_savings_pct", "commit_share_of_aggregate_e2e_pct",
-    # --- aggregate attestation set ---
-    "aggregate_num_attesters", "anchor_threshold",
-]
-
-
-# ============================================================
-# Deployed-contract wiring (see deploy_verifiers.py)
-# ============================================================
-
-CDR_VERIFIER_ABI = [{
-    "type": "function", "name": "verifyProof", "stateMutability": "view",
-    "inputs": [
-        {"name": "_pA", "type": "uint256[2]"},
-        {"name": "_pB", "type": "uint256[2][2]"},
-        {"name": "_pC", "type": "uint256[2]"},
-        {"name": "_pubSignals", "type": "uint256[5]"},
-    ],
-    "outputs": [{"name": "", "type": "bool"}],
-}]
-
-CDR_COMMIT_ABI = [{
-    "type": "function", "name": "commit", "stateMutability": "nonpayable",
-    "inputs": [
-        {"name": "sid", "type": "bytes32"},
-        {"name": "hCdr", "type": "bytes32"},
-    ],
-    "outputs": [],
-}]
 
 AGGREGATE_ANCHOR_ABI = [{
     "type": "function", "name": "anchorAggregateProof", "stateMutability": "nonpayable",
@@ -388,6 +277,17 @@ DUMMY_PC = (
 )
 DUMMY_PUBLIC_SIGNALS = (1, 2, 3, 4, 5)
 
+# Public-signal order of the CDR circuit (snarkjs public.json) and therefore of
+# Groth16Verifier.verifyProof's uint[5]. AgreementIndividual.terminateRoamingSession
+# must build its array in exactly this order.
+PS_RSMS, PS_RDATA, PS_RVOICE, PS_COST, PS_HASH = range(5)
+
+
+def pub_signals(rates, cost, cdr_hash_int):
+    """Verifier public inputs in circuit order: [r_sms, r_data, r_voice, cost, cdrHash]."""
+    return [int(rates["sms"]), int(rates["data"]), int(rates["voice"]),
+            int(cost), int(cdr_hash_int)]
+
 
 def load_deployed_contracts(path):
     if not path or not os.path.exists(path):
@@ -410,182 +310,6 @@ def load_snarkjs_proof(proof_path, public_path):
 
     return pA, pB, pC, public_signals
 
-
-def build_verify_proof_calldata(w3, pA=None, pB=None, pC=None, public_signals=None):
-    pA = pA or DUMMY_PA
-    pB = pB or DUMMY_PB
-    pC = pC or DUMMY_PC
-    public_signals = public_signals or DUMMY_PUBLIC_SIGNALS
-
-    contract = w3.eth.contract(abi=CDR_VERIFIER_ABI)
-    return contract.encode_abi(
-        abi_element_identifier="verifyProof",
-        args=[list(pA), [list(pB[0]), list(pB[1])], list(pC), list(public_signals)],
-    )
-
-
-def build_commit_calldata(w3, sid: bytes, h_cdr: bytes):
-    """commit(bytes32 sid, bytes32 hCdr) calldata: 4B selector + 64B = 68B."""
-    contract = w3.eth.contract(abi=CDR_COMMIT_ABI)
-    return contract.encode_abi(
-        abi_element_identifier="commit", args=[sid, h_cdr],
-    )
-
-
-def build_anchor_calldata(w3, settlement_id: bytes, commitment: bytes, nproofs: int):
-    """Direct anchorAggregateProof(onlyVerifier) calldata - kept for
-    smoke-testing; the sweep driver uses build_relay_calldata()."""
-    contract = w3.eth.contract(abi=AGGREGATE_ANCHOR_ABI)
-    return contract.encode_abi(
-        abi_element_identifier="anchorAggregateProof",
-        args=[settlement_id, commitment, nproofs],
-    )
-
-
-def fetch_gas_used(transactions, web3s):
-    """Post-hoc fetch of real gasUsed for confirmed txs."""
-    used = []
-    for t in transactions:
-        if t["status"] != "confirmed" or not t["tx_hash"]:
-            continue
-        try:
-            receipt = web3s[t["rpc_index"]].eth.get_transaction_receipt(t["tx_hash"])
-            t["gas_used"] = receipt["gasUsed"]
-            used.append(receipt["gasUsed"])
-        except Exception:
-            t["gas_used"] = None
-    return used
-
-
-def block_timestamp(w3, block_number):
-    """Block timestamp via raw RPC. web3.py's get_block() validates extraData
-    length and raises ExtraDataLengthError on QBFT/IBFT chains (the header
-    carries validator set + seals), so it must not be used here."""
-    res = w3.provider.make_request("eth_getBlockByNumber", [hex(block_number), False])
-    if res.get("error") or not res.get("result"):
-        return None
-    return int(res["result"]["timestamp"], 16)
-
-
-def apply_block_time_latency(transactions, web3s, method="block_time"):
-    """
-    Per-tx latency = (timestamp of the block that mined the tx) - (that
-    tx's own submit_ts).
-
-    The receipt poller only starts after submit_all() returns, so
-    confirm_ts - submit_ts also contains the time spent submitting the
-    rest of the batch plus the poll sweep. Block time avoids that.
-
-    Safeguards:
-      * block timestamps are whole seconds -> clamp at >= 0
-      * never exceed the poll-based latency (the true latency cannot be
-        larger), which also bounds the error from client/node clock skew
-      * if a block cannot be fetched, fall back to the poll-based value
-
-    Sets t["latency_s"], t["poll_latency_s"], t["block_ts"] on every tx and
-    returns {"p50", "p99", "mean", "n"} over confirmed txs.
-    """
-    block_ts_cache = {}
-
-    for t in transactions:
-        t["latency_s"] = None
-        t["poll_latency_s"] = None
-        t["block_ts"] = None
-
-        if t["submit_ts"] is None or t["confirm_ts"] is None:
-            continue
-
-        poll_lat = t["confirm_ts"] - t["submit_ts"]
-        t["poll_latency_s"] = poll_lat
-        lat = poll_lat
-
-        if (method == "block_time" and t["status"] == "confirmed"
-                and t["block_number"] is not None):
-            bn = t["block_number"]
-            if bn not in block_ts_cache:
-                try:
-                    block_ts_cache[bn] = block_timestamp(web3s[t["rpc_index"]], bn)
-                except Exception:
-                    block_ts_cache[bn] = None
-            bts = block_ts_cache[bn]
-            if bts is not None:
-                t["block_ts"] = bts
-                lat = min(poll_lat, max(0.0, bts - t["submit_ts"]))
-
-        t["latency_s"] = lat
-
-    if method == "block_time":
-        missing = sum(1 for t in transactions
-                      if t["status"] == "confirmed" and t["block_ts"] is None)
-        if missing:
-            print(f"  WARNING: block timestamp unavailable for {missing} confirmed "
-                  f"txs - they use poll-based latency instead.")
-
-    vals = sorted(t["latency_s"] for t in transactions
-                  if t["status"] == "confirmed" and t["latency_s"] is not None)
-    if not vals:
-        return {"p50": None, "p99": None, "mean": None, "n": 0}
-
-    def pct(q):
-        k = (len(vals) - 1) * q
-        lo, hi = math.floor(k), math.ceil(k)
-        return vals[lo] + (vals[hi] - vals[lo]) * (k - lo)
-
-    return {"p50": pct(0.50), "p99": pct(0.99),
-            "mean": sum(vals) / len(vals), "n": len(vals)}
-
-
-def wait_for_pool_drain(accounts, assignment, web3s, timeout_s=900.0, poll_s=2.0):
-    """
-    Block until no workload account has pending-but-unmined txs, i.e.
-    eth_getTransactionCount(addr, "pending") == (addr, "latest") for all.
-    Returns (drained: bool, waited_s, remaining_backlog).
-    """
-    def backlog(acc):
-        w3 = web3s[assignment[acc["index"]]]
-        try:
-            return (w3.eth.get_transaction_count(acc["address"], "pending")
-                    - w3.eth.get_transaction_count(acc["address"], "latest"))
-        except Exception:
-            return 0
-
-    start = time.time()
-    remaining = 0
-    while True:
-        with ThreadPoolExecutor(max_workers=16) as ex:
-            remaining = sum(ex.map(backlog, accounts))
-        if remaining == 0:
-            return True, time.time() - start, 0
-        if time.time() - start > timeout_s:
-            return False, time.time() - start, remaining
-        time.sleep(poll_s)
-
-
-def settle_network(label, accounts, assignment, web3s, timeout_s, resource_monitor=None):
-    """
-    Called between legs/runs so one leg's backlog (e.g. a 16k-tx individual
-    leg at 500 tx/s) cannot congest the next one: wait for the pool to
-    drain, then re-read nonces from the chain instead of assuming every
-    submitted tx was mined.
-    """
-    if resource_monitor is not None:
-        resource_monitor.set_phase(f"settle:{label}")
-
-    drained, waited, remaining = wait_for_pool_drain(
-        accounts, assignment, web3s, timeout_s=timeout_s
-    )
-    if drained:
-        print(f"  [settle:{label}] pool drained after {waited:.1f}s")
-    else:
-        print(f"  [settle:{label}] WARNING: {remaining} txs still pending after "
-              f"{waited:.0f}s - next leg may be affected (raise "
-              f"execution.drain_timeout_s or lower execution.rate)")
-
-    nonces = load_nonces(accounts, assignment, web3s)
-
-    if resource_monitor is not None:
-        resource_monitor.set_phase("idle")
-    return nonces
 
 
 # ============================================================
@@ -731,185 +455,62 @@ def estimate_aggregate_proof_bytes(nproofs, measured_bytes=None):
     return fixed + (rounds * per_round) + finalize
 
 
-def calldata_gas_cost(payload: bytes):
-    nonzero = sum(1 for b in payload if b != 0)
-    zero = len(payload) - nonzero
-    return BASE_TX_GAS + (nonzero * GAS_PER_NONZERO_BYTE) + (zero * GAS_PER_ZERO_BYTE)
-
-
 def make_calldata(n_bytes):
     """Random bytes stand in for serialized curve points/field elements."""
     return secrets.token_bytes(n_bytes)
 
 
-# ============================================================
-# Transaction preparation (zkRoam variant - adds calldata + variable gas)
-# ============================================================
-
-def prepare_zkroam_transactions(
-    accounts,
-    assignment,
-    nonces,
-    web3s,
-    num_tx,
-    chain_id,
-    calldata,
-    gas_per_tx: int,
-    to_address=None,
-):
-    """
-    Same shape as benchmark.py's prepare_transactions(), but every tx
-    carries calldata as `data` and uses an explicit gas limit.
-
-    `calldata` is either a single `bytes` object reused for all `num_tx`
-    transactions (individual leg) or a list/tuple of `num_tx` distinct
-    `bytes` objects (aggregate leg: each VMNO needs its own settlementId).
-
-    `num_tx` is the TOTAL transaction count for this leg, already
-    resolved by the caller (nproofs * num_vmnos or num_vmnos).
-    """
-
-    if not accounts:
-        raise RuntimeError("No accounts available.")
-
-    per_tx_calldata = isinstance(calldata, (list, tuple))
-    if per_tx_calldata and len(calldata) != num_tx:
-        raise ValueError(
-            f"calldata list has {len(calldata)} entries but num_tx={num_tx}"
-        )
-
-    transactions = []
-    next_nonce = dict(nonces)
-    single_data_hex = None if per_tx_calldata else Web3.to_hex(calldata)
-
-    for tx_index in range(num_tx):
-
-        account = accounts[tx_index % len(accounts)]
-        account_index = account["index"]
-        rpc_index = assignment[account_index]
-        w3 = web3s[rpc_index]
-
-        nonce = next_nonce[account_index]
-        next_nonce[account_index] += 1
-
-        target = to_address or account["address"]
-
-        data_hex = single_data_hex or Web3.to_hex(calldata[tx_index])
-
-        tx = {
-            "chainId": chain_id,
-            "nonce": nonce,
-            "to": target,
-            "value": 0,
-            "gas": gas_per_tx,
-            "gasPrice": w3.eth.gas_price,
-            "data": data_hex,
-        }
-
-        signed = w3.eth.account.sign_transaction(tx, account["private_key"])
-
-        transactions.append(
-            {
-                "tx_index": tx_index,
-                "account_index": account_index,
-                "sender": account["address"],
-                "rpc_index": rpc_index,
-                "raw": signed.raw_transaction,
-                "nonce": nonce,
-                "tx_hash": None,
-                "submit_ts": None,
-                "confirm_ts": None,
-                "block_number": None,
-                "status": "prepared",
-                "error": None,
-            }
-        )
-
-    return transactions
 
 
 # ============================================================
-# One benchmark leg: submit + confirm a batch, return on-chain stats
+# Batch commitment (mirror of AgreementAggregate._commitment)
 # ============================================================
 
-def run_onchain_leg(
-    label,
-    accounts,
-    assignment,
-    nonces,
-    web3s,
-    endpoints,
-    chain_id,
-    num_tx,
-    calldata_bytes,
-    gas_per_tx,
-    rate,
-    workers,
-    receipt_workers,
-    receipt_timeout,
-    poll_interval,
-    resource_monitor=None,
-    to_address=None,
-    accounts_override=None,
-    receipt_timeout_per_tx=0.0,
-):
-    # Large legs (e.g. 16k individual txs) can legitimately need far longer
-    # than a flat timeout: scale it with the leg size.
-    receipt_timeout = max(receipt_timeout, num_tx * receipt_timeout_per_tx)
-    print()
-    calldata_size_desc = (
-        f"{len(calldata_bytes[0])}B/tx x {len(calldata_bytes)} distinct payloads"
-        if isinstance(calldata_bytes, (list, tuple))
-        else f"{len(calldata_bytes)}B calldata"
-    )
-    print(f">>> on-chain leg: {label} "
-          f"({num_tx} tx total, {calldata_size_desc}, "
-          f"gas/tx={gas_per_tx}, to={to_address or '(self)'})")
+BATCH_DOMAIN = Web3.keccak(text="zkRoam.AgreementAggregate.batch.v1")
 
-    transactions = prepare_zkroam_transactions(
-        accounts=accounts_override or accounts,
-        assignment=assignment,
-        nonces=nonces,
-        web3s=web3s,
-        num_tx=num_tx,
-        chain_id=chain_id,
-        calldata=calldata_bytes,
-        gas_per_tx=gas_per_tx,
-        to_address=to_address,
-    )
 
-    if resource_monitor is not None:
-        resource_monitor.set_phase(f"{label}:submission")
+def sessions_digest(sids, costs, cdrs):
+    return Web3.keccak(b"".join(
+        eth_abi_encode(["uint256", "uint256", "bytes32"], [s, c, h])
+        for s, c, h in zip(sids, costs, cdrs)))
 
-    submit_all(transactions, web3s, target_rate=rate, workers=workers)
 
-    if resource_monitor is not None:
-        resource_monitor.set_phase(f"{label}:confirmation")
+# UE signature over the CDR hash (mirror of AgreementAggregate.ueCDRDigest)
+UE_CDR_DOMAIN = Web3.keccak(text="zkRoam.AgreementAggregate.ueCDR.v1")
 
-    poll_all_receipts(
-        transactions, web3s,
-        workers=receipt_workers,
-        timeout=receipt_timeout,
-        poll_interval=poll_interval,
-    )
 
-    if resource_monitor is not None:
-        resource_monitor.set_phase("idle")
+def ue_cdr_digest(agreement, chain_id, session_id, cdr_hash: bytes) -> bytes:
+    return Web3.keccak(eth_abi_encode(
+        ["bytes32", "address", "uint256", "uint256", "bytes32"],
+        [UE_CDR_DOMAIN, Web3.to_checksum_address(agreement), chain_id, session_id, cdr_hash]))
 
-    stats = compute_statistics(transactions)
-    rpc_stats = compute_rpc_statistics(transactions, endpoints)
 
-    return transactions, stats, rpc_stats
+def sign_cdr_compact(digest: bytes, private_key_hex: str) -> bytes:
+    """EIP-2098 compact signature r || (yParity<<255 | s). eth_keys gives v in {0,1}, low-s."""
+    pk = eth_keys.PrivateKey(bytes.fromhex(private_key_hex.replace("0x", "")))
+    sig = pk.sign_msg_hash(digest)
+    return sig.r.to_bytes(32, "big") + (sig.s | (sig.v << 255)).to_bytes(32, "big")
+
+
+def batch_commitment(agreement, chain_id, batch_id, agg_proof_hash, rates, sids, costs, cdrs):
+    return Web3.keccak(eth_abi_encode(
+        ["bytes32", "address", "uint256", "bytes32", "uint256", "bytes32",
+         "uint256", "uint256", "uint256", "bytes32"],
+        [BATCH_DOMAIN, agreement, chain_id, batch_id, len(sids), agg_proof_hash,
+         rates["sms"], rates["data"], rates["voice"],
+         sessions_digest(sids, costs, cdrs)]))
+
+
+def settlement_id_of(agreement, batch_id):
+    return Web3.keccak(eth_abi_encode(["address", "bytes32"], [agreement, batch_id]))
 
 
 # ============================================================
-# YAML config loading
+# Config
 # ============================================================
 
 DEFAULT_CONFIG = {
-    "experiment": {
-        "name": "zkroam_benchmark",
-    },
+    "experiment": {"name": "zkroam_benchmark"},
     "network": {
         "topology": "networkFiles/topology.json",
         "accounts": "accounts/accounts.json",
@@ -917,30 +518,37 @@ DEFAULT_CONFIG = {
     "sweep": {
         "nproofs": list(DEFAULT_SWEEP),
         "runs": 1,
-        "mode": "both",  # individual | aggregate | both
+        "mode": "both",          # individual | aggregate | both
     },
     "workload": {
-        # individual leg total tx = nproofs * num_vmnos
-        # aggregate  leg total tx = num_vmnos
-        "num_vmnos": 1000,
-        # one commit(sid, h_cdr) tx per SESSION = nproofs * num_vmnos txs,
-        # shared by both ZK variants (individual and aggregate)
-        "include_commit": True,
-        # number of authorized verifiers signing each aggregate attestation
-        # (relayAggregateProof carries this many signatures)
-        "num_attesters": 4,
-        # anchor finalization threshold; null = leave the on-chain value as is
-        "threshold": None,
+        # individual: nproofs * num_vmnos sessions (commit + terminate txs each)
+        # aggregate : num_vmnos batches (1 anchor tx + 1 settleBatch tx each)
+        "num_vmnos": 8,
+        # attester committee size m (authorized verifiers provisioned on the anchor)
+        "num_attesters": 5,
+        # anchor threshold t; each relay submits exactly t signatures (extra ones only
+        # cost gas: the anchor stores every signature even after finality).
+        # null = leave the on-chain value as is
+        "threshold": 3,
+        # agreement rates (ignored when a real proof is given: its public
+        # inputs fix the rates)
+        "rate_sms": 5,
+        "rate_voice": 3,
+        "rate_data": 2,
+        "estimate_margin_pct": 20,
+        "setup_chunk": 500,
+        # native balance per UE; null = auto (gas_price * 150k * #commit txs)
+        "ue_fund_wei": None,
     },
-    "offchain": {
-        "logs_dir": "snarkpack_aggregation/output",
-    },
+    "offchain": {"logs_dir": "snarkpack_aggregation/output"},
     "contracts": {
-        "verifier_address": None,
-        "deployed_contracts": "deployed_contracts.json",
-        "proof_json": None,
+        "forge_out": "out",
+        "deployed_contracts": "deployed_contracts.json",   # cdr_verifier + aggregate_anchor
+        "proof_json": None,             # real snarkjs proof => exact verifier gas
         "public_json": None,
-        "verifier_key_index": 0,
+        "verifier_key_index": 2,        # first attester account; must not overlap mno_key_indices
+        "deployer_key_index": 0,
+        "mno_key_indices": [0, 1],
     },
     "execution": {
         "rate": 500.0,
@@ -948,21 +556,12 @@ DEFAULT_CONFIG = {
         "receipt_workers": 16,
         "receipt_timeout": 120.0,
         "poll_interval": 0.25,
-        # "block_time": latency = mining block timestamp - tx's own submit_ts
-        # "poll":       latency = receipt-seen time - submit_ts (old behaviour)
         "latency_method": "block_time",
-        # receipt timeout for a leg = max(receipt_timeout, num_tx * this)
         "receipt_timeout_per_tx_s": 0.05,
-        # max time to wait for the txpool to drain between legs/runs
         "drain_timeout_s": 900.0,
     },
-    "monitoring": {
-        "enabled": True,
-        "interval": 1.0,
-    },
-    "output": {
-        "out_dir": "results/zkroam",
-    },
+    "monitoring": {"enabled": True, "interval": 1.0},
+    "output": {"out_dir": "results/zkroam"},
 }
 
 
@@ -978,16 +577,11 @@ def _deep_merge(base, override):
 
 def load_config(path):
     if not os.path.exists(path):
-        raise FileNotFoundError(
-            f"Config file not found: {path}\n"
-            f"Copy config.example.yml to {path} and edit it, or pass "
-            f"--config /path/to/the.yml."
-        )
-
+        raise FileNotFoundError(f"Config file not found: {path}")
     with open(path) as f:
         user_cfg = yaml.safe_load(f) or {}
-
     cfg = _deep_merge(DEFAULT_CONFIG, user_cfg)
+    w, c, e = cfg["workload"], cfg["contracts"], cfg["execution"]
 
     args = SimpleNamespace(
         experiment_name=cfg["experiment"]["name"],
@@ -996,57 +590,271 @@ def load_config(path):
         sweep=cfg["sweep"]["nproofs"],
         runs=int(cfg["sweep"]["runs"]),
         mode=cfg["sweep"]["mode"],
-        num_vmnos=int(cfg["workload"]["num_vmnos"]),
-        include_commit=bool(cfg["workload"]["include_commit"]),
-        num_attesters=int(cfg["workload"]["num_attesters"]),
-        threshold=(None if cfg["workload"]["threshold"] is None
-                   else int(cfg["workload"]["threshold"])),
+        num_vmnos=int(w["num_vmnos"]),
+        num_attesters=int(w["num_attesters"]),
+        threshold=None if w["threshold"] is None else int(w["threshold"]),
+        rates={"sms": int(w["rate_sms"]), "voice": int(w["rate_voice"]),
+               "data": int(w["rate_data"])},
+        margin_pct=int(w["estimate_margin_pct"]),
+        setup_chunk=int(w["setup_chunk"]),
+        ue_fund_wei=None if w["ue_fund_wei"] is None else int(w["ue_fund_wei"]),
         offchain_logs_dir=cfg["offchain"]["logs_dir"],
-        verifier_address=cfg["contracts"]["verifier_address"],
-        deployed_contracts=cfg["contracts"]["deployed_contracts"],
-        proof_json=cfg["contracts"]["proof_json"],
-        public_json=cfg["contracts"]["public_json"],
-        verifier_key_index=int(cfg["contracts"]["verifier_key_index"]),
-        rate=float(cfg["execution"]["rate"]),
-        workers=int(cfg["execution"]["workers"]),
-        receipt_workers=int(cfg["execution"]["receipt_workers"]),
-        receipt_timeout=float(cfg["execution"]["receipt_timeout"]),
-        poll_interval=float(cfg["execution"]["poll_interval"]),
-        latency_method=str(cfg["execution"]["latency_method"]),
-        receipt_timeout_per_tx=float(cfg["execution"]["receipt_timeout_per_tx_s"]),
-        drain_timeout_s=float(cfg["execution"]["drain_timeout_s"]),
+        forge_out=c["forge_out"],
+        deployed_contracts=c["deployed_contracts"],
+        proof_json=c["proof_json"], public_json=c["public_json"],
+        verifier_key_index=int(c["verifier_key_index"]),
+        deployer_key_index=int(c["deployer_key_index"]),
+        mno_key_indices=[int(x) for x in c["mno_key_indices"]],
+        rate=float(e["rate"]), workers=int(e["workers"]),
+        receipt_workers=int(e["receipt_workers"]),
+        receipt_timeout=float(e["receipt_timeout"]),
+        poll_interval=float(e["poll_interval"]),
+        latency_method=str(e["latency_method"]),
+        receipt_timeout_per_tx=float(e["receipt_timeout_per_tx_s"]),
+        drain_timeout_s=float(e["drain_timeout_s"]),
         monitor_resources=bool(cfg["monitoring"]["enabled"]),
         monitor_interval=float(cfg["monitoring"]["interval"]),
         out_dir=cfg["output"]["out_dir"],
     )
-
-    if isinstance(args.sweep, str):
-        args.sweep = [int(x) for x in args.sweep.split(",") if str(x).strip()]
-    else:
-        args.sweep = [int(x) for x in args.sweep]
+    args.sweep = ([int(x) for x in args.sweep.split(",") if str(x).strip()]
+                  if isinstance(args.sweep, str) else [int(x) for x in args.sweep])
 
     if args.latency_method not in ("block_time", "poll"):
-        raise ValueError(
-            f"execution.latency_method must be block_time or poll, got {args.latency_method!r}"
-        )
-
-    if args.num_attesters < 1 or args.num_attesters > 50:
-        raise ValueError(
-            f"workload.num_attesters must be in [1, 50] (contract MAX_BATCH_SIZE), "
-            f"got {args.num_attesters}"
-        )
-    if args.threshold is not None and not (1 <= args.threshold <= args.num_attesters):
-        raise ValueError(
-            f"workload.threshold must be in [1, num_attesters={args.num_attesters}], "
-            f"got {args.threshold}"
-        )
-
+        raise ValueError("execution.latency_method must be block_time or poll")
+    if not 1 <= args.num_attesters <= 50:
+        raise ValueError("workload.num_attesters must be in [1, 50]")
+    if args.threshold is not None and not 1 <= args.threshold <= args.num_attesters:
+        raise ValueError("workload.threshold must be in [1, num_attesters]")
     if args.mode not in ("individual", "aggregate", "both"):
-        raise ValueError(
-            f"sweep.mode must be one of individual/aggregate/both, got {args.mode!r}"
-        )
-
+        raise ValueError("sweep.mode must be individual/aggregate/both")
+    if len(args.mno_key_indices) != 2 or args.mno_key_indices[0] == args.mno_key_indices[1]:
+        raise ValueError("contracts.mno_key_indices must be two distinct account indices")
     return args
+
+
+# ============================================================
+# Individual path: commit leg + terminateRoamingSession per session
+# ============================================================
+
+def probe_verifier_gas(env, args, ctx, pA, pB, pC, inputs):
+    """Send ONE real verifyProof tx to the REAL verifier and return its gasUsed.
+
+    Why a real tx and not estimate_gas: estimate_gas looks for the smallest gas at
+    which the call does not revert, and a precompile that runs out of gas does not
+    revert its caller. For a dummy proof that "minimum" is far below the real cost
+    (the pairing never completes), and with BenchGroth16Verifier (which returns true
+    regardless) a leg run with that limit would silently measure the wrong gas.
+    The pairing alone costs >= 45000 + 4*34000, so anything cheaper means the
+    verifier exited early (public input >= field order, invalid point)."""
+    abi, _ = load_artifact(forge_artifact(args.forge_out, "CDRVerifier.sol", "Groth16Verifier"))
+    data = env.web3s[0].eth.contract(abi=abi).encode_abi(
+        abi_element_identifier="verifyProof",
+        args=[list(pA), [list(pB[0]), list(pB[1])], list(pC), list(inputs)])
+    if ctx.real_proof:
+        # gas alone cannot tell a valid proof from a failed pairing (verifyProof
+        # returns false, it does not revert), so check the result explicitly.
+        vc = env.web3s[0].eth.contract(address=ctx.inner_verifier, abi=abi)
+        ok = vc.functions.verifyProof(list(pA), [list(pB[0]), list(pB[1])],
+                                      list(pC), list(inputs)).call()
+        if not ok:
+            raise RuntimeError("real proof does not verify against the given public "
+                               "inputs: check public-signal order (circuit vs contract)")
+    rc = _send_and_wait(env, ctx.deployer, {"to": ctx.inner_verifier, "gas": 1_000_000,
+                                            "data": data})
+    g = rc["gasUsed"]
+    if g < 200_000:
+        raise RuntimeError(
+            f"verifyProof used only {g} gas: the verifier exits before the pairing "
+            f"(public inputs must be < the BN254 field order and the points valid). "
+            f"The individual leg would understate verifier gas.")
+    print(f"verifier probe: real verifyProof tx used {g} gas (pairing executes)")
+    return g
+
+
+def run_individual(env, args, ctx, nproofs, run, row):
+    n = nproofs * args.num_vmnos
+    plan = session_plan(args.num_vmnos, nproofs, ctx.rates, args.margin_pct)
+    if ctx.real_proof:
+        # one real proof settles every session: all sessions must carry the
+        # proof's cost and cdrHash (the verifier checks them as public inputs)
+        p0 = ctx.real_proof[3][PS_COST]
+        for p in plan:
+            p["cost"] = p0
+            p["est"] = max(p["est"], p0 + p0 * args.margin_pct // 100 + 1)
+        hashes = [Web3.to_bytes(ctx.real_proof[3][PS_HASH]).rjust(32, b"\0")] * n
+        pA, pB, pC = ctx.real_proof[0], ctx.real_proof[1], ctx.real_proof[2]
+    else:
+        hashes = [field_cdr_hash(p["cdr"]) for p in plan]
+        pA, pB, pC = DUMMY_PA, DUMMY_PB, DUMMY_PC
+
+    probe_gas = probe_verifier_gas(
+        env, args, ctx, pA, pB, pC,
+        pub_signals(ctx.rates, plan[0]["cost"], int.from_bytes(hashes[0], "big")))
+
+    ue = ctx.ue_accts[:n]
+    fund_ue_accounts(env, ctx.deployer, ue, ctx.ue_tx_budget, args.setup_chunk,
+                     args.ue_fund_wei)
+    env.phase("setup:individual")
+    ag = deploy_agreement(env, "individual", ctx.deployer, ctx.mnos, ctx.rates,
+                          ctx.token, args.forge_out, extra=ctx.verifier_address)
+    sessions = start_sessions(env, ag, ctx.mnos, ue, plan, args.setup_chunk)
+    env.phase("idle")
+
+    commit = commit_leg(env, ag, ue, sessions, hashes,
+                        f"individual_commit_n{nproofs}_vmnos{args.num_vmnos}_r{run}")
+
+    senders = ctx.accounts
+    specs = [{"sender": senders[u % len(senders)], "to": ag.address, "gas": 0,
+              "data": ag.contract.encode_abi(
+                  abi_element_identifier="terminateRoamingSession",
+                  args=[sessions[u][0], list(pA), [list(pB[0]), list(pB[1])],
+                        list(pC), plan[u]["cost"]])} for u in range(n)]
+    # NOT estimate_gas alone: see probe_verifier_gas. The limit only has to be high
+    # enough for the pairing to complete; unused gas is refunded, gasUsed is unaffected.
+    gas = max(estimate_gas(env, senders[0]["address"], ag.address, specs[0]["data"], 1.15,
+                           "terminateRoamingSession"),
+              probe_gas + 400_000)
+    check_gas_fits_block("individual", gas, env.web3s[0], "Verifier gas is too high.")
+    for s in specs:
+        s["gas"] = gas
+    res = run_leg(env, f"individual_n{nproofs}_vmnos{args.num_vmnos}_r{run}", specs)
+    settle_leg(env, res)
+
+    row.update(leg_columns("individual_commit", commit))
+    row.update(leg_columns("individual", res))
+    cg, sg = row["individual_commit_total_gas_used"], row["individual_total_gas_used"]
+    row["individual_contract"] = ag.address
+    row["individual_verifier_mode"] = "real_proof" if ctx.real_proof else "bench_wrapper"
+    row["individual_gas_per_session"] = sg / n if sg else None
+    row["individual_e2e_gas_per_session"] = (cg + sg) / n if cg and sg else None
+    row["individual_valid_all"] = bool(row["individual_commit_valid"] and row["individual_valid"])
+    if (row["individual_gas_used_per_tx"] or 0) < probe_gas:
+        # a settlement cannot cost less than the verifier call it contains
+        print(f"  ERROR: individual gas/tx {row['individual_gas_used_per_tx']} < verifier "
+              f"probe {probe_gas}: the pairing did not run, results are invalid")
+        row["individual_valid_all"] = False
+    row["individual_verifier_probe_gas"] = probe_gas
+    return commit, res
+
+
+# ============================================================
+# Aggregate path: anchor leg (attest) + settleBatch leg. NO commit.
+# ============================================================
+
+def run_aggregate(env, args, ctx, nproofs, run, row, offchain, salt):
+    n = nproofs * args.num_vmnos
+    plan = session_plan(args.num_vmnos, nproofs, ctx.rates, args.margin_pct)
+    ue = ctx.ue_accts[:n]            # UEs sign CDR hashes off-chain; they never send a tx
+
+    env.phase("setup:aggregate")
+    ag = deploy_agreement(env, "aggregate", ctx.deployer, ctx.mnos, ctx.rates,
+                          ctx.token, args.forge_out, extra=ctx.anchor_address)
+    sessions = start_sessions(env, ag, ctx.mnos, ue, plan, args.setup_chunk)
+    env.phase("idle")
+
+    proof_bytes = estimate_aggregate_proof_bytes(
+        nproofs, offchain.get("aggregate_proof_bytes_measured"))
+    domain = anchor_domain_separator(env.chain_id, ctx.anchor_address)
+
+    # exactly t signatures per relay (signers stay sorted ascending: the slice of a sorted list)
+    signers = ctx.attesters[:ctx.anchor_threshold]
+
+    batches, relay_specs = [], []
+    for g in range(args.num_vmnos):
+        idx = range(g * nproofs, (g + 1) * nproofs)
+        sids = [sessions[u][0] for u in idx]
+        costs = [plan[u]["cost"] for u in idx]
+        cdrs = [field_cdr_hash(plan[u]["cdr"]) for u in idx]
+        batch_id = Web3.keccak(text=f"zkroam-batch-{salt}-n{nproofs}-r{run}-v{g}")
+        # stand-in for the aggregate proof the verifiers checked off-chain
+        agg_hash = Web3.keccak(make_calldata(proof_bytes))
+
+        # UE signatures over (agreement, chainid, sessionId, cdrHash), packed r||vs per session
+        ue_sigs = b"".join(
+            sign_cdr_compact(ue_cdr_digest(ag.address, env.chain_id, sid, cdr),
+                             ue[u]["private_key"])
+            for u, sid, cdr in zip(idx, sids, cdrs))
+
+        commitment = batch_commitment(ag.address, env.chain_id, batch_id, agg_hash,
+                                      ctx.rates, sids, costs, cdrs)
+        if g == 0:   # the python mirrors must equal the contract's own views
+            onchain = ag.contract.functions.batchCommitment(
+                batch_id, agg_hash, sids, costs, cdrs).call()
+            if bytes(onchain) != bytes(commitment):
+                raise RuntimeError("batch commitment mismatch between workload and contract")
+            ue_dig = ag.contract.functions.ueCDRDigest(sids[0], cdrs[0]).call()
+            if bytes(ue_dig) != ue_cdr_digest(ag.address, env.chain_id, sids[0], cdrs[0]):
+                raise RuntimeError("UE digest mismatch between workload and contract")
+
+        sid = settlement_id_of(ag.address, batch_id)
+        digest = attestation_digest(domain, sid, commitment, nproofs)
+        sigs = [sign_attestation(digest, a["private_key"]) for a in signers]
+        calldata = build_relay_calldata_multi(
+            env.web3s[0], sid, commitment, nproofs,
+            [a["address"] for a in signers], sigs)
+        relay_specs.append({"sender": ctx.accounts[g % len(ctx.accounts)],
+                            "to": ctx.anchor_address, "data": calldata, "gas": 0})
+        batches.append((batch_id, agg_hash, sids, costs, cdrs, ue_sigs))
+
+    gas = estimate_gas(env, ctx.accounts[0]["address"], ctx.anchor_address,
+                       relay_specs[0]["data"], 1.15, "relayAggregateProof")
+    for s in relay_specs:
+        s["gas"] = gas
+    anchor = run_leg(env, f"aggregate_anchor_n{nproofs}_vmnos{args.num_vmnos}_r{run}", relay_specs)
+    settle_leg(env, anchor)
+
+    # Negative test (eth_call, no state change): settleBatch must reject swapped UE signatures.
+    # The anchor leg has finalized the batch, so a revert here can only come from the UE check.
+    b0 = batches[0]
+    if nproofs >= 2:
+        swapped = b0[5][64:128] + b0[5][:64] + b0[5][128:]
+        accepted = False
+        try:
+            ag.contract.functions.settleBatch(swapped, *b0[:5]).call(
+                {"from": ctx.accounts[0]["address"]})
+            accepted = True
+        except Exception:
+            pass
+        if accepted:
+            raise RuntimeError("settleBatch accepted tampered UE signatures")
+        print("  UE-signature negative test passed (swapped signatures rejected)")
+
+    settle_specs = [{"sender": ctx.accounts[g % len(ctx.accounts)], "to": ag.address, "gas": 0,
+                     "data": ag.contract.encode_abi(
+                         abi_element_identifier="settleBatch",
+                         args=[b[5], b[0], b[1], b[2], b[3], b[4]])}
+                    for g, b in enumerate(batches)]
+    sgas = estimate_gas(env, ctx.accounts[0]["address"], ag.address,
+                        settle_specs[0]["data"], 1.15, "settleBatch")
+    check_gas_fits_block("aggregate_settle", sgas, env.web3s[0],
+                         "A batch of nproofs sessions must fit in one block: "
+                         "lower sweep.nproofs or raise the block gas limit.")
+    for s in settle_specs:
+        s["gas"] = sgas
+    settle = run_leg(env, f"aggregate_settle_n{nproofs}_vmnos{args.num_vmnos}_r{run}", settle_specs)
+    settle_leg(env, settle)
+
+    row.update(leg_columns("aggregate_anchor", anchor))
+    row.update(leg_columns("aggregate_settle", settle))
+    ag_gas, st_gas = row["aggregate_anchor_total_gas_used"], row["aggregate_settle_total_gas_used"]
+    total = (ag_gas + st_gas) if ag_gas and st_gas else None
+    d_a, d_s = row["aggregate_anchor_confirm_duration_s"], row["aggregate_settle_confirm_duration_s"]
+    row.update({
+        "aggregate_contract": ag.address,
+        "aggregate_num_attesters": len(signers),          # signatures relayed per batch (= t)
+        "aggregate_committee_size": args.num_attesters,   # provisioned committee m
+        "anchor_threshold": ctx.anchor_threshold,
+        "aggregate_proof_bytes": proof_bytes,
+        "aggregate_proof_bytes_is_measured": bool(offchain.get("aggregate_proof_bytes_measured")),
+        "aggregate_total_tx": len(anchor.txs) + len(settle.txs),
+        "aggregate_total_gas_used": total,
+        "aggregate_gas_per_vmno_batch": total / args.num_vmnos if total else None,
+        "aggregate_gas_per_session": total / n if total else None,
+        "aggregate_e2e_gas_per_session": total / n if total else None,   # no commit leg; UE sig is inside settle
+        "aggregate_confirm_duration_s": (d_a or 0) + (d_s or 0),
+        "aggregate_valid_all": bool(row["aggregate_anchor_valid"] and row["aggregate_settle_valid"]),
+    })
+    return anchor, settle
 
 
 # ============================================================
@@ -1054,627 +862,265 @@ def load_config(path):
 # ============================================================
 
 def main():
-
     cli = argparse.ArgumentParser(
-        description=(
-            "zkRoam / SnarkPack on-chain workload for the Besu "
-            "benchmark harness: individual-proof vs aggregate-proof "
-            "settlement, swept over per-VMNO proof count. "
-            "All other configuration lives in the YAML config file."
-        )
-    )
-    cli.add_argument(
-        "--config", default="config.yml",
-        help="Path to the YAML config file (see config.example.yml).",
-    )
-    cli_args = cli.parse_args()
+        description="zkRoam workload against the real Agreement contracts: "
+                    "individual-proof vs SnarkPack-aggregate settlement.")
+    cli.add_argument("--config", default="config.yml")
+    args = load_config(cli.parse_args().config)
 
-    args = load_config(cli_args.config)
-
-    sweep = args.sweep
     os.makedirs(args.out_dir, exist_ok=True)
+    detail_dir = os.path.join(args.out_dir, "detail")
+    os.makedirs(detail_dir, exist_ok=True)
 
-    resource_monitor = None
+    monitor = None
     if args.monitor_resources:
-        resource_monitor = ResourceMonitor(args.monitor_interval)
-        resource_monitor.start()
-        resource_monitor.set_phase("setup:connecting")
+        monitor = ResourceMonitor(args.monitor_interval)
+        monitor.start()
+        monitor.set_phase("setup:connecting")
 
     topology = load_json(args.topology)
     endpoints = build_rpc_endpoints(topology)
     web3s, chain_id = connect_web3(endpoints)
-
-    if resource_monitor is not None:
-        resource_monitor.set_phase("setup:loading_accounts")
-
     accounts = load_accounts(args.accounts)
     if not accounts:
         raise RuntimeError("No workload accounts found.")
-
     assignment = assign_accounts(accounts, endpoints)
+    env = Env(web3s, chain_id, accounts, assignment, endpoints, args)
+    env.monitor = monitor
 
-    if resource_monitor is not None:
-        resource_monitor.set_phase("setup:loading_nonces")
+    deployed = load_deployed_contracts(args.deployed_contracts) or {}
+    need_ind = args.mode in ("individual", "both")
+    need_agg = args.mode in ("aggregate", "both")
 
-    nonces = load_nonces(accounts, assignment, web3s)
+    def addr_of(key):
+        if deployed.get(key):
+            return Web3.to_checksum_address(deployed[key]["address"])
+        return None
 
-    if resource_monitor is not None:
-        resource_monitor.set_phase("idle")
-
-    deployed = load_deployed_contracts(args.deployed_contracts)
-
-    cdr_verifier_address = None
-    if args.verifier_address:
-        cdr_verifier_address = Web3.to_checksum_address(args.verifier_address)
-    elif deployed and deployed.get("cdr_verifier"):
-        cdr_verifier_address = Web3.to_checksum_address(deployed["cdr_verifier"]["address"])
-
-    anchor_address = None
-    if deployed and deployed.get("aggregate_anchor"):
-        anchor_address = Web3.to_checksum_address(deployed["aggregate_anchor"]["address"])
-
-    commit_address = None
-    if deployed and deployed.get("cdr_commit"):
-        commit_address = Web3.to_checksum_address(deployed["cdr_commit"]["address"])
-    if args.include_commit:
-        if commit_address:
-            print(f"commit leg     -> real commit(sid, h_cdr) calls on {commit_address}")
-        else:
-            print("commit leg     -> no deployed cdr_commit found, "
-                  "falling back to calldata + analytic exec-cost estimate "
-                  "(run deploy_cdr_commit.py for measured gasUsed)")
+    verifier = addr_of("cdr_verifier")
+    anchor_address = addr_of("aggregate_anchor")
+    if need_ind and not verifier:
+        raise RuntimeError("deployed_contracts.json has no 'cdr_verifier' "
+                           "(run deploy_verifiers.py first)")
+    if need_agg and not anchor_address:
+        raise RuntimeError("deployed_contracts.json has no 'aggregate_anchor' "
+                           "(run deploy_verifiers.py first)")
 
     real_proof = None
+    rates = dict(args.rates)
     if args.proof_json and args.public_json:
         real_proof = load_snarkjs_proof(args.proof_json, args.public_json)
-        print(f"\nUsing real proof from {args.proof_json} / {args.public_json}")
-    elif cdr_verifier_address:
-        print(
-            "\nNo contracts.proof_json/public_json given: 'individual' will call "
-            "verifyProof() with known-valid-but-cryptographically-wrong curve "
-            "points, so gas reflects a full precompile execution but the proof "
-            "itself won't verify. Set real snarkjs files in the config for a "
-            "true positive."
-        )
+        ps = real_proof[3]
+        rates = {"sms": ps[PS_RSMS], "data": ps[PS_RDATA], "voice": ps[PS_RVOICE]}   # circuit public-signal order
+        print(f"\nUsing real proof from {args.proof_json}: rates fixed by its public inputs {rates}")
+    elif need_ind:
+        print("\nNo real proof given: 'individual' settles through BenchGroth16Verifier, which "
+              "runs the real pairing check (same precompile gas) and returns true. It adds one "
+              "extra STATICCALL (~3k gas) per settlement. Set contracts.proof_json/public_json "
+              "for exact numbers.")
 
-    if cdr_verifier_address:
-        print(f"individual leg -> real verifyProof() calls on {cdr_verifier_address}")
-    else:
-        print("individual leg -> no deployed cdr_verifier found, "
-              "falling back to raw-calldata-cost estimate (no contract execution)")
+    deployer = accounts[args.deployer_key_index]
+    mnos = [accounts[i] for i in args.mno_key_indices]
+    token = Token(env, deployer, args.forge_out)
+    for m in mnos:
+        token.mint(env, deployer, m["address"], 10 ** 30)
 
-    if anchor_address:
-        print(f"aggregate leg  -> real relayAggregateProof() calls on {anchor_address}")
-    else:
-        print("aggregate leg  -> no deployed aggregate_anchor found, "
-              "falling back to raw-calldata-cost estimate (no contract execution)")
+    verifier_address = verifier
+    if need_ind and not real_proof:
+        babi, bbc = load_artifact(forge_artifact(args.forge_out, "BenchGroth16Verifier.sol",
+                                                 "BenchGroth16Verifier"))
+        verifier_address, _ = deploy_contract(env, deployer, babi, bbc, verifier)
+        print(f"bench verifier wrapper: {verifier_address} (inner {verifier})")
 
-    print(
-        f"\nworkload.num_vmnos = {args.num_vmnos} "
-        f"(total VMNO settlements submitted per sweep point; "
-        f"nproofs below is per-VMNO batch size, not workload size)"
-    )
-
-    anchor_threshold = None
-    if anchor_address and args.mode in ("aggregate", "both"):
+    attesters, anchor_threshold = None, None
+    if need_agg:
         print(f"\nprovisioning {args.num_attesters} attesters on the anchor...")
         attesters = pick_attesters(accounts, args.verifier_key_index, args.num_attesters)
-        anchor_threshold = ensure_attesters(
-            web3s[0], chain_id, anchor_address, accounts, attesters, args.threshold
-        )
-        # admin txs consumed nonces: re-read them before the sweep
-        nonces = load_nonces(accounts, assignment, web3s)
+        anchor_threshold = ensure_attesters(web3s[0], chain_id, anchor_address, accounts,
+                                            attesters, args.threshold)
+        env._nonce.clear()    # admin txs consumed nonces
+        if anchor_threshold > len(attesters):
+            raise RuntimeError(
+                f"anchor threshold {anchor_threshold} > committee size {len(attesters)}: "
+                f"no batch could ever finalize. Set workload.threshold <= num_attesters.")
+        overlap = {a["address"].lower() for a in attesters} & {m["address"].lower() for m in mnos}
+        if overlap:
+            raise RuntimeError(
+                "an attester account is also an MNO account (a VMNO would attest its own "
+                "batch). Raise contracts.verifier_key_index so attesters are distinct from "
+                f"contracts.mno_key_indices; overlapping: {sorted(overlap)}")
 
-    sweep_rows = []
-    detail_dir = os.path.join(args.out_dir, "detail")
-    os.makedirs(detail_dir, exist_ok=True)
+    max_n = max(args.sweep) * args.num_vmnos
+    print(f"generating {max_n} UE accounts...")
+    ctx = SimpleNamespace(
+        accounts=accounts, deployer=deployer, mnos=mnos, token=token, rates=rates,
+        real_proof=real_proof, verifier_address=verifier_address, inner_verifier=verifier,
+        anchor_address=anchor_address, attesters=attesters,
+        anchor_threshold=anchor_threshold,
+        ue_accts=make_ue_accounts(max_n, f"zkroam-{int(time.time())}", len(web3s)),
+        ue_tx_budget=args.runs * len(args.sweep) + 2,
+    )
+    if monitor is not None:
+        monitor.set_phase("idle")
 
-    for nproofs in sweep:
+    print(f"\nworkload.num_vmnos = {args.num_vmnos} (nproofs below is the per-VMNO batch size)")
+    salt = secrets.token_hex(4)
+    rows = []
+    for nproofs in args.sweep:
         for run in range(1, args.runs + 1):
-
             offchain = load_offchain_log(args.offchain_logs_dir, nproofs, run)
             proof_ms_max = offchain.get("proof_ms_max", offchain.get("proof_ms"))
-
-            print()
-            print("=" * 60)
+            print("\n" + "=" * 60)
             print(f"nproofs/vmno={nproofs}  num_vmnos={args.num_vmnos}  run={run}  "
                   f"(off-chain source: {offchain['source']})")
             print("=" * 60)
-
-            # Off-chain work summed over ALL VMNOs (each VMNO repeats the
-            # same per-VMNO off-chain work): proof generation, and
-            # aggregation + aggregation-verify (+ serialization if logged).
-            proof_ms_total = offchain.get("proof_ms_total")
-            agg_serialize_ms = offchain.get("agg_serialize_ms")
-            agg_work_per_vmno_ms = (
-                offchain["agg_ms"]
-                + offchain["agg_verify_ms"]
-                + (agg_serialize_ms or 0)
-            )
-
+            agg_ser = offchain.get("agg_serialize_ms")
+            agg_work = offchain["agg_ms"] + offchain["agg_verify_ms"] + (agg_ser or 0)
             row = {
-                "nproofs_per_vmno": nproofs,
-                "num_vmnos": args.num_vmnos,
-                "run": run,
+                "nproofs_per_vmno": nproofs, "num_vmnos": args.num_vmnos, "run": run,
+                "sessions_total": nproofs * args.num_vmnos,
                 "offchain_source": offchain["source"],
                 "offchain_proof_ms_max": proof_ms_max,
                 "offchain_proof_ms_avg": offchain.get("proof_ms_avg"),
-                "offchain_proof_ms_total": proof_ms_total,
+                "offchain_proof_ms_total": offchain.get("proof_ms_total"),
                 "offchain_param_ms": offchain.get("param_ms"),
                 "offchain_single_verify_ms": offchain.get("single_verify_ms"),
                 "offchain_agg_ms": offchain["agg_ms"],
-                "offchain_agg_serialize_ms": agg_serialize_ms,
+                "offchain_agg_serialize_ms": agg_ser,
                 "offchain_agg_verify_ms": offchain["agg_verify_ms"],
                 "offchain_peak_mb": offchain["peak_mb"],
                 "offchain_total_experiment_ms": offchain.get("total_experiment_ms"),
                 "offchain_proof_work_ms_all_vmnos": (
-                    proof_ms_total * args.num_vmnos if proof_ms_total is not None else None
-                ),
-                "offchain_aggregate_work_ms_all_vmnos": (
-                    agg_work_per_vmno_ms * args.num_vmnos
-                ),
+                    offchain["proof_ms_total"] * args.num_vmnos
+                    if offchain.get("proof_ms_total") is not None else None),
+                "offchain_aggregate_work_ms_all_vmnos": agg_work * args.num_vmnos,
             }
 
-           
-            # -------- individual: num_vmnos VMNOs x nproofs proofs ----------
-            if args.mode in ("individual", "both"):
-
-                # -------- commit: one commit(sid, h_cdr) tx per SESSION ----------
-                # Used by the individual variant, so it is run once per sweep point.
-                commit_gas = None
-                commit_total_tx = nproofs * args.num_vmnos
-                if args.include_commit:
-                        run_salt = secrets.token_hex(4)  # fresh sids on every harness run
-                        if commit_address:
-                            calldata = []
-                            for i in range(commit_total_tx):
-                                        sid = Web3.keccak(
-                                            text=f"zkroam-sid-{run_salt}-n{nproofs}-r{run}-{i}")
-                                        h_cdr = Web3.keccak(make_calldata(32))
-                                        calldata.append(Web3.to_bytes(
-                                            hexstr=build_commit_calldata(web3s[0], sid, h_cdr)))
-                            probe_hex = build_commit_calldata(
-                                        web3s[0],
-                                        Web3.keccak(text=f"zkroam-sid-probe-{run_salt}"),
-                                        Web3.keccak(b"probe"),
-                                    )
-                            try:
-                                        commit_gas = int(web3s[0].eth.estimate_gas({
-                                            "from": accounts[0]["address"],
-                                            "to": commit_address, "data": probe_hex,
-                                        }) * 1.15)
-                            except Exception as e:
-                                        print(f"  estimate_gas failed ({e}), using 80000 fallback")
-                                        commit_gas = 80_000
-                            commit_to = commit_address
-                            commit_bytes = len(calldata[0])
-                        else:
-                            # selector + 2 x bytes32, random stand-ins
-                            one = make_calldata(4 + 64)
-                            calldata = one
-                            commit_gas = calldata_gas_cost(one) + COMMIT_EXEC_COST
-                            commit_to = None
-                            commit_bytes = len(one)
-                
-                        ctxs, cstats, _ = run_onchain_leg(
-                                    label=f"commit_n{nproofs}_vmnos{args.num_vmnos}_r{run}",
-                                    accounts=accounts, assignment=assignment, nonces=nonces,
-                                    web3s=web3s, endpoints=endpoints, chain_id=chain_id,
-                                    num_tx=commit_total_tx, calldata_bytes=calldata,
-                                    gas_per_tx=commit_gas,
-                                    rate=args.rate, workers=args.workers,
-                                    receipt_workers=args.receipt_workers,
-                                    receipt_timeout=args.receipt_timeout,
-                                    poll_interval=args.poll_interval,
-                                    receipt_timeout_per_tx=args.receipt_timeout_per_tx,
-                                    resource_monitor=resource_monitor,
-                                    to_address=commit_to,
-                                )
-                
-                        for t in ctxs:
-                                    nonces[t["account_index"]] = max(
-                                        nonces[t["account_index"]], t["nonce"] + 1
-                                    )
-                
-                        cg_vals = fetch_gas_used(ctxs, web3s) if commit_address else []
-                        commit_gas_used = statistics.median(cg_vals) if cg_vals else commit_gas
-                        clat = apply_block_time_latency(ctxs, web3s, args.latency_method)
-                
-                        row.update({
-                                    "commit_total_tx": commit_total_tx,
-                                    "commit_bytes_per_tx": commit_bytes,
-                                    "commit_gas_limit_per_tx": commit_gas,
-                                    "commit_gas_used_per_tx": commit_gas_used,
-                                    "commit_total_gas_used": commit_gas_used * commit_total_tx,
-                                    "commit_contract_called": bool(commit_address),
-                                    "commit_confirmed": cstats["confirmed"],
-                                    "commit_success_rate_pct": cstats["success_rate_pct"],
-                                    "commit_submit_throughput_tx_s": cstats["submission_throughput_tx_s"],
-                                    "commit_confirm_throughput_tx_s": cstats["confirmation_throughput_tx_s"],
-                                    "commit_latency_p50_s": clat["p50"],
-                                    "commit_latency_p99_s": clat["p99"],
-                                    "commit_confirm_duration_s": cstats["confirm_duration_s"],
-                                })
-                
-                        write_leg_detail(detail_dir, "commit", nproofs, args.num_vmnos, args.rate, args.workers, args.receipt_workers, run, ctxs, endpoints)
-                
-                        nonces = settle_network(
-                                    "commit_n{}_r{}".format(nproofs, run),
-                                    accounts, assignment, web3s, args.drain_timeout_s,
-                                    resource_monitor,
-                                )
-                
-                           
-                #------- individual: num_vmnos VMNOs x nproofs proofs ----------
-                individual_total_tx = nproofs * args.num_vmnos
-
-                if cdr_verifier_address:
-                    pA, pB, pC, pubsig = real_proof or (None, None, None, None)
-                    calldata_hex = build_verify_proof_calldata(
-                        web3s[0], pA, pB, pC, pubsig
-                    )
-                    calldata = Web3.to_bytes(hexstr=calldata_hex)
-                    try:
-                        gas = web3s[0].eth.estimate_gas({
-                            "to": cdr_verifier_address, "data": calldata_hex,
-                        })
-                        gas = int(gas * 1.15)
-                    except Exception as e:
-                        print(f"  estimate_gas failed ({e}), using 400000 fallback")
-                        gas = 400_000
-                    leg_to = cdr_verifier_address
-                else:
-                    calldata = make_calldata(GROTH16_PROOF_BYTES)
-                    gas = calldata_gas_cost(calldata) + EXEC_COST
-                    leg_to = None
-
-                txs, stats, rpc_stats = run_onchain_leg(
-                    label=f"individual_n{nproofs}_vmnos{args.num_vmnos}_r{run}",
-                    accounts=accounts, assignment=assignment, nonces=nonces,
-                    web3s=web3s, endpoints=endpoints, chain_id=chain_id,
-                    num_tx=individual_total_tx, calldata_bytes=calldata, gas_per_tx=gas,
-                    rate=args.rate, workers=args.workers,
-                    receipt_workers=args.receipt_workers,
-                    receipt_timeout=args.receipt_timeout,
-                    poll_interval=args.poll_interval,
-                    receipt_timeout_per_tx=args.receipt_timeout_per_tx,
-                    resource_monitor=resource_monitor,
-                    to_address=leg_to,
-                )
-
-                for t in txs:
-                    nonces[t["account_index"]] = max(
-                        nonces[t["account_index"]], t["nonce"] + 1
-                    )
-
-                gas_used_vals = fetch_gas_used(txs, web3s) if cdr_verifier_address else []
-                real_gas_median = statistics.median(gas_used_vals) if gas_used_vals else gas
-                lat = apply_block_time_latency(txs, web3s, args.latency_method)
-
-                row.update({
-                    "individual_total_tx": individual_total_tx,
-                    "individual_bytes_per_tx": len(calldata),
-                    "individual_gas_limit_per_tx": gas,
-                    "individual_gas_used_per_tx": real_gas_median,
-                    "individual_total_gas_used": real_gas_median * individual_total_tx,
-                    "individual_contract_called": bool(cdr_verifier_address),
-                    "individual_confirmed": stats["confirmed"],
-                    "individual_success_rate_pct": stats["success_rate_pct"],
-                    "individual_submit_throughput_tx_s": stats["submission_throughput_tx_s"],
-                    "individual_confirm_throughput_tx_s": stats["confirmation_throughput_tx_s"],
-                    "individual_latency_p50_s": lat["p50"],
-                    "individual_latency_p99_s": lat["p99"],
-                    "individual_confirm_duration_s": stats["confirm_duration_s"],
-                })
-
-                if proof_ms_max is not None and stats["confirm_duration_s"] is not None:
+            if need_ind:
+                commit, res = run_individual(env, args, ctx, nproofs, run, row)
+                if proof_ms_max is not None and row["individual_confirm_duration_s"] is not None:
                     row["individual_pipeline_latency_s"] = (
-                        proof_ms_max / 1000.0
-                        + (stats["confirm_duration_s"] or 0)
-                    )
+                        proof_ms_max / 1000.0 + row["individual_confirm_duration_s"])
+                write_leg_detail(detail_dir, "individual_commit", nproofs, args, run,
+                                 commit.txs, endpoints)
+                write_leg_detail(detail_dir, "individual", nproofs, args, run, res.txs, endpoints)
 
-                write_leg_detail(detail_dir, "individual", nproofs, args.num_vmnos, args.rate, args.workers, args.receipt_workers, run, txs, endpoints)
-
-                nonces = settle_network(
-                    "individual_n{}_r{}".format(nproofs, run),
-                    accounts, assignment, web3s, args.drain_timeout_s,
-                    resource_monitor,
-                )
-
-            # -------- aggregate: num_vmnos VMNOs x 1 aggregate attestation ----
-            if args.mode in ("aggregate", "both"):
-
-                aggregate_total_tx = args.num_vmnos
-
-                proof_bytes = estimate_aggregate_proof_bytes(
-                    nproofs, offchain.get("aggregate_proof_bytes_measured")
-                )
-
-                if anchor_address:
-                    # One DISTINCT settlementId per VMNO, relayed via
-                    # relayAggregateProof, signed off-chain by num_attesters
-                    # verifier identities and submitted through the FULL
-                    # account pool.
-                    attesters = pick_attesters(
-                        accounts, args.verifier_key_index, args.num_attesters
-                    )
-                    domain_sep = anchor_domain_separator(chain_id, anchor_address)
-
-                    calldata_list = []
-                    for vmno_i in range(aggregate_total_tx):
-                        # Stand-in payload; swap in the real serialized
-                        # aggregate proof for a real commitment.
-                        fake_proof_bytes = make_calldata(proof_bytes)
-                        commitment = Web3.keccak(fake_proof_bytes)
-                        settlement_id = Web3.keccak(
-                            text=f"zkroam-settlement-n{nproofs}-run{run}-vmno{vmno_i}"
-                        )
-                        digest = attestation_digest(
-                            domain_sep, settlement_id, commitment, nproofs
-                        )
-                        calldata_hex = build_relay_calldata_multi(
-                            web3s[0], settlement_id, commitment, nproofs,
-                            [a["address"] for a in attesters],
-                            [sign_attestation(digest, a["private_key"])
-                             for a in attesters],
-                        )
-                        calldata_list.append(Web3.to_bytes(hexstr=calldata_hex))
-                    calldata = calldata_list
-
-                    probe_id = Web3.keccak(text=f"zkroam-gas-probe-n{nproofs}-run{run}")
-                    probe_commitment = Web3.keccak(b"probe")
-                    probe_digest = attestation_digest(
-                        domain_sep, probe_id, probe_commitment, nproofs
-                    )
-                    probe_calldata_hex = build_relay_calldata_multi(
-                        web3s[0], probe_id, probe_commitment, nproofs,
-                        [a["address"] for a in attesters],
-                        [sign_attestation(probe_digest, a["private_key"])
-                         for a in attesters],
-                    )
-                    try:
-                        gas = web3s[0].eth.estimate_gas({
-                            "from": accounts[0]["address"],
-                            "to": anchor_address, "data": probe_calldata_hex,
-                        })
-                        gas = int(gas * 1.15)
-                    except Exception as e:
-                        print(f"  estimate_gas failed ({e}), using 200000 fallback")
-                        gas = 200_000
-                    leg_to = anchor_address
-                    leg_accounts = None
-                else:
-                    calldata = make_calldata(proof_bytes)
-                    gas = calldata_gas_cost(calldata) + EXEC_COST
-                    leg_to = None
-                    leg_accounts = None
-
-                txs, stats, rpc_stats = run_onchain_leg(
-                    label=f"aggregate_n{nproofs}_vmnos{args.num_vmnos}_r{run}",
-                    accounts=accounts, assignment=assignment, nonces=nonces,
-                    web3s=web3s, endpoints=endpoints, chain_id=chain_id,
-                    num_tx=aggregate_total_tx, calldata_bytes=calldata, gas_per_tx=gas,
-                    rate=args.rate, workers=args.workers,
-                    receipt_workers=args.receipt_workers,
-                    receipt_timeout=args.receipt_timeout,
-                    poll_interval=args.poll_interval,
-                    receipt_timeout_per_tx=args.receipt_timeout_per_tx,
-                    resource_monitor=resource_monitor,
-                    to_address=leg_to,
-                    accounts_override=leg_accounts,
-                )
-
-                for t in txs:
-                    nonces[t["account_index"]] = max(
-                        nonces[t["account_index"]], t["nonce"] + 1
-                    )
-
-                gas_used_vals = fetch_gas_used(txs, web3s) if anchor_address else []
-                real_gas = statistics.median(gas_used_vals) if gas_used_vals else gas
-                lat = apply_block_time_latency(txs, web3s, args.latency_method)
-                if anchor_address and len(gas_used_vals) < aggregate_total_tx:
-                    print(
-                        f"  warning: only {len(gas_used_vals)}/{aggregate_total_tx} "
-                        f"aggregate anchor calls confirmed with gasUsed - check "
-                        f"stats['reverted']/['timeout'] below for why."
-                    )
-
-                # Latency of the very first submitted tx (txs[0]), same
-                # measure as the percentiles.
-                first_tx_latency = txs[0]["latency_s"] if txs else None
-
-                row.update({
-                    "aggregate_total_tx": aggregate_total_tx,
-                    "aggregate_num_attesters": args.num_attesters if anchor_address else None,
-                    "anchor_threshold": anchor_threshold,
-                    "aggregate_proof_bytes": proof_bytes,
-                    "aggregate_proof_bytes_is_measured": bool(
-                        offchain.get("aggregate_proof_bytes_measured")
-                    ),
-                    "aggregate_gas_limit_per_tx": gas,
-                    "aggregate_gas_used_per_tx": real_gas,
-                    "aggregate_total_gas_used": real_gas * aggregate_total_tx,
-                    "aggregate_contract_called": bool(anchor_address),
-                    "aggregate_confirmed": stats["confirmed"],
-                    "aggregate_success_rate_pct": stats["success_rate_pct"],
-                    "aggregate_submit_throughput_tx_s": stats["submission_throughput_tx_s"],
-                    "aggregate_confirm_throughput_tx_s": stats["confirmation_throughput_tx_s"],
-                    "aggregate_latency_p50_s": lat["p50"],
-                    "aggregate_latency_p99_s": lat["p99"],
-                    # Representative per-tx confirmation latency = p50.
-                    "aggregate_latency_s": lat["p50"],
-                    "aggregate_first_tx_latency_s": first_tx_latency,
-                    "aggregate_confirm_duration_s": stats["confirm_duration_s"],
-                })
-
-                # off-chain: proof gen (slowest) + aggregation + agg verify
-                # (+ serialization if logged), then on-chain confirm duration.
-                if proof_ms_max is not None and stats["confirm_duration_s"] is not None:
+            if need_agg:
+                anchor, settle = run_aggregate(env, args, ctx, nproofs, run, row, offchain, salt)
+                if proof_ms_max is not None:
                     row["aggregate_pipeline_latency_s"] = (
-                        proof_ms_max / 1000.0
-                        + offchain["agg_ms"] / 1000.0
-                        + (agg_serialize_ms or 0) / 1000.0
-                        + offchain["agg_verify_ms"] / 1000.0
-                        + (stats["confirm_duration_s"] or 0)
-                    )
+                        proof_ms_max / 1000.0 + offchain["agg_ms"] / 1000.0
+                        + (agg_ser or 0) / 1000.0 + offchain["agg_verify_ms"] / 1000.0
+                        + row["aggregate_confirm_duration_s"])
+                write_leg_detail(detail_dir, "aggregate_anchor", nproofs, args, run,
+                                 anchor.txs, endpoints)
+                write_leg_detail(detail_dir, "aggregate_settle", nproofs, args, run,
+                                 settle.txs, endpoints)
 
-                write_leg_detail(detail_dir, "aggregate", nproofs, args.num_vmnos, args.rate, args.workers, args.receipt_workers, run, txs, endpoints)
+            # ---- head-to-head ----
+            ind_s, agg_t = row.get("individual_total_gas_used"), row.get("aggregate_total_gas_used")
+            if ind_s and agg_t:
+                # settlement only: terminateRoamingSession x N  vs  anchor + settleBatch
+                row["gas_savings_pct"] = (1 - agg_t / ind_s) * 100
+            i_lat, a_lat = row.get("individual_pipeline_latency_s"), row.get("aggregate_pipeline_latency_s")
+            if i_lat and a_lat:
+                row["pipeline_speedup_x"] = i_lat / a_lat
+            # end to end: individual pays commit + settle; aggregate has NO commit leg
+            i_c = row.get("individual_commit_total_gas_used")
+            if i_c and ind_s:
+                row["e2e_individual_total_gas"] = i_c + ind_s
+                row["e2e_individual_gas_per_session"] = (i_c + ind_s) / row["sessions_total"]
+                row["commit_share_of_individual_e2e_pct"] = 100.0 * i_c / (i_c + ind_s)
+            if agg_t:
+                row["e2e_aggregate_total_gas"] = agg_t
+                row["e2e_aggregate_gas_per_session"] = agg_t / row["sessions_total"]
+            if row.get("e2e_individual_total_gas") and agg_t:
+                row["e2e_gas_savings_pct"] = (1 - agg_t / row["e2e_individual_total_gas"]) * 100
+            row["all_legs_valid"] = all(row.get(k) for k in
+                                        ("individual_valid_all", "aggregate_valid_all")
+                                        if k in row)
+            rows.append(row)
 
-                nonces = settle_network(
-                    "aggregate_n{}_r{}".format(nproofs, run),
-                    accounts, assignment, web3s, args.drain_timeout_s,
-                    resource_monitor,
-                )
-
-            # -------- head-to-head for this (nproofs, num_vmnos, run) --------
-            if args.mode == "both":
-                ind = row.get("individual_total_gas_used")
-                agg = row.get("aggregate_total_gas_used")
-                if ind and agg:
-                    row["gas_savings_pct"] = (1 - (agg / ind)) * 100
-                ind_lat = row.get("individual_pipeline_latency_s")
-                agg_lat = row.get("aggregate_pipeline_latency_s")
-                if ind_lat and agg_lat:
-                    row["pipeline_speedup_x"] = ind_lat / agg_lat
-
-            # -------- end-to-end per-session gas (commit + settlement) --------
-            # session = one CDR. ZK-individual: commit + one verifyProof tx.
-            # ZK-aggregate: commit + 1/nproofs of the per-VMNO anchor tx.
-            cgu = row.get("commit_gas_used_per_tx")
-            if cgu is not None:
-                n_sessions = nproofs * args.num_vmnos
-                ind_gas_tx = row.get("individual_gas_used_per_tx")
-                agg_gas_tx = row.get("aggregate_gas_used_per_tx")
-                if ind_gas_tx is not None:
-                    row["e2e_individual_gas_per_session"] = cgu + ind_gas_tx
-                    row["e2e_individual_total_gas"] = (cgu + ind_gas_tx) * n_sessions
-                if agg_gas_tx is not None:
-                    per_session = cgu + agg_gas_tx / nproofs
-                    row["e2e_aggregate_gas_per_session"] = per_session
-                    row["e2e_aggregate_total_gas"] = (
-                        cgu * n_sessions + agg_gas_tx * args.num_vmnos
-                    )
-                    row["commit_share_of_aggregate_e2e_pct"] = 100.0 * cgu / per_session
-                if (row.get("e2e_individual_total_gas")
-                        and row.get("e2e_aggregate_total_gas")):
-                    row["e2e_gas_savings_pct"] = (
-                        1 - row["e2e_aggregate_total_gas"]
-                        / row["e2e_individual_total_gas"]
-                    ) * 100
-
-            sweep_rows.append(row)
-
-    if resource_monitor is not None:
-        resource_monitor.stop()
-        resource_monitor.write_csv(os.path.join(args.out_dir, f"{args.experiment_name}_{args.num_vmnos}_{args.rate}_{args.workers}_{args.receipt_workers}_resource_usage.csv"))
-
-    write_sweep_summary(os.path.join(args.out_dir, f"{args.experiment_name}_{args.num_vmnos}_{args.rate}_{args.workers}_{args.receipt_workers}_sweep_summary.csv"), sweep_rows)
-    print_sweep_highlights(sweep_rows)
+    stem = (f"{args.experiment_name}_{args.num_vmnos}_{args.rate}_{args.workers}_"
+            f"{args.receipt_workers}")
+    if monitor is not None:
+        monitor.stop()
+        monitor.write_csv(os.path.join(args.out_dir, f"{stem}_resource_usage.csv"))
+    write_sweep_summary(os.path.join(args.out_dir, f"{stem}_sweep_summary.csv"), rows)
+    print_sweep_highlights(rows)
 
 
 # ============================================================
 # Output writers
 # ============================================================
 
-def write_leg_detail(detail_dir, label, nproofs, num_vmnos, rate, workers, receipt_workers, run, transactions, endpoints):
-
-    path = os.path.join(detail_dir, f"{label}_n{nproofs}_{num_vmnos}_{rate}_{workers}_{receipt_workers}_r{run}.csv")
-
-    fields = ["tx_index", "sender", "rpc_node", "tx_hash", "nonce",
-              "submit_ts", "confirm_ts", "latency_s", "poll_latency_s",
-              "block_number", "block_ts", "gas_used", "status", "error"]
-
+def write_leg_detail(detail_dir, label, nproofs, args, run, transactions, endpoints):
+    if transactions is None:
+        return
+    path = os.path.join(detail_dir, f"{label}_n{nproofs}_{args.num_vmnos}_{args.rate}_"
+                                    f"{args.workers}_{args.receipt_workers}_r{run}.csv")
+    fields = ["tx_index", "sender", "rpc_node", "tx_hash", "nonce", "submit_ts", "confirm_ts",
+              "latency_s", "poll_latency_s", "block_number", "block_ts", "gas_used",
+              "status", "error"]
     with open(path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fields)
-        writer.writeheader()
-        for item in transactions:
-            poll_latency = item.get("poll_latency_s")
-            if poll_latency is None and item["submit_ts"] and item["confirm_ts"]:
-                poll_latency = item["confirm_ts"] - item["submit_ts"]
-            latency = item.get("latency_s")
-            if latency is None:
-                latency = poll_latency
-            writer.writerow({
-                "tx_index": item["tx_index"],
-                "sender": item["sender"],
-                "rpc_node": endpoints[item["rpc_index"]]["name"],
-                "tx_hash": item["tx_hash"],
-                "nonce": item["nonce"],
-                "submit_ts": item["submit_ts"],
-                "confirm_ts": item["confirm_ts"],
-                "latency_s": latency,
-                "poll_latency_s": poll_latency,
-                "block_number": item["block_number"],
-                "block_ts": item.get("block_ts"),
-                "gas_used": item.get("gas_used"),
-                "status": item["status"],
-                "error": item["error"],
+        w = csv.DictWriter(f, fieldnames=fields)
+        w.writeheader()
+        for t in transactions:
+            poll = t.get("poll_latency_s")
+            if poll is None and t["submit_ts"] and t["confirm_ts"]:
+                poll = t["confirm_ts"] - t["submit_ts"]
+            lat = t.get("latency_s")
+            w.writerow({
+                "tx_index": t["tx_index"], "sender": t["sender"],
+                "rpc_node": endpoints[t["rpc_index"]]["name"], "tx_hash": t["tx_hash"],
+                "nonce": t["nonce"], "submit_ts": t["submit_ts"], "confirm_ts": t["confirm_ts"],
+                "latency_s": lat if lat is not None else poll, "poll_latency_s": poll,
+                "block_number": t["block_number"], "block_ts": t.get("block_ts"),
+                "gas_used": t.get("gas_used"), "status": t["status"], "error": t["error"],
             })
 
 
 def write_sweep_summary(path, rows):
-    """Write rows using the fixed SWEEP_SUMMARY_FIELDS schema so the CSV
-    always has the same columns/order; missing values are left empty."""
     if not rows:
         return
-
-    # Keep any unexpected extra keys at the end rather than dropping them.
-    extras = []
+    fields = []
     for r in rows:
-        for k in r.keys():
-            if k not in SWEEP_SUMMARY_FIELDS and k not in extras:
-                extras.append(k)
-
+        for k in r:
+            if k not in fields:
+                fields.append(k)
     with open(path, "w", newline="") as f:
-        writer = csv.DictWriter(
-            f, fieldnames=SWEEP_SUMMARY_FIELDS + extras, restval=""
-        )
-        writer.writeheader()
-        for r in rows:
-            writer.writerow({k: ("" if v is None else v) for k, v in r.items()})
-
+        w = csv.DictWriter(f, fieldnames=fields, restval="")
+        w.writeheader()
+        w.writerows({k: ("" if v is None else v) for k, v in r.items()} for r in rows)
     print(f"\nWrote: {path}")
 
 
 def print_sweep_highlights(rows):
     if not rows:
         return
-
     by_n = defaultdict(list)
     for r in rows:
         by_n[r["nproofs_per_vmno"]].append(r)
 
-    print()
-    print("=" * 76)
-    print("SWEEP HIGHLIGHTS (median across runs per nproofs/VMNO level)")
-    print("=" * 76)
-    print(f"{'nproofs':>8} {'num_vmnos':>10} {'ind_gas_total':>14} {'agg_gas_total':>14} "
-          f"{'gas_save_%':>10} {'pipeline_x':>11} {'e2e_ind/sess':>13} "
-          f"{'e2e_agg/sess':>13} {'e2e_save_%':>11}")
+    def med(rs, k):
+        v = [r[k] for r in rs if r.get(k) is not None]
+        return statistics.median(v) if v else 0
 
+    print("\n" + "=" * 118)
+    print("SWEEP HIGHLIGHTS (median across runs per nproofs/VMNO level)")
+    print("=" * 118)
+    print(f"{'nproofs':>8} {'vmnos':>6} {'ind_settle_gas':>15} {'agg_total_gas':>14} "
+          f"{'settle_save_%':>14} {'e2e_ind/sess':>13} {'e2e_agg/sess':>13} "
+          f"{'e2e_save_%':>11} {'pipeline_x':>11}")
     for n in sorted(by_n):
         rs = by_n[n]
-        vmnos = rs[0]["num_vmnos"]
-        ind_gas = [r["individual_total_gas_used"] for r in rs if "individual_total_gas_used" in r]
-        agg_gas = [r["aggregate_total_gas_used"] for r in rs if "aggregate_total_gas_used" in r]
-        save = [r["gas_savings_pct"] for r in rs if "gas_savings_pct" in r]
-        speed = [r["pipeline_speedup_x"] for r in rs if "pipeline_speedup_x" in r]
-        e_ind = [r["e2e_individual_gas_per_session"] for r in rs if "e2e_individual_gas_per_session" in r]
-        e_agg = [r["e2e_aggregate_gas_per_session"] for r in rs if "e2e_aggregate_gas_per_session" in r]
-        e_sav = [r["e2e_gas_savings_pct"] for r in rs if "e2e_gas_savings_pct" in r]
-
-        print(
-            f"{n:>8} {vmnos:>10} "
-            f"{statistics.median(ind_gas) if ind_gas else 0:>14,.0f} "
-            f"{statistics.median(agg_gas) if agg_gas else 0:>14,.0f} "
-            f"{statistics.median(save) if save else 0:>9.1f}% "
-            f"{statistics.median(speed) if speed else 0:>10.2f}x "
-            f"{statistics.median(e_ind) if e_ind else 0:>13,.0f} "
-            f"{statistics.median(e_agg) if e_agg else 0:>13,.0f} "
-            f"{statistics.median(e_sav) if e_sav else 0:>10.1f}%"
-        )
-
-    print("=" * 76)
+        print(f"{n:>8} {rs[0]['num_vmnos']:>6} {med(rs, 'individual_total_gas_used'):>15,.0f} "
+              f"{med(rs, 'aggregate_total_gas_used'):>14,.0f} {med(rs, 'gas_savings_pct'):>13.1f}% "
+              f"{med(rs, 'e2e_individual_gas_per_session'):>13,.0f} "
+              f"{med(rs, 'e2e_aggregate_gas_per_session'):>13,.0f} "
+              f"{med(rs, 'e2e_gas_savings_pct'):>10.1f}% {med(rs, 'pipeline_speedup_x'):>10.2f}x"
+              + ("" if all(r.get("all_legs_valid", True) for r in rs) else "  [INVALID: failed txs]"))
+    print("=" * 118)
 
 
 if __name__ == "__main__":
