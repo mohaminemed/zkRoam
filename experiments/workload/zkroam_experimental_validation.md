@@ -8,6 +8,9 @@ This document defines the experimental validation required to address the two re
 2. **Multi-VMNO/HMNO concurrent deployment:** evaluate concurrent VMNO/HMNO activity rather than only scaling the number of proofs in a single pair, to provide evidence for larger-scale roaming environments.
 
 
+**Amortization of CDR commitments.** The current gas accounting assumes one on-chain CDR commitment transaction per session. This overhead can be amortized by allowing a relayer to submit a batch commitment, such as a Merkle root covering multiple session commitments, rather than requiring individual submissions. Individual proofs can remain independently verifiable by linking each session commitment to the registered batch root. We leave the implementation and evaluation of this optimization to future work, as it is orthogonal to the proof and settlement mechanisms evaluated in this paper.
+
+
 ---
 
 ## 1. Experimental Workflow

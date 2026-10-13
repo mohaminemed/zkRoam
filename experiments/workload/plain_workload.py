@@ -31,6 +31,16 @@ latency of a plain leg is just its on-chain makespan
 (last confirmation - first submission). Compare it with
 individual_pipeline_latency_s / aggregate_pipeline_latency_s.
 
+LATENCY MEASUREMENT
+------------------------------------------------------------------
+Per-tx latency = (timestamp of the block that mined the tx) - (that
+tx's OWN submit_ts). The receipt poller only starts after submit_all()
+returns, so confirm_ts - submit_ts would also count the time spent
+submitting the rest of the batch plus the poll sweep. Set
+execution.latency_method: poll to get the old behaviour back.
+Block timestamps are whole seconds, so sub-second values are only
+accurate to about +-1 s, and client/node clocks should be NTP-synced.
+
 CONTRACT SETUP
 ------------------------------------------------------------------
 The contract address is read from deployed_contracts.json under
@@ -49,8 +59,9 @@ ASSUMPTIONS
    CDR circuit proves (see the contract header). Swap in the real rule.
 2. Session ids are salted per process run, so repeated runs against the
    same chain never trip the contract's replay guard.
-3. Nonces are re-read from the chain before every leg, so a failed
-   earlier leg cannot leave a nonce gap that stalls the next one.
+3. After every leg the script waits for the txpool to drain and the
+   next leg re-reads nonces from the chain, so a congested or failed
+   leg cannot leave a backlog or nonce gap that stalls the next one.
 4. gas used is read from receipts, not estimated, whenever the
    contract is deployed (always the case here).
 ------------------------------------------------------------------
@@ -329,6 +340,14 @@ def latest_block_gas_limit(w3):
     return int(res["result"]["gasLimit"], 16)
 
 
+def block_timestamp(w3, block_number):
+    """Block timestamp via raw RPC (same QBFT extraData reason as above)."""
+    res = w3.provider.make_request("eth_getBlockByNumber", [hex(block_number), False])
+    if res.get("error") or not res.get("result"):
+        return None
+    return int(res["result"]["timestamp"], 16)
+
+
 def estimate_gas_limit(w3, sender, to_address, data, margin=1.15):
     """estimate_gas on a valid CDR must succeed. A failure means the call would
     revert (e.g. AlreadySettled, missing tariff, bad ABI encoding), so abort
@@ -343,6 +362,129 @@ def estimate_gas_limit(w3, sender, to_address, data, margin=1.15):
             f"Check the contract state (AlreadySettled? tariff set?) and the ABI."
         ) from e
     return int(g * margin)
+
+
+# ============================================================
+# Latency: block time instead of receipt-seen time
+# ============================================================
+
+def apply_block_time_latency(transactions, web3s, method="block_time"):
+    """
+    Per-tx latency = (timestamp of the block that mined the tx) - (that
+    tx's own submit_ts). Receipt polling starts only after submit_all()
+    returns, so confirm_ts - submit_ts also contains the time spent
+    submitting the rest of the batch plus the poll sweep.
+
+    Safeguards:
+      * block timestamps are whole seconds -> clamp at >= 0
+      * never exceed the poll-based latency (the true latency cannot be
+        larger), which also bounds the error from client/node clock skew
+      * if a block cannot be fetched, fall back to the poll-based value
+
+    Sets t["latency_s"], t["poll_latency_s"], t["block_ts"] on every tx and
+    returns {"p50", "p99", "mean", "n"} over confirmed txs.
+    """
+    block_ts_cache = {}
+
+    for t in transactions:
+        t["latency_s"] = None
+        t["poll_latency_s"] = None
+        t["block_ts"] = None
+
+        if t["submit_ts"] is None or t["confirm_ts"] is None:
+            continue
+
+        poll_lat = t["confirm_ts"] - t["submit_ts"]
+        t["poll_latency_s"] = poll_lat
+        lat = poll_lat
+
+        if (method == "block_time" and t["status"] == "confirmed"
+                and t["block_number"] is not None):
+            bn = t["block_number"]
+            if bn not in block_ts_cache:
+                try:
+                    block_ts_cache[bn] = block_timestamp(web3s[t["rpc_index"]], bn)
+                except Exception:  # noqa: BLE001
+                    block_ts_cache[bn] = None
+            bts = block_ts_cache[bn]
+            if bts is not None:
+                t["block_ts"] = bts
+                lat = min(poll_lat, max(0.0, bts - t["submit_ts"]))
+
+        t["latency_s"] = lat
+
+    if method == "block_time":
+        missing = sum(1 for t in transactions
+                      if t["status"] == "confirmed" and t["block_ts"] is None)
+        if missing:
+            print(f"  WARNING: block timestamp unavailable for {missing} confirmed "
+                  f"txs - they use poll-based latency instead.")
+
+    vals = sorted(t["latency_s"] for t in transactions
+                  if t["status"] == "confirmed" and t["latency_s"] is not None)
+    if not vals:
+        return {"p50": None, "p99": None, "mean": None, "n": 0}
+
+    def pct(q):
+        k = (len(vals) - 1) * q
+        lo, hi = math.floor(k), math.ceil(k)
+        return vals[lo] + (vals[hi] - vals[lo]) * (k - lo)
+
+    return {"p50": pct(0.50), "p99": pct(0.99),
+            "mean": sum(vals) / len(vals), "n": len(vals)}
+
+
+# ============================================================
+# Settling between legs
+# ============================================================
+
+def wait_for_pool_drain(accounts, assignment, web3s, timeout_s=900.0, poll_s=2.0):
+    """
+    Block until no workload account has pending-but-unmined txs, i.e.
+    eth_getTransactionCount(addr, "pending") == (addr, "latest") for all.
+    Returns (drained: bool, waited_s, remaining_backlog).
+    """
+    def backlog(acc):
+        w3 = web3s[assignment[acc["index"]]]
+        try:
+            return (w3.eth.get_transaction_count(acc["address"], "pending")
+                    - w3.eth.get_transaction_count(acc["address"], "latest"))
+        except Exception:  # noqa: BLE001
+            return 0
+
+    start = time.time()
+    while True:
+        with ThreadPoolExecutor(max_workers=16) as ex:
+            remaining = sum(ex.map(backlog, accounts))
+        if remaining == 0:
+            return True, time.time() - start, 0
+        if time.time() - start > timeout_s:
+            return False, time.time() - start, remaining
+        time.sleep(poll_s)
+
+
+def settle_network(label, accounts, assignment, web3s, timeout_s,
+                   resource_monitor=None):
+    """
+    Called after every leg so one leg's backlog (e.g. thousands of
+    stateful txs at 500 tx/s) cannot congest the next one. Nonces are
+    re-read from the chain at the start of the next leg (run_leg).
+    """
+    if resource_monitor is not None:
+        resource_monitor.set_phase(f"settle:{label}")
+
+    drained, waited, remaining = wait_for_pool_drain(
+        accounts, assignment, web3s, timeout_s=timeout_s
+    )
+    if drained:
+        print(f"  [settle:{label}] pool drained after {waited:.1f}s")
+    else:
+        print(f"  [settle:{label}] WARNING: {remaining} txs still pending after "
+              f"{waited:.0f}s - next leg may be affected (raise "
+              f"execution.drain_timeout_s or lower execution.rate)")
+
+    if resource_monitor is not None:
+        resource_monitor.set_phase("idle")
 
 
 # ============================================================
@@ -365,7 +507,7 @@ def block_usage(txs):
     return len(set(blocks)), max(blocks) - min(blocks) + 1
 
 
-def leg_metrics(prefix, txs, stats, gas_used_vals, sessions_per_leg):
+def leg_metrics(prefix, txs, stats, gas_used_vals, sessions_per_leg, lat):
     n_blocks, span = block_usage(txs)
     total_gas = sum(gas_used_vals) if gas_used_vals else None
     return {
@@ -376,9 +518,10 @@ def leg_metrics(prefix, txs, stats, gas_used_vals, sessions_per_leg):
         f"{prefix}_success_rate_pct": stats["success_rate_pct"],
         f"{prefix}_submit_throughput_tx_s": stats["submission_throughput_tx_s"],
         f"{prefix}_confirm_throughput_tx_s": stats["confirmation_throughput_tx_s"],
-        f"{prefix}_latency_avg_s": stats["latency_avg_s"],
-        f"{prefix}_latency_p50_s": stats["latency_p50_s"],
-        f"{prefix}_latency_p99_s": stats["latency_p99_s"],
+        # per-tx latency from the tx's own submission to its mining block
+        f"{prefix}_latency_avg_s": lat["mean"],
+        f"{prefix}_latency_p50_s": lat["p50"],
+        f"{prefix}_latency_p99_s": lat["p99"],
         f"{prefix}_makespan_s": leg_makespan(txs),
         f"{prefix}_blocks_used": n_blocks,
         f"{prefix}_block_span": span,
@@ -422,6 +565,10 @@ def run_leg(label, mode, accounts, assignment, web3s, endpoints, chain_id,
     txs = prepare_transactions(accounts, assignment, nonces, web3s, chain_id,
                                calldata_list, gas, contract.address)
 
+    # Large legs can legitimately need far longer than a flat timeout.
+    receipt_timeout = max(args.receipt_timeout,
+                          len(txs) * args.receipt_timeout_per_tx)
+
     if resource_monitor is not None:
         resource_monitor.set_phase(f"{label}:submission")
     submit_all(txs, web3s, target_rate=args.rate, workers=args.workers)
@@ -429,19 +576,20 @@ def run_leg(label, mode, accounts, assignment, web3s, endpoints, chain_id,
     if resource_monitor is not None:
         resource_monitor.set_phase(f"{label}:confirmation")
     poll_all_receipts(txs, web3s, workers=args.receipt_workers,
-                      timeout=args.receipt_timeout,
+                      timeout=receipt_timeout,
                       poll_interval=args.poll_interval)
     if resource_monitor is not None:
         resource_monitor.set_phase("idle")
 
     stats = compute_statistics(txs)
     gas_used = fetch_gas_used(txs, web3s)
+    lat = apply_block_time_latency(txs, web3s, args.latency_method)
 
     if stats["reverted"] or stats["timeout"] or stats["failed_submission"]:
         print(f"  WARNING {label}: reverted={stats['reverted']} "
               f"timeout={stats['timeout']} "
               f"failed_submission={stats['failed_submission']}")
-    return txs, stats, gas_used
+    return txs, stats, gas_used, lat
 
 
 # ============================================================
@@ -479,6 +627,13 @@ DEFAULT_CONFIG = {
         "receipt_workers": 16,
         "receipt_timeout": 120.0,
         "poll_interval": 0.25,
+        # "block_time": latency = mining block timestamp - tx's own submit_ts
+        # "poll":       latency = receipt-seen time - submit_ts (old behaviour)
+        "latency_method": "block_time",
+        # receipt timeout for a leg = max(receipt_timeout, num_tx * this)
+        "receipt_timeout_per_tx_s": 0.05,
+        # max time to wait for the txpool to drain between legs/runs
+        "drain_timeout_s": 900.0,
     },
     "monitoring": {"enabled": True, "interval": 1.0},
     "output": {"out_dir": "results/plain"},
@@ -525,6 +680,9 @@ def load_config(path):
         receipt_workers=int(cfg["execution"]["receipt_workers"]),
         receipt_timeout=float(cfg["execution"]["receipt_timeout"]),
         poll_interval=float(cfg["execution"]["poll_interval"]),
+        latency_method=str(cfg["execution"]["latency_method"]),
+        receipt_timeout_per_tx=float(cfg["execution"]["receipt_timeout_per_tx_s"]),
+        drain_timeout_s=float(cfg["execution"]["drain_timeout_s"]),
         monitor_resources=bool(cfg["monitoring"]["enabled"]),
         monitor_interval=float(cfg["monitoring"]["interval"]),
         out_dir=cfg["output"]["out_dir"],
@@ -542,6 +700,10 @@ def load_config(path):
     else:
         raise ValueError(f"sweep.mode must be one of {MODES + ('all',)}, got {args.mode!r}")
 
+    if args.latency_method not in ("block_time", "poll"):
+        raise ValueError(
+            f"execution.latency_method must be block_time or poll, got {args.latency_method!r}"
+        )
     if args.num_operators < 2:
         raise ValueError("workload.num_operators must be >= 2")
     if not 1 <= args.batch_chunk <= 200:
@@ -596,7 +758,7 @@ def main():
     salt = secrets.token_hex(4)
     print(f"\nsession-id salt for this process: {salt}")
     print(f"workload.num_vmnos={args.num_vmnos}  modes={args.modes}  "
-          f"batch_chunk={args.batch_chunk}")
+          f"batch_chunk={args.batch_chunk}  latency={args.latency_method}")
 
     rows = []
     for nproofs in args.sweep:
@@ -623,17 +785,21 @@ def main():
                     args.rate_per_second, args.rate_per_kb,
                 )
                 label = f"plain_{mode}_n{nproofs}_vmnos{args.num_vmnos}_r{run}"
-                txs, stats, gas_used = run_leg(
+                txs, stats, gas_used, lat = run_leg(
                     label, mode, accounts, assignment, web3s, endpoints,
                     chain_id, contract, calldata, args, resource_monitor,
                 )
                 row.update(leg_metrics(mode, txs, stats, gas_used,
-                                       row["sessions_total"]))
+                                       row["sessions_total"], lat))
                 write_leg_detail(detail_dir, mode, nproofs, args, run, txs, endpoints)
 
                 print(f"  {mode}: tx={len(txs)} confirmed={stats['confirmed']} "
                       f"makespan={row[f'{mode}_makespan_s']}s "
                       f"gas/session={row[f'{mode}_gas_per_session']}")
+
+                # Let the pool drain before the next leg / run starts.
+                settle_network(f"{mode}_n{nproofs}_r{run}", accounts, assignment,
+                               web3s, args.drain_timeout_s, resource_monitor)
 
             rows.append(row)
 
@@ -662,21 +828,26 @@ def write_leg_detail(detail_dir, mode, nproofs, args, run, txs, endpoints):
         f"{args.receipt_workers}_r{run}.csv",
     )
     fields = ["tx_index", "sender", "rpc_node", "tx_hash", "nonce", "submit_ts",
-              "confirm_ts", "latency_s", "block_number", "gas_used", "status",
-              "error"]
+              "confirm_ts", "latency_s", "poll_latency_s", "block_number",
+              "block_ts", "gas_used", "status", "error"]
     with open(path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         for t in txs:
-            lat = None
-            if t["submit_ts"] and t["confirm_ts"]:
-                lat = t["confirm_ts"] - t["submit_ts"]
+            poll_lat = t.get("poll_latency_s")
+            if poll_lat is None and t["submit_ts"] and t["confirm_ts"]:
+                poll_lat = t["confirm_ts"] - t["submit_ts"]
+            lat = t.get("latency_s")
+            if lat is None:
+                lat = poll_lat
             w.writerow({
                 "tx_index": t["tx_index"], "sender": t["sender"],
                 "rpc_node": endpoints[t["rpc_index"]]["name"],
                 "tx_hash": t["tx_hash"], "nonce": t["nonce"],
                 "submit_ts": t["submit_ts"], "confirm_ts": t["confirm_ts"],
-                "latency_s": lat, "block_number": t["block_number"],
+                "latency_s": lat, "poll_latency_s": poll_lat,
+                "block_number": t["block_number"],
+                "block_ts": t.get("block_ts"),
                 "gas_used": t.get("gas_used"), "status": t["status"],
                 "error": t["error"],
             })

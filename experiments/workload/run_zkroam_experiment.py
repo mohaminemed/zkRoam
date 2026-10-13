@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 """
 Full automated zkRoam sweep:
-  network up -> deploy verifiers -> run nproofs sweep -> save artifacts -> network down
+  network up -> deploy verifiers -> deploy CDR commit contract
+  -> run nproofs sweep (commit + individual + aggregate) -> save artifacts -> network down
 
 For every (network, num_vmnos) pair it writes results to
   <results-root>/zkroam-<network>-<N>vmnos/
 containing: config.yml (the exact config used), run.log (full console output),
 topology.json, deployed_contracts.json, and whatever zkroam_workload.py writes.
 
+The per-session commit(sid, h_cdr) leg (nproofs * num_vmnos txs) is enabled by
+default; pass --no-commit to skip it (and the CDRCommitment deployment).
+
 Examples:
-  python3 workload/run_experiment.py --network wan --num-vmnos 64
-  python3 workload/run_experiment.py --network wan baseline heterogeneous --num-vmnos 16 64 256
-  python3 workload/run_experiment.py --network wan --num-vmnos 64 --nproofs 8 64 128
+  python3 workload/run_zkroam_experiment.py --network wan --num-vmnos 64
+  python3 workload/run_zkroam_experiment.py --network wan baseline heterogeneous --num-vmnos 16 32 64 128 256 512 1024
+  python3 workload/run_zkroam_experiment.py --network wan --num-vmnos 64 --nproofs 8 64 128
+  python3 workload/run_zkroam_experiment.py --network wan --num-vmnos 64 --no-commit
 """
 import argparse
 import json
@@ -32,6 +37,7 @@ NETWORK_SCRIPTS = {
     "heterogeneous": "scripts/04-run-network.sh",
 }
 RPC_URL = "http://localhost:8545"
+DEPLOYED_CONTRACTS = "deployed_contracts.json"  # written by deploy_verifiers.py
 
 
 def run(cmd, log, check=True):
@@ -80,14 +86,32 @@ def teardown(log):
     run(["docker", "compose", "down", "-v", "--remove-orphans"], log, check=False)
 
 
-def start_network(network, log):
+def deploy_commit_contract(log):
+    """Deploy CDRCommitment and register it as 'cdr_commit' in deployed_contracts.json."""
+    run([sys.executable, "workload/deploy_cdr_commit.py",
+         "--topology", "networkFiles/topology.json",
+         "--accounts", "accounts/accounts.json",
+         "--out", DEPLOYED_CONTRACTS], log)
+
+
+def has_commit_contract(deployed_path):
+    path = os.path.join(ROOT, deployed_path)
+    if not os.path.exists(path):
+        return False
+    with open(path) as f:
+        return bool(json.load(f).get("cdr_commit"))
+
+
+def start_network(network, log, include_commit=True):
     run(["bash", NETWORK_SCRIPTS[network]], log)
     print("Waiting 60s for network to settle...", flush=True)
-    #time.sleep(60)  # give the network a moment to settle before running the workload   
+    #time.sleep(60)  # give the network a moment to settle before running the workload
     wait_for_chain()
     run([sys.executable, "workload/deploy_verifiers.py",
          "--topology", "networkFiles/topology.json",
          "--accounts", "accounts/accounts.json"], log)
+    if include_commit:
+        deploy_commit_contract(log)
 
 
 def run_sweep(args, network, n_vmnos, tmpl):
@@ -99,30 +123,42 @@ def run_sweep(args, network, n_vmnos, tmpl):
         return "skipped"
     os.makedirs(out_dir, exist_ok=True)
 
+    include_commit = not args.no_commit
+
     cfg = json.loads(json.dumps(tmpl))  # deep copy
     cfg["experiment"]["name"] = f"zkroam_{network}_{n_vmnos}vmnos"
+    cfg.setdefault("workload", {})
     cfg["workload"]["num_vmnos"] = n_vmnos
+    cfg["workload"]["include_commit"] = include_commit
     cfg["output"]["out_dir"] = out_dir_rel
     if args.nproofs:
         cfg["sweep"]["nproofs"] = args.nproofs
     if args.mode:
         cfg["sweep"]["mode"] = args.mode
+    if args.num_attesters:
+        cfg["workload"]["num_attesters"] = args.num_attesters
     cfg_path = os.path.join(out_dir, "config.yml")
     with open(cfg_path, "w") as f:
         yaml.safe_dump(cfg, f, sort_keys=False)
+
+    deployed_rel = cfg.get("contracts", {}).get("deployed_contracts", DEPLOYED_CONTRACTS)
 
     status = "ok"
     with open(os.path.join(out_dir, "run.log"), "w") as log:
         try:
             if not args.reuse_network:
-                start_network(network, log)
-            print(f"Running zkRoam sweep with {n_vmnos} vmnos (see {out_dir_rel}/run.log)...", flush=True)     
+                start_network(network, log, include_commit=include_commit)
+            elif include_commit and not has_commit_contract(deployed_rel):
+                # Reused network that predates the commit contract: deploy it now.
+                print("No cdr_commit in deployed contracts; deploying CDRCommitment...",
+                      flush=True)
+                deploy_commit_contract(log)
+            print(f"Running zkRoam sweep with {n_vmnos} vmnos (see {out_dir_rel}/run.log)...", flush=True)
             run([sys.executable, "workload/zkroam_workload.py",
                  "--config", os.path.relpath(cfg_path, ROOT)], log)
 
             # Snapshot the setup that produced these results
-            for src in ("networkFiles/topology.json",
-                        cfg["contracts"].get("deployed_contracts", "deployed_contracts.json")):
+            for src in ("networkFiles/topology.json", deployed_rel):
                 if os.path.exists(os.path.join(ROOT, src)):
                     shutil.copy(os.path.join(ROOT, src), out_dir)
             if args.save_node_logs and os.path.isdir(os.path.join(ROOT, "logs")):
@@ -149,6 +185,11 @@ def main():
     ap.add_argument("--nproofs", nargs="+", type=int, help="override sweep.nproofs")
     ap.add_argument("--mode", choices=["individual", "aggregate", "both"],
                     help="override sweep.mode")
+    ap.add_argument("--num-attesters", type=int,
+                    help="override workload.num_attesters (default 4 in config.yml)")
+    ap.add_argument("--no-commit", action="store_true",
+                    help="skip the per-session commit(sid, h_cdr) leg and the "
+                         "CDRCommitment deployment")
     ap.add_argument("--results-root", default="results")
     ap.add_argument("--reuse-network", action="store_true",
                     help="don't start/stop the network; use the one already running")
