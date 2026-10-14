@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 """
-Full automated zkRoam sweep:
-  network up -> deploy verifiers -> deploy CDR commit contract
-  -> run nproofs sweep (commit + individual + aggregate) -> save artifacts -> network down
+Full automated zkRoam sweep (real settlement contracts):
+  forge build -> network up -> deploy verifier + anchor
+  -> run nproofs sweep (individual: commit + terminateRoamingSession per session;
+                        aggregate: anchor attestation + settleBatch per VMNO)
+  -> save artifacts -> network down
+
+AgreementIndividual / AgreementAggregate and the benchmark helpers (BenchToken,
+BenchGroth16Verifier) are compiled once up front with `forge build` and deployed by
+zkroam_workload.py itself, FRESH for every leg. Only the verifier (cdr_verifier) and
+the anchor (aggregate_anchor) are deployed here by deploy_verifiers.py.
 
 For every (network, num_vmnos) pair it writes results to
   <results-root>/zkroam-<network>-<N>vmnos/
 containing: config.yml (the exact config used), run.log (full console output),
 topology.json, deployed_contracts.json, and whatever zkroam_workload.py writes.
 
-The per-session commit(sid, h_cdr) leg (nproofs * num_vmnos txs) is enabled by
-default; pass --no-commit to skip it (and the CDRCommitment deployment).
+The individual path always includes the per-session commit leg (the contract
+reverts without a committed CDR hash); the aggregate path never does.
 
 Examples:
-  python3 workload/run_experiment.py --network wan --num-vmnos 64
-  python3 workload/run_experiment.py --network wan baseline heterogeneous --num-vmnos 16 64 256
-  python3 workload/run_experiment.py --network wan --num-vmnos 64 --nproofs 8 64 128
-  python3 workload/run_experiment.py --network wan --num-vmnos 64 --no-commit
-  python3 workload/run_experiment.py --network wan --num-vmnos 64 --threshold-ablation 1 2 3 5 7 10
+  python3 workload/run_zkroam_experiment_e2e.py --network wan --num-vmnos 64
+  python3 workload/run_zkroam_experiment_e2e.py --network wan baseline heterogeneous --num-vmnos 16 64 256
+  python3 workload/run_zkroam_experiment_e2e.py --network wan --num-vmnos 64 --nproofs 8 64 128
+  python3 workload/run_zkroam_experiment_e2e.py --network wan --num-vmnos 64 --mode aggregate
+  python3 workload/run_zkroam_experiment_e2e.py --network wan --num-vmnos 64 --no-build
 """
 import argparse
 import json
@@ -87,36 +94,59 @@ def teardown(log):
     run(["docker", "compose", "down", "-v", "--remove-orphans"], log, check=False)
 
 
-def deploy_commit_contract(log):
-    """Deploy CDRCommitment and register it as 'cdr_commit' in deployed_contracts.json."""
-    run([sys.executable, "workload/deploy_cdr_commit.py",
-         "--topology", "networkFiles/topology.json",
-         "--accounts", "accounts/accounts.json",
-         "--out", DEPLOYED_CONTRACTS], log)
+REQUIRED_ARTIFACTS = [
+    ("AgreementIndividual.sol", "AgreementIndividual"),
+    ("AgreementAggregate.sol", "AgreementAggregate"),
+    ("BenchToken.sol", "BenchToken"),
+    ("BenchGroth16Verifier.sol", "BenchGroth16Verifier"),
+    ("CDRVerifier.sol", "Groth16Verifier"),
+    ("SnarkPackAggregateAnchor.sol", "SnarkPackAggregateAnchor"),
+]
 
 
-def has_commit_contract(deployed_path):
-    path = os.path.join(ROOT, deployed_path)
-    if not os.path.exists(path):
-        return False
-    with open(path) as f:
-        return bool(json.load(f).get("cdr_commit"))
+def build_contracts(forge_out, skip_build):
+    """forge build once, before any network starts, then check the artifacts the
+    workload will load (out/<File>.sol/<Contract>.json)."""
+    if not skip_build:
+        if not shutil.which("forge"):
+            raise RuntimeError("`forge` not found on PATH (install Foundry, or build "
+                               "yourself and pass --no-build)")
+        print("Building contracts with forge...", flush=True)
+        r = subprocess.run(["forge", "build"], cwd=ROOT, capture_output=True, text=True)
+        sys.stdout.write(r.stdout[-2000:])
+        if r.returncode != 0:
+            raise RuntimeError(f"forge build failed:\n{r.stderr or r.stdout}")
+    missing = [f"{forge_out}/{src}/{name}.json" for src, name in REQUIRED_ARTIFACTS
+               if not os.path.exists(os.path.join(ROOT, forge_out, src, f"{name}.json"))]
+    if missing:
+        raise RuntimeError("missing compiled artifacts (check src/out in foundry.toml): "
+                           + ", ".join(missing))
 
 
-def start_network(network, log, include_commit=True):
+def start_network(network, log):
     run(["bash", NETWORK_SCRIPTS[network]], log)
-    print("Waiting 60s for network to settle...", flush=True)
-    #time.sleep(60)  # give the network a moment to settle before running the workload
     wait_for_chain()
     run([sys.executable, "workload/deploy_verifiers.py",
          "--topology", "networkFiles/topology.json",
          "--accounts", "accounts/accounts.json"], log)
-    if include_commit:
-        deploy_commit_contract(log)
+
+
+def check_all_legs_valid(out_dir):
+    """A run whose txs reverted/timed out is not a result: surface it as FAILED."""
+    import csv
+    bad = []
+    for f in os.listdir(out_dir):
+        if f.endswith("_sweep_summary.csv"):
+            with open(os.path.join(out_dir, f)) as fh:
+                for row in csv.DictReader(fh):
+                    if row.get("all_legs_valid", "True") != "True":
+                        bad.append(f"nproofs={row.get('nproofs_per_vmno')} run={row.get('run')}")
+    if bad:
+        raise RuntimeError("some legs had failed txs, results invalid: " + "; ".join(bad))
 
 
 def run_sweep(args, network, n_vmnos, tmpl):
-    out_dir_rel = os.path.join(args.results_root, f"zkroam-{network}-{n_vmnos}vmnos")
+    out_dir_rel = os.path.join(args.results_root, f"zkroam-{network}-{n_vmnos}vmnos_e2e")
     out_dir = os.path.join(ROOT, out_dir_rel)
 
     if os.path.exists(os.path.join(out_dir, "run.log")) and not args.force:
@@ -124,13 +154,11 @@ def run_sweep(args, network, n_vmnos, tmpl):
         return "skipped"
     os.makedirs(out_dir, exist_ok=True)
 
-    include_commit = not args.no_commit
-
     cfg = json.loads(json.dumps(tmpl))  # deep copy
     cfg["experiment"]["name"] = f"zkroam_{network}_{n_vmnos}vmnos"
     cfg.setdefault("workload", {})
     cfg["workload"]["num_vmnos"] = n_vmnos
-    cfg["workload"]["include_commit"] = include_commit
+    cfg.setdefault("contracts", {})["forge_out"] = args.forge_out
     cfg["output"]["out_dir"] = out_dir_rel
     if args.nproofs:
         cfg["sweep"]["nproofs"] = args.nproofs
@@ -148,30 +176,12 @@ def run_sweep(args, network, n_vmnos, tmpl):
     with open(os.path.join(out_dir, "run.log"), "w") as log:
         try:
             if not args.reuse_network:
-                start_network(network, log, include_commit=include_commit)
-            elif include_commit and not has_commit_contract(deployed_rel):
-                # Reused network that predates the commit contract: deploy it now.
-                print("No cdr_commit in deployed contracts; deploying CDRCommitment...",
-                      flush=True)
-                deploy_commit_contract(log)
+                start_network(network, log)
             print(f"Running zkRoam sweep with {n_vmnos} vmnos (see {out_dir_rel}/run.log)...", flush=True)
-            run([sys.executable, "workload/zkroam_workload.py",
+            run([sys.executable, "workload/zkroam_workload_e2e.py",
                  "--config", os.path.relpath(cfg_path, ROOT)], log)
 
-            if args.threshold_ablation:
-                # Ablation over the anchor threshold t (runs after the main sweep so the
-                # sweep always sees the default threshold; the script restores it anyway).
-                nproofs_list = cfg.get("sweep", {}).get("nproofs") or [8, 64, 128]
-                if not isinstance(nproofs_list, list):
-                    nproofs_list = [nproofs_list]
-                print(f"Running threshold ablation t={args.threshold_ablation}...", flush=True)
-                run([sys.executable, "workload/zkroam_threshold_ablation.py",
-                     "--topology", "networkFiles/topology.json",
-                     "--accounts", "accounts/accounts.json",
-                     "--deployed", deployed_rel,
-                     "--out-dir", out_dir_rel,
-                     "--t-values", *[str(t) for t in args.threshold_ablation],
-                     "--nproofs", *[str(n) for n in nproofs_list]], log)
+            check_all_legs_valid(out_dir)
 
             # Snapshot the setup that produced these results
             for src in ("networkFiles/topology.json", deployed_rel):
@@ -203,12 +213,10 @@ def main():
                     help="override sweep.mode")
     ap.add_argument("--num-attesters", type=int,
                     help="override workload.num_attesters (default 4 in config.yml)")
-    ap.add_argument("--no-commit", action="store_true",
-                    help="skip the per-session commit(sid, h_cdr) leg and the "
-                         "CDRCommitment deployment")
-    ap.add_argument("--threshold-ablation", nargs="+", type=int, metavar="T",
-                    help="after the sweep, run the anchor-threshold ablation for these t "
-                         "values (needs >= max(T)+2 funded accounts)")
+    ap.add_argument("--forge-out", default="out",
+                    help="foundry output dir holding out/<File>.sol/<Contract>.json")
+    ap.add_argument("--no-build", action="store_true",
+                    help="skip `forge build` (artifacts must already exist)")
     ap.add_argument("--results-root", default="results")
     ap.add_argument("--reuse-network", action="store_true",
                     help="don't start/stop the network; use the one already running")
@@ -221,6 +229,8 @@ def main():
 
     with open(os.path.join(ROOT, args.config)) as f:
         tmpl = yaml.safe_load(f)
+
+    build_contracts(args.forge_out, args.no_build)   # fail before any network starts
 
     summary = []
     for network in args.network:

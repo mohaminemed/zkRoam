@@ -32,7 +32,7 @@ network:
 
 sweep:
   nproofs: [8] #, 64, 128, 256, 512, 1024#start small - see note below on what nproofs means here
-  runs: 10
+  runs: 1
   mode: both      # individual | aggregate | both
                        
 
@@ -46,6 +46,11 @@ workload:
   num_attesters: 5
   # anchor finalization threshold; null = leave the on-chain value unchanged
   threshold: 3
+
+  # max setup txs per sender sent at once; Besu caps each account's share of the txpool,
+  # and setup txs come from only 2 HMNO accounts. Raise it only if the nodes allow it
+  # (--tx-pool-limit-by-account-percentage); 0 = unlimited; used by e2e tests to avoid txpool congestion.
+  setup_per_sender: 4
 
 offchain:
   logs_dir: ../aggregation/aggregation_bn254/output

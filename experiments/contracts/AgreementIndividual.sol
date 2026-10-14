@@ -56,8 +56,8 @@ contract AgreementIndividual is AgreementBase {
 
         // Anyone may call: only the VMNO can produce a valid proof, and funds
         // only ever go to the two agreement parties.
-        // Order must match the circuit's public signals (snarkjs public.json):
-        // [r_sms, r_mb, r_voice, t (total cost), hash_cdr]
+        // Order MUST match the circuit's public signals (snarkjs public.json):
+        // [r_sms, r_data, r_voice, cost, cdrHash]
         uint256[5] memory publicInputs = [
             rates.sms,
             rates.data,
