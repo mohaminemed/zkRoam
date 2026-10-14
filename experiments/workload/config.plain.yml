@@ -7,7 +7,7 @@ network:
   accounts: accounts/accounts.json
 
 sweep:
-  nproofs: [8, 64, 128]          # CDRs per VMNO settlement (same sweep as zkroam_workload.py)
+  nproofs: [8] #, 64, 128]          # CDRs per VMNO settlement (same sweep as zkroam_workload.py)
   runs: 10
   mode: all             # stateless | stateful | batch | all
 
